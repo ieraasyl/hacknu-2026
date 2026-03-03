@@ -1,0 +1,257 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/jetbrains-mono';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===== HackNU/26 Theme ===== */
+
+:root {
+  /* HackNU Brand Colors */
+  --hacknu-green: #58e191;
+  --hacknu-purple: #e256ff;
+  --hacknu-dark: #0a0a0a;
+  --hacknu-dark-card: #141414;
+  --hacknu-border: #282828;
+  --hacknu-text: #f5f5f5;
+  --hacknu-text-muted: #888888;
+
+  /* shadcn overrides for dark-first design */
+  --background: oklch(0.07 0.005 285.823);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.12 0.003 285);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.12 0.003 285);
+  --popover-foreground: oklch(0.97 0 0);
+  --primary: oklch(0.77 0.18 155);
+  --primary-foreground: oklch(0.15 0.04 155);
+  --secondary: oklch(0.2 0.005 286);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.2 0.005 286);
+  --muted-foreground: oklch(0.6 0.01 286);
+  --accent: oklch(0.2 0.005 286);
+  --accent-foreground: oklch(0.97 0 0);
+  --destructive: oklch(0.65 0.22 25);
+  --border: oklch(0.25 0.005 286);
+  --input: oklch(0.25 0.005 286);
+  --ring: oklch(0.77 0.18 155);
+  --chart-1: oklch(0.77 0.18 155);
+  --chart-2: oklch(0.72 0.22 320);
+  --chart-3: oklch(0.65 0.18 200);
+  --chart-4: oklch(0.55 0.15 250);
+  --chart-5: oklch(0.45 0.12 280);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.1 0.003 285);
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.77 0.18 155);
+  --sidebar-primary-foreground: oklch(0.15 0.04 155);
+  --sidebar-accent: oklch(0.2 0.005 286);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(0.25 0.005 286);
+  --sidebar-ring: oklch(0.77 0.18 155);
+}
+
+@theme inline {
+  --font-sans: 'JetBrains Mono Variable', monospace;
+  --color-hacknu-green: var(--hacknu-green);
+  --color-hacknu-purple: var(--hacknu-purple);
+  --color-hacknu-dark: var(--hacknu-dark);
+  --color-hacknu-dark-card: var(--hacknu-dark-card);
+  --color-hacknu-border: var(--hacknu-border);
+  --color-hacknu-text: var(--hacknu-text);
+  --color-hacknu-text-muted: var(--hacknu-text-muted);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* ===== Base Styles ===== */
+
+body {
+  margin: 0;
+  font-family: 'JetBrains Mono Variable', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--hacknu-dark);
+  color: var(--hacknu-text);
+  overflow-x: hidden;
+}
+
+code {
+  font-family: 'JetBrains Mono Variable', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+
+  /* Remove browser autofill highlight */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--card) inset !important;
+    box-shadow: 0 0 0px 1000px var(--card) inset !important;
+    -webkit-text-fill-color: var(--foreground) !important;
+    font-family: 'JetBrains Mono Variable', monospace !important;
+    font-size: inherit !important;
+    caret-color: var(--foreground);
+    transition: background-color 9999s ease-in-out 0s;
+  }
+}
+
+/* ===== Animations ===== */
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(88, 225, 145, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 40px rgba(88, 225, 145, 0.6),
+      0 0 80px rgba(88, 225, 145, 0.2);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+/* ===== Utility Classes ===== */
+
+.blink-cursor::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  color: var(--hacknu-green);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--hacknu-purple), #6366f1, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-green {
+  background: linear-gradient(135deg, var(--hacknu-green), #06b6d4, var(--hacknu-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-divider {
+  border-top: 1px dashed var(--hacknu-border);
+}
+
+.hacknu-border {
+  border: 1px solid var(--hacknu-border);
+}
+
+.terminal-header {
+  font-family: 'JetBrains Mono Variable', monospace;
+  color: var(--hacknu-text-muted);
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--hacknu-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--hacknu-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hacknu-green);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(88, 225, 145, 0.3);
+  color: white;
+}

@@ -1,0 +1,28 @@
+{
+  "short_name": "HackNU/26",
+  "name": "HackNU/26 — 9th Annual Student Hackathon",
+  "description": "HackNU/26 — the 9th Annual 24-hour student hackathon organized by NU ACM Student Chapter at Nazarbayev University.",
+"icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#000000"
+}

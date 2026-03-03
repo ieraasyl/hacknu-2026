@@ -1,0 +1,10 @@
+# Cloudflare Workers secrets for local development.
+# Loaded by wrangler during `bun run dev`. Copy to .dev.vars and fill in the values.
+
+# local: http://localhost:3000 
+# remote: https://hacknu-2026.ieraasyl.workers.dev
+BETTER_AUTH_URL=
+
+BETTER_AUTH_SECRET=
+GAS_URL=
+GAS_SECRET=
