@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
+import { useSession } from '../../lib/auth-client';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
 
   return (
     <nav className="fixed top-0 right-0 left-0 z-50 border-b border-hacknu-border bg-hacknu-dark/90 backdrop-blur-md">
@@ -28,14 +31,6 @@ export default function Navbar() {
             variant="ghost"
             size="sm"
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
-            render={<a href="#agenda" />}
-          >
-            Agenda
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
             render={<a href="#faq" />}
           >
             FAQ
@@ -50,9 +45,9 @@ export default function Navbar() {
           </Button>
           <Button
             className="ml-2 bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
-            render={<a href="/login" />}
+            render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
           >
-            Register
+            {isLoggedIn ? 'Dashboard' : 'Register'}
           </Button>
         </div>
 
@@ -105,14 +100,6 @@ export default function Navbar() {
             <Button
               variant="ghost"
               className="justify-start tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
-              render={<a href="#agenda" />}
-              onClick={() => setIsOpen(false)}
-            >
-              Agenda
-            </Button>
-            <Button
-              variant="ghost"
-              className="justify-start tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
               render={<a href="#faq" />}
               onClick={() => setIsOpen(false)}
             >
@@ -129,9 +116,9 @@ export default function Navbar() {
             <Separator className="my-2 bg-hacknu-border" />
             <Button
               className="bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
-              render={<a href="/login" />}
+              render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
             >
-              Register
+              {isLoggedIn ? 'Dashboard' : 'Register'}
             </Button>
           </div>
         </div>

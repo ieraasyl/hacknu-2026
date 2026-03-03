@@ -1,10 +1,14 @@
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
+import { useSession } from '../../lib/auth-client';
 
 export default function Footer() {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+
   return (
     <footer className="border-t border-hacknu-border bg-hacknu-dark">
-      {/* Register CTA Section */}
+      {/* Register / Dashboard CTA Section */}
       <div className="mx-auto max-w-7xl px-6 py-16 text-center md:py-24">
         <p className="mb-4 text-sm tracking-widest text-hacknu-text-muted uppercase">
           Ready to hack?
@@ -12,9 +16,9 @@ export default function Footer() {
         <Button
           variant="link"
           className="h-auto p-0 font-mono text-2xl font-bold tracking-wider text-hacknu-green hover:text-white md:text-4xl"
-          render={<a href="/login" />}
+          render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
         >
-          {'>'} register
+          {'>'} {isLoggedIn ? 'dashboard' : 'register'}
           <span
             className="ml-1 inline-block h-7 w-4 bg-hacknu-green align-middle"
             style={{ animation: 'blink 1s step-end infinite' }}
@@ -40,7 +44,11 @@ export default function Footer() {
             size="sm"
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
             render={
-              <a href="https://instagram.com/nuacm" target="_blank" rel="noopener noreferrer" />
+              <a
+                href="https://www.instagram.com/nuacmsc/"
+                target="_blank"
+                rel="noopener noreferrer"
+              />
             }
           >
             Instagram
@@ -49,17 +57,9 @@ export default function Footer() {
             variant="ghost"
             size="sm"
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
-            render={<a href="https://t.me/nuacm" target="_blank" rel="noopener noreferrer" />}
-          >
-            Telegram
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
             render={
               <a
-                href="https://linkedin.com/company/nuacm"
+                href="https://www.linkedin.com/company/nuacmsc"
                 target="_blank"
                 rel="noopener noreferrer"
               />
@@ -71,9 +71,29 @@ export default function Footer() {
             variant="ghost"
             size="sm"
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
-            render={<a href="mailto:acm@nu.edu.kz" />}
+            render={
+              <a
+                href="https://www.youtube.com/@nuacmsc"
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
           >
-            Contact
+            YouTube
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
+            render={
+              <a
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=acmsc@nu.edu.kz&su=&body="
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+          >
+            Email
           </Button>
         </div>
       </div>

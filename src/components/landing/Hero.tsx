@@ -1,6 +1,10 @@
 import { Button } from '../ui/button';
+import { useSession } from '../../lib/auth-client';
 
 export default function Hero() {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-hacknu-dark">
       {/* Subtle grid background */}
@@ -46,14 +50,14 @@ export default function Hero() {
           organized by <span className="text-hacknu-green">NU ACM Student Chapter</span>
         </p>
 
-        {/* Register CTA */}
+        {/* Register / Dashboard CTA */}
         <div className="mt-10 md:mt-14">
           <Button
             variant="link"
             className="h-auto p-0 font-mono text-lg tracking-wider text-hacknu-green hover:text-white md:text-2xl"
-            render={<a href="/login" />}
+            render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
           >
-            {'>'} register
+            {'>'} {isLoggedIn ? 'dashboard' : 'register'}
             <span
               className="ml-1 inline-block h-5 w-3 bg-hacknu-green align-middle"
               style={{ animation: 'blink 1s step-end infinite' }}

@@ -229,7 +229,7 @@ function Dashboard() {
       <div className="flex min-h-screen items-center justify-center bg-hacknu-dark">
         <div className="text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-2 border-hacknu-green/30 border-t-hacknu-green" />
-          <p className="text-sm tracking-wider text-hacknu-text-muted">Loading session...</p>
+          <p className="text-sm tracking-wider text-hacknu-text-muted">Hacking into dashboard...</p>
         </div>
       </div>
     );
@@ -266,9 +266,9 @@ function Dashboard() {
 
   const isCaptain = teamData ? teamData.captainId === session.user.id : false;
   const inviteUrl = teamData
-    ? (typeof window !== 'undefined'
-        ? `${window.location.origin}/invite/${teamData.inviteSlug}`
-        : `/invite/${teamData.inviteSlug}`)
+    ? typeof window !== 'undefined'
+      ? `${window.location.origin}/invite/${teamData.inviteSlug}`
+      : `/invite/${teamData.inviteSlug}`
     : '';
 
   return (
@@ -340,7 +340,11 @@ function Dashboard() {
                 <CardTitle className="text-2xl text-hacknu-purple">—</CardTitle>
               )}
               <p className="mt-1 text-xs text-hacknu-text-muted">
-                {teamLoading ? '' : teamData ? `${teamData.members.length}/4 members` : 'No team yet'}
+                {teamLoading
+                  ? ''
+                  : teamData
+                    ? `${teamData.members.length}/4 members`
+                    : 'No team yet'}
               </p>
             </CardContent>
           </Card>
@@ -463,18 +467,18 @@ function Dashboard() {
                     ))}
                     {/* Empty slots */}
                     {Array.from({ length: 4 - teamData.members.length }).map((_, i) => (
-                      <li key={`empty-${i}`} className="font-mono text-sm text-hacknu-text-muted/40">
-                        <span className="mr-2 text-hacknu-text-muted/40">{'>'}</span>
-                        — empty slot —
+                      <li
+                        key={`empty-${i}`}
+                        className="font-mono text-sm text-hacknu-text-muted/40"
+                      >
+                        <span className="mr-2 text-hacknu-text-muted/40">{'>'}</span>— empty slot —
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 {/* Action error */}
-                {actionError && (
-                  <p className="text-xs text-red-400">[error] {actionError}</p>
-                )}
+                {actionError && <p className="text-xs text-red-400">[error] {actionError}</p>}
 
                 {/* Captain / member actions */}
                 <div className="flex justify-end pt-2">
@@ -519,7 +523,6 @@ function Dashboard() {
                     />
                     <Button
                       type="submit"
-                      size="sm"
                       disabled={createLoading || !createName.trim()}
                       className="shrink-0 bg-hacknu-green text-xs font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
                     >
@@ -548,16 +551,13 @@ function Dashboard() {
                     />
                     <Button
                       type="submit"
-                      size="sm"
                       disabled={joinLoading || !joinInput.trim()}
                       className="shrink-0 border border-hacknu-border bg-transparent text-xs tracking-wider text-hacknu-purple uppercase hover:border-hacknu-purple/50 hover:bg-hacknu-purple/10"
                     >
                       {joinLoading ? '...' : 'Join →'}
                     </Button>
                   </form>
-                  {joinError && (
-                    <p className="mt-1 text-xs text-red-400">[error] {joinError}</p>
-                  )}
+                  {joinError && <p className="mt-1 text-xs text-red-400">[error] {joinError}</p>}
                 </div>
               </div>
             )}
@@ -567,4 +567,3 @@ function Dashboard() {
     </div>
   );
 }
-

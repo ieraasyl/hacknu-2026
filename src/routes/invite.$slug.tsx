@@ -77,9 +77,7 @@ function InviteResult() {
         <BackgroundGrid />
         <div className="relative z-10 text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-2 border-hacknu-green/30 border-t-hacknu-green" />
-          <p className="font-mono text-sm tracking-wider text-hacknu-text-muted">
-            Joining team...
-          </p>
+          <p className="font-mono text-sm tracking-wider text-hacknu-text-muted">Joining team...</p>
         </div>
       </div>
     );

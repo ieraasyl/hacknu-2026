@@ -155,7 +155,7 @@ function OnboardingPage() {
         return;
       }
       if (err != null && typeof err === 'object' && 'to' in err) {
-        await navigate({ to: safeRedirect ?? ((err as { to: string }).to) });
+        await navigate({ to: safeRedirect ?? (err as { to: string }).to });
         return;
       }
       setError(err instanceof Error ? err.message : 'Something went wrong');

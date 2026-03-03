@@ -124,7 +124,7 @@ function LoginPage() {
         setLoading(false);
       }
     },
-    [email, otp, navigate],
+    [email, otp, navigate, redirect],
   );
 
   /* ─── Resend OTP ─── */
