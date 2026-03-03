@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { user } from './auth-schema';
 
 /**
@@ -8,7 +8,30 @@ import { user } from './auth-schema';
  */
 
 /**
- * Participant — filled in during onboarding (step 2 of registration)
+ * Team — created by a captain, up to 4 members.
+ * inviteSlug is a URL-safe slug derived from the team name (e.g. "cool-hackers").
+ */
+export const team = sqliteTable('team', {
+  id: text('id').primaryKey(), // crypto.randomUUID()
+  name: text('name').notNull().unique(),
+  inviteSlug: text('invite_slug').notNull().unique(),
+  captainId: text('captain_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+});
+
+export type Team = typeof team.$inferSelect;
+export type NewTeam = typeof team.$inferInsert;
+
+/**
+ * Participant — filled in during onboarding (step 2 of registration).
+ * teamId is nullable; set when the participant joins or creates a team.
  */
 export const participant = sqliteTable('participant', {
   id: text('id')
@@ -19,6 +42,7 @@ export const participant = sqliteTable('participant', {
   phone: text('phone').notNull(),
   educationLevel: text('education_level').notNull(),
   cvUrl: text('cv_url'),
+  teamId: text('team_id').references(() => team.id, { onDelete: 'set null' }),
   createdAt: integer('created_at', { mode: 'timestamp_ms' })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
@@ -29,3 +53,15 @@ export const participant = sqliteTable('participant', {
 
 export type Participant = typeof participant.$inferSelect;
 export type NewParticipant = typeof participant.$inferInsert;
+
+// ── Relations ────────────────────────────────────────────────────────────────
+
+export const teamRelations = relations(team, ({ many, one }) => ({
+  members: many(participant),
+  captain: one(user, { fields: [team.captainId], references: [user.id] }),
+}));
+
+export const participantRelations = relations(participant, ({ one }) => ({
+  team: one(team, { fields: [participant.teamId], references: [team.id] }),
+  user: one(user, { fields: [participant.id], references: [user.id] }),
+}));

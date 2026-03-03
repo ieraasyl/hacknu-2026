@@ -30,6 +30,9 @@ const getPostLoginDestination = createServerFn({ method: 'GET' }).handler(async 
 });
 
 export const Route = createFileRoute('/login')({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
+  }),
   component: LoginPage,
 });
 
@@ -38,6 +41,7 @@ const RESEND_COOLDOWN = 60; // seconds
 function LoginPage() {
   const { data: session } = useSession();
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
 
   // Two-phase state: 'email' or 'otp'
   const [phase, setPhase] = useState<'email' | 'otp'>('email');
@@ -107,7 +111,12 @@ function LoginPage() {
           setError(result.error.message ?? 'Invalid verification code');
         } else {
           const destination = await getPostLoginDestination();
-          await navigate({ to: destination as '/dashboard' | '/onboarding' });
+          const safeRedirect = redirect && redirect.startsWith('/invite/') ? redirect : undefined;
+          if (destination === '/onboarding') {
+            await navigate({ to: '/onboarding', search: { redirect: safeRedirect } });
+          } else {
+            await navigate({ to: safeRedirect ?? '/dashboard' });
+          }
         }
       } catch (err) {
         setError(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);

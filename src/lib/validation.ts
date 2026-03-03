@@ -59,3 +59,25 @@ export const onboardingSchema = z.object({
 });
 
 export type OnboardingInput = z.infer<typeof onboardingSchema>;
+
+// ── Team ─────────────────────────────────────────────────────────────────────
+
+export const createTeamSchema = z.object({
+  name: z
+    .string()
+    .min(3, 'Team name must be at least 3 characters')
+    .max(30, 'Team name must be 30 characters or fewer')
+    .transform((v) => v.trim()),
+});
+
+export type CreateTeamInput = z.infer<typeof createTeamSchema>;
+
+export const inviteSlugSchema = z.object({
+  slug: z
+    .string()
+    .min(1, 'Invite code is required')
+    .max(50)
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Invalid invite code format'),
+});
+
+export type InviteSlugInput = z.infer<typeof inviteSlugSchema>;

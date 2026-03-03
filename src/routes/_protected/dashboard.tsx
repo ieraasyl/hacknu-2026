@@ -1,5 +1,19 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createServerFn } from '@tanstack/react-start';
+import { getRequest } from '@tanstack/react-start/server';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession, signOut } from '../../lib/auth-client';
+import { getSession } from '../../lib/auth.server';
+import { createTeamSchema, inviteSlugSchema } from '../../lib/validation';
+import {
+  getTeamByParticipant,
+  createTeam,
+  joinTeamBySlug,
+  kickMember,
+  leaveTeam,
+  dissolveTeam,
+  type TeamData,
+} from '../../lib/team.server';
 import { Button } from '../../components/ui/button';
 import {
   Card,
@@ -8,15 +22,207 @@ import {
   CardHeader,
   CardTitle,
 } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Separator } from '../../components/ui/separator';
 import { BackgroundGrid } from '../../components/ui/background';
+
+/* ─── Server Functions ─── */
+
+const getMyTeamFn = createServerFn({ method: 'GET' }).handler(async () => {
+  const request = getRequest();
+  const session = await getSession(request);
+  if (!session) return null;
+  return getTeamByParticipant(session.user.id);
+});
+
+const createTeamFn = createServerFn({ method: 'POST' })
+  .inputValidator((input: { name: string }) => input)
+  .handler(async ({ data }) => {
+    const request = getRequest();
+    const session = await getSession(request);
+    if (!session) throw new Error('Unauthorized');
+    const parsed = createTeamSchema.safeParse(data);
+    if (!parsed.success) throw new Error(parsed.error.issues[0].message);
+    return createTeam(session.user.id, parsed.data.name);
+  });
+
+const joinTeamFn = createServerFn({ method: 'POST' })
+  .inputValidator((input: { slug: string }) => input)
+  .handler(async ({ data }) => {
+    const request = getRequest();
+    const session = await getSession(request);
+    if (!session) throw new Error('Unauthorized');
+    const parsed = inviteSlugSchema.safeParse(data);
+    if (!parsed.success) throw new Error(parsed.error.issues[0].message);
+    return joinTeamBySlug(session.user.id, parsed.data.slug);
+  });
+
+const kickMemberFn = createServerFn({ method: 'POST' })
+  .inputValidator((input: { targetUserId: string }) => input)
+  .handler(async ({ data }) => {
+    const request = getRequest();
+    const session = await getSession(request);
+    if (!session) throw new Error('Unauthorized');
+    await kickMember(session.user.id, data.targetUserId);
+  });
+
+const leaveTeamFn = createServerFn({ method: 'POST' }).handler(async () => {
+  const request = getRequest();
+  const session = await getSession(request);
+  if (!session) throw new Error('Unauthorized');
+  await leaveTeam(session.user.id);
+});
+
+const dissolveTeamFn = createServerFn({ method: 'POST' }).handler(async () => {
+  const request = getRequest();
+  const session = await getSession(request);
+  if (!session) throw new Error('Unauthorized');
+  await dissolveTeam(session.user.id);
+});
+
+/* ─── Route ─── */
 
 export const Route = createFileRoute('/_protected/dashboard')({
   component: Dashboard,
 });
 
+/* ─── Component ─── */
+
 function Dashboard() {
   const { data: session, isPending, error } = useSession();
   const navigate = useNavigate();
+
+  // Team state
+  const [teamLoading, setTeamLoading] = useState(true);
+  const [teamData, setTeamData] = useState<TeamData | null>(null);
+
+  // Create team form
+  const [createName, setCreateName] = useState('');
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+
+  // Join team form (accepts full URL or bare slug)
+  const [joinInput, setJoinInput] = useState('');
+  const [joinLoading, setJoinLoading] = useState(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
+
+  // Per-action loading: 'leave' | 'dissolve' | '<userId>' (kick)
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const [copied, setCopied] = useState(false);
+
+  const refreshTeam = useCallback(async () => {
+    setTeamLoading(true);
+    try {
+      const data = await getMyTeamFn();
+      setTeamData(data);
+    } catch {
+      setTeamData(null);
+    } finally {
+      setTeamLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshTeam();
+  }, [refreshTeam]);
+
+  // Extract slug from a full invite URL or bare slug
+  function extractSlug(input: string): string {
+    const trimmed = input.trim();
+    try {
+      const url = new URL(trimmed);
+      const parts = url.pathname.split('/').filter(Boolean);
+      const inviteIdx = parts.indexOf('invite');
+      if (inviteIdx !== -1 && parts[inviteIdx + 1]) return parts[inviteIdx + 1];
+    } catch {
+      // not a URL — treat as bare slug
+    }
+    return trimmed.replace(/.*\/invite\//, '');
+  }
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setCreateError(null);
+    setCreateLoading(true);
+    try {
+      const result = await createTeamFn({ data: { name: createName } });
+      setTeamData(result);
+      setCreateName('');
+    } catch (err) {
+      setCreateError((err as Error).message);
+    } finally {
+      setCreateLoading(false);
+    }
+  }
+
+  async function handleJoin(e: React.FormEvent) {
+    e.preventDefault();
+    setJoinError(null);
+    const slug = extractSlug(joinInput);
+    if (!slug) {
+      setJoinError('Enter a valid invite link or code');
+      return;
+    }
+    setJoinLoading(true);
+    try {
+      const result = await joinTeamFn({ data: { slug } });
+      setTeamData(result);
+      setJoinInput('');
+    } catch (err) {
+      setJoinError((err as Error).message);
+    } finally {
+      setJoinLoading(false);
+    }
+  }
+
+  async function handleKick(targetUserId: string) {
+    setActionError(null);
+    setActionLoading(targetUserId);
+    try {
+      await kickMemberFn({ data: { targetUserId } });
+      await refreshTeam();
+    } catch (err) {
+      setActionError((err as Error).message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleLeave() {
+    setActionError(null);
+    setActionLoading('leave');
+    try {
+      await leaveTeamFn();
+      setTeamData(null);
+    } catch (err) {
+      setActionError((err as Error).message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleDissolve() {
+    setActionError(null);
+    setActionLoading('dissolve');
+    try {
+      await dissolveTeamFn();
+      setTeamData(null);
+    } catch (err) {
+      setActionError((err as Error).message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleCopyLink() {
+    if (!teamData) return;
+    const url = `${window.location.origin}/invite/${teamData.inviteSlug}`;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   if (isPending) {
     return (
@@ -57,6 +263,13 @@ function Dashboard() {
       </div>
     );
   }
+
+  const isCaptain = teamData ? teamData.captainId === session.user.id : false;
+  const inviteUrl = teamData
+    ? (typeof window !== 'undefined'
+        ? `${window.location.origin}/invite/${teamData.inviteSlug}`
+        : `/invite/${teamData.inviteSlug}`)
+    : '';
 
   return (
     <div className="min-h-screen bg-hacknu-dark">
@@ -117,8 +330,18 @@ function Dashboard() {
               <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
                 Team
               </CardDescription>
-              <CardTitle className="text-2xl text-hacknu-purple">—</CardTitle>
-              <p className="mt-1 text-xs text-hacknu-text-muted">No team yet</p>
+              {teamLoading ? (
+                <div className="h-8 w-24 animate-pulse rounded bg-hacknu-border" />
+              ) : teamData ? (
+                <CardTitle className="truncate text-2xl text-hacknu-purple">
+                  {teamData.name}
+                </CardTitle>
+              ) : (
+                <CardTitle className="text-2xl text-hacknu-purple">—</CardTitle>
+              )}
+              <p className="mt-1 text-xs text-hacknu-text-muted">
+                {teamLoading ? '' : teamData ? `${teamData.members.length}/4 members` : 'No team yet'}
+              </p>
             </CardContent>
           </Card>
           <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-green/30 sm:col-span-2 lg:col-span-1">
@@ -133,7 +356,7 @@ function Dashboard() {
         </div>
 
         {/* Profile Card */}
-        <Card className="border-hacknu-border bg-hacknu-dark-card">
+        <Card className="mb-6 border-hacknu-border bg-hacknu-dark-card">
           <CardHeader className="border-b border-hacknu-border">
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-hacknu-green/60" />
@@ -156,7 +379,192 @@ function Dashboard() {
             </pre>
           </CardContent>
         </Card>
+
+        {/* Team Management Card */}
+        <Card className="border-hacknu-border bg-hacknu-dark-card">
+          <CardHeader className="border-b border-hacknu-border">
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-3 rounded-full bg-hacknu-purple/60" />
+              <div className="h-3 w-3 rounded-full bg-hacknu-purple/30" />
+              <div className="h-3 w-3 rounded-full bg-hacknu-purple/10" />
+              <span className="ml-2 text-xs text-hacknu-text-muted">team.sh</span>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            {teamLoading ? (
+              <div className="space-y-3 py-4">
+                <div className="h-4 w-48 animate-pulse rounded bg-hacknu-border" />
+                <div className="h-4 w-64 animate-pulse rounded bg-hacknu-border" />
+              </div>
+            ) : teamData ? (
+              /* ── In a team ── */
+              <div className="space-y-4">
+                {/* Team name + invite link */}
+                <div>
+                  <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
+                    Team
+                  </p>
+                  <p className="font-mono text-lg font-bold text-hacknu-green">{teamData.name}</p>
+                </div>
+
+                <div>
+                  <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
+                    Invite link
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 truncate rounded border border-hacknu-border bg-hacknu-dark px-2 py-1 text-xs text-hacknu-text-muted">
+                      {inviteUrl}
+                    </code>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0 border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-hacknu-green/50 hover:text-hacknu-green"
+                      onClick={handleCopyLink}
+                    >
+                      {copied ? '✓ Copied' : 'Copy'}
+                    </Button>
+                  </div>
+                </div>
+
+                <Separator className="border-hacknu-border" />
+
+                {/* Members list */}
+                <div>
+                  <p className="mb-2 text-xs tracking-wider text-hacknu-text-muted uppercase">
+                    Members ({teamData.members.length}/4)
+                  </p>
+                  <ul className="space-y-2">
+                    {teamData.members.map((member) => (
+                      <li
+                        key={member.id}
+                        className="flex items-center justify-between gap-2 font-mono text-sm"
+                      >
+                        <span className="flex items-center gap-2 truncate">
+                          <span className="text-hacknu-green">{'>'}</span>
+                          <span className="truncate text-hacknu-text">{member.fullName}</span>
+                          {member.isCaptain && (
+                            <span className="rounded border border-hacknu-purple/40 px-1 py-0.5 text-xs text-hacknu-purple">
+                              captain
+                            </span>
+                          )}
+                        </span>
+                        {isCaptain && !member.isCaptain && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="shrink-0 border-hacknu-border px-2 text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
+                            disabled={actionLoading === member.id}
+                            onClick={() => handleKick(member.id)}
+                          >
+                            {actionLoading === member.id ? '...' : 'Kick'}
+                          </Button>
+                        )}
+                      </li>
+                    ))}
+                    {/* Empty slots */}
+                    {Array.from({ length: 4 - teamData.members.length }).map((_, i) => (
+                      <li key={`empty-${i}`} className="font-mono text-sm text-hacknu-text-muted/40">
+                        <span className="mr-2 text-hacknu-text-muted/40">{'>'}</span>
+                        — empty slot —
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Action error */}
+                {actionError && (
+                  <p className="text-xs text-red-400">[error] {actionError}</p>
+                )}
+
+                {/* Captain / member actions */}
+                <div className="flex justify-end pt-2">
+                  {isCaptain ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-red-500/30 text-xs tracking-wider text-red-400/70 uppercase hover:border-red-500 hover:text-red-400"
+                      disabled={actionLoading === 'dissolve'}
+                      onClick={handleDissolve}
+                    >
+                      {actionLoading === 'dissolve' ? 'Dissolving...' : 'Dissolve Team'}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
+                      disabled={actionLoading === 'leave'}
+                      onClick={handleLeave}
+                    >
+                      {actionLoading === 'leave' ? 'Leaving...' : 'Leave Team'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* ── No team ── */
+              <div className="space-y-6 py-2">
+                {/* Create team */}
+                <div>
+                  <p className="mb-3 text-xs tracking-wider text-hacknu-text-muted uppercase">
+                    Create a team
+                  </p>
+                  <form onSubmit={handleCreate} className="flex gap-2">
+                    <Input
+                      placeholder="Team name"
+                      value={createName}
+                      onChange={(e) => setCreateName(e.target.value)}
+                      disabled={createLoading}
+                      className="flex-1 border-hacknu-border bg-hacknu-dark font-mono text-xs text-hacknu-text placeholder:text-hacknu-text-muted/50"
+                    />
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={createLoading || !createName.trim()}
+                      className="shrink-0 bg-hacknu-green text-xs font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
+                    >
+                      {createLoading ? '...' : 'Create →'}
+                    </Button>
+                  </form>
+                  {createError && (
+                    <p className="mt-1 text-xs text-red-400">[error] {createError}</p>
+                  )}
+                </div>
+
+                <Separator className="border-hacknu-border" />
+
+                {/* Join team */}
+                <div>
+                  <p className="mb-3 text-xs tracking-wider text-hacknu-text-muted uppercase">
+                    Join a team
+                  </p>
+                  <form onSubmit={handleJoin} className="flex gap-2">
+                    <Input
+                      placeholder="Paste invite link or code"
+                      value={joinInput}
+                      onChange={(e) => setJoinInput(e.target.value)}
+                      disabled={joinLoading}
+                      className="flex-1 border-hacknu-border bg-hacknu-dark font-mono text-xs text-hacknu-text placeholder:text-hacknu-text-muted/50"
+                    />
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={joinLoading || !joinInput.trim()}
+                      className="shrink-0 border border-hacknu-border bg-transparent text-xs tracking-wider text-hacknu-purple uppercase hover:border-hacknu-purple/50 hover:bg-hacknu-purple/10"
+                    >
+                      {joinLoading ? '...' : 'Join →'}
+                    </Button>
+                  </form>
+                  {joinError && (
+                    <p className="mt-1 text-xs text-red-400">[error] {joinError}</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
 }
+

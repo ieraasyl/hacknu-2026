@@ -34,7 +34,7 @@ const checkOnboardingStatus = createServerFn({ method: 'GET' }).handler(async ()
   const request = getRequest();
   const session = await getSession(request);
   if (!session) {
-    throw redirect({ to: '/login' });
+    throw redirect({ to: '/login', search: { redirect: undefined } });
   }
   const profile = await getParticipant(session.user.id);
   if (profile) {
@@ -84,7 +84,7 @@ const saveOnboarding = createServerFn({ method: 'POST' })
     const request = getRequest();
     const session = await getSession(request);
     if (!session) {
-      throw redirect({ to: '/login' });
+      throw redirect({ to: '/login', search: { redirect: undefined } });
     }
     await upsertParticipant({
       userId: session.user.id,
@@ -100,6 +100,9 @@ const saveOnboarding = createServerFn({ method: 'POST' })
 /* ─── Route ─── */
 
 export const Route = createFileRoute('/onboarding')({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
+  }),
   beforeLoad: async () => {
     await checkOnboardingStatus();
   },
@@ -109,6 +112,8 @@ export const Route = createFileRoute('/onboarding')({
 function OnboardingPage() {
   const { data: session } = useSession();
   const navigate = useNavigate();
+  const { redirect: redirectTo } = Route.useSearch();
+  const safeRedirect = redirectTo?.startsWith('/invite/') ? redirectTo : undefined;
 
   const [fullName, setFullName] = useState(session?.user?.name ?? '');
   const [iin, setIin] = useState('');
@@ -142,16 +147,15 @@ function OnboardingPage() {
         data: { fullName, iin, phone, educationLevel, cvUrl: cvUrl ?? undefined },
       });
       // If no redirect thrown, navigate manually
-      await navigate({ to: '/dashboard' });
+      await navigate({ to: safeRedirect ?? '/dashboard' });
     } catch (err) {
       // Handle serialized redirects from TanStack Start server functions
       if (err instanceof Response) {
-        const opts = (err as Response & { options?: { to?: string } }).options;
-        await navigate({ to: opts?.to ?? '/dashboard' });
+        await navigate({ to: safeRedirect ?? '/dashboard' });
         return;
       }
       if (err != null && typeof err === 'object' && 'to' in err) {
-        await navigate({ to: (err as { to: string }).to });
+        await navigate({ to: safeRedirect ?? ((err as { to: string }).to) });
         return;
       }
       setError(err instanceof Error ? err.message : 'Something went wrong');
