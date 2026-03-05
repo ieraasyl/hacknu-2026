@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Button } from '../ui/button';
-import { useSession } from '../../lib/auth-client';
+import { Button } from '@/components/ui/button';
+import type { Session } from '@/lib/types';
 
-export default function Hero() {
+export default function Hero({ session }: { session: Session | null }) {
   const { t } = useTranslation();
-  const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
 
   return (

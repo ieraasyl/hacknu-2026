@@ -2,9 +2,9 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import en from './locales/en.json';
-import kk from './locales/kk.json';
-import ru from './locales/ru.json';
+import en from '@/i18n/locales/en.json';
+import kk from '@/i18n/locales/kk.json';
+import ru from '@/i18n/locales/ru.json';
 
 export const supportedLngs = ['en', 'kk', 'ru'] as const;
 export type SupportedLng = (typeof supportedLngs)[number];

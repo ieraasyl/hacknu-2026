@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { eq } from 'drizzle-orm';
-import { getDb } from '../db';
-import { participant } from '../db/schema';
+import { getDb } from '@/db';
+import { participant } from '@/db/schema';
 
 interface AppEnv {
   DB: D1Database;

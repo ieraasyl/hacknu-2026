@@ -3,9 +3,9 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSession, signOut } from '../../lib/auth-client';
-import { getSession } from '../../lib/auth.server';
-import { createTeamSchema, inviteSlugSchema } from '../../lib/validation';
+import { useSession, signOut } from '@/lib/auth-client';
+import { getSession } from '@/lib/auth.server';
+import { createTeamSchema, inviteSlugSchema } from '@/lib/validation';
 import {
   getTeamByParticipant,
   createTeam,
@@ -14,18 +14,14 @@ import {
   leaveTeam,
   dissolveTeam,
   type TeamData,
-} from '../../lib/team.server';
-import { Button } from '../../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/card';
-import { Input } from '../../components/ui/input';
-import { Separator } from '../../components/ui/separator';
-import { BackgroundGrid } from '../../components/ui/background';
+} from '@/lib/team.server';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BackgroundGrid } from '@/components/ui/background';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import DashboardStats from '@/components/dashboard/DashboardStats';
+import ProfileCard from '@/components/dashboard/ProfileCard';
+import TeamCard from '@/components/dashboard/TeamCard';
 
 /* ─── Server Functions ─── */
 
@@ -94,24 +90,16 @@ function Dashboard() {
   const { data: session, isPending, error } = useSession();
   const navigate = useNavigate();
 
-  // Team state
   const [teamLoading, setTeamLoading] = useState(true);
   const [teamData, setTeamData] = useState<TeamData | null>(null);
-
-  // Create team form
   const [createName, setCreateName] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
-
-  // Join team form (accepts full URL or bare slug)
   const [joinInput, setJoinInput] = useState('');
   const [joinLoading, setJoinLoading] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
-
-  // Per-action loading: 'leave' | 'dissolve' | '<userId>' (kick)
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-
   const [copied, setCopied] = useState(false);
 
   const refreshTeam = useCallback(async () => {
@@ -130,7 +118,6 @@ function Dashboard() {
     void refreshTeam();
   }, [refreshTeam]);
 
-  // Extract slug from a full invite URL or bare slug
   function extractSlug(input: string): string {
     const trimmed = input.trim();
     try {
@@ -226,6 +213,11 @@ function Dashboard() {
     setTimeout(() => setCopied(false), 2000);
   }
 
+  async function handleSignOut() {
+    await signOut();
+    void navigate({ to: '/' });
+  }
+
   if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-hacknu-dark">
@@ -279,38 +271,9 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-hacknu-dark">
-      {/* Background grid */}
       <BackgroundGrid />
-
-      {/* Top navbar */}
-      <header className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <a href="/" className="flex items-center gap-1">
-            <span className="text-xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
-            <span className="text-xl font-bold tracking-tighter text-hacknu-purple">/26</span>
-          </a>
-          <div className="flex items-center gap-4">
-            <span className="hidden text-xs text-hacknu-text-muted sm:inline">
-              {session.user.email}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-hacknu-border tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
-              onClick={async () => {
-                await signOut();
-                void navigate({ to: '/' });
-              }}
-            >
-              {t('dashboard.signOut')}
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
+      <DashboardHeader session={session} onSignOut={handleSignOut} />
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-12">
-        {/* Welcome */}
         <div className="mb-10">
           <p className="mb-2 text-sm tracking-wider text-hacknu-text-muted">
             $ dashboard --user="{session.user.name}"
@@ -320,265 +283,39 @@ function Dashboard() {
             <span className="text-hacknu-green">{session.user.name}</span>
           </h1>
         </div>
-
-        {/* Stats Grid */}
-        <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-green/30">
-            <CardContent className="pt-4">
-              <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                {t('dashboard.status')}
-              </CardDescription>
-              <CardTitle className="text-2xl text-hacknu-green">
-                {t('dashboard.registered')}
-              </CardTitle>
-              <p className="mt-1 text-xs text-hacknu-text-muted">{t('dashboard.participant')}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-purple/30">
-            <CardContent className="pt-4">
-              <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                {t('dashboard.team')}
-              </CardDescription>
-              {teamLoading ? (
-                <div className="h-8 w-24 animate-pulse rounded bg-hacknu-border" />
-              ) : teamData ? (
-                <CardTitle className="truncate text-2xl text-hacknu-purple">
-                  {teamData.name}
-                </CardTitle>
-              ) : (
-                <CardTitle className="text-2xl text-hacknu-purple">—</CardTitle>
-              )}
-              <p className="mt-1 text-xs text-hacknu-text-muted">
-                {teamLoading
-                  ? ''
-                  : teamData
-                    ? t('dashboard.members', { count: teamData.members.length })
-                    : t('dashboard.noTeam')}
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-green/30 sm:col-span-2 lg:col-span-1">
-            <CardContent className="pt-4">
-              <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                {t('dashboard.event')}
-              </CardDescription>
-              <CardTitle className="text-2xl text-hacknu-text">
-                {t('dashboard.eventDate')}
-              </CardTitle>
-              <p className="mt-1 text-xs text-hacknu-text-muted">{t('dashboard.eventVenue')}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Profile Card */}
-        <Card className="mb-6 border-hacknu-border bg-hacknu-dark-card">
-          <CardHeader className="border-b border-hacknu-border">
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-hacknu-green/60" />
-              <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
-              <div className="h-3 w-3 rounded-full bg-red-500/60" />
-              <span className="ml-2 text-xs text-hacknu-text-muted">profile.json</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <pre className="overflow-x-auto text-sm leading-relaxed text-hacknu-text-muted">
-              <code>
-                {`{
-  "name": "${session.user.name}",
-  "email": "${session.user.email}",
-  "role": "participant",
-  "event": "HackNU/26",
-  "registered": true
-}`}
-              </code>
-            </pre>
-          </CardContent>
-        </Card>
-
-        {/* Team Management Card */}
-        <Card className="border-hacknu-border bg-hacknu-dark-card">
-          <CardHeader className="border-b border-hacknu-border">
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-hacknu-purple/60" />
-              <div className="h-3 w-3 rounded-full bg-hacknu-purple/30" />
-              <div className="h-3 w-3 rounded-full bg-hacknu-purple/10" />
-              <span className="ml-2 text-xs text-hacknu-text-muted">team.sh</span>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-4">
-            {teamLoading ? (
-              <div className="space-y-3 py-4">
-                <div className="h-4 w-48 animate-pulse rounded bg-hacknu-border" />
-                <div className="h-4 w-64 animate-pulse rounded bg-hacknu-border" />
-              </div>
-            ) : teamData ? (
-              /* ── In a team ── */
-              <div className="space-y-4">
-                {/* Team name + invite link */}
-                <div>
-                  <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    {t('dashboard.team')}
-                  </p>
-                  <p className="font-mono text-lg font-bold text-hacknu-green">{teamData.name}</p>
-                </div>
-
-                <div>
-                  <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    {t('dashboard.inviteLink')}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 truncate rounded border border-hacknu-border bg-hacknu-dark px-2 py-1 text-xs text-hacknu-text-muted">
-                      {inviteUrl}
-                    </code>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="shrink-0 border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-hacknu-green/50 hover:text-hacknu-green"
-                      onClick={handleCopyLink}
-                    >
-                      {copied ? t('dashboard.copied') : t('dashboard.copy')}
-                    </Button>
-                  </div>
-                </div>
-
-                <Separator className="border-hacknu-border" />
-
-                {/* Members list */}
-                <div>
-                  <p className="mb-2 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    {t('dashboard.members', { count: teamData.members.length })}
-                  </p>
-                  <ul className="space-y-2">
-                    {teamData.members.map((member) => (
-                      <li
-                        key={member.id}
-                        className="flex items-center justify-between gap-2 font-mono text-sm"
-                      >
-                        <span className="flex items-center gap-2 truncate">
-                          <span className="text-hacknu-green">{'>'}</span>
-                          <span className="truncate text-hacknu-text">{member.fullName}</span>
-                          {member.isCaptain && (
-                            <span className="rounded border border-hacknu-purple/40 px-1 py-0.5 text-xs text-hacknu-purple">
-                              {t('dashboard.captain')}
-                            </span>
-                          )}
-                        </span>
-                        {isCaptain && !member.isCaptain && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="shrink-0 border-hacknu-border px-2 text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
-                            disabled={actionLoading === member.id}
-                            onClick={() => handleKick(member.id)}
-                          >
-                            {actionLoading === member.id ? '...' : t('dashboard.kick')}
-                          </Button>
-                        )}
-                      </li>
-                    ))}
-                    {/* Empty slots */}
-                    {Array.from({ length: 4 - teamData.members.length }).map((_, i) => (
-                      <li
-                        key={`empty-${i}`}
-                        className="font-mono text-sm text-hacknu-text-muted/40"
-                      >
-                        <span className="mr-2 text-hacknu-text-muted/40">{'>'}</span>
-                        {t('dashboard.emptySlot')}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Action error */}
-                {actionError && <p className="text-xs text-red-400">[error] {actionError}</p>}
-
-                {/* Captain / member actions */}
-                <div className="flex justify-end pt-2">
-                  {isCaptain ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-red-500/30 text-xs tracking-wider text-red-400/70 uppercase hover:border-red-500 hover:text-red-400"
-                      disabled={actionLoading === 'dissolve'}
-                      onClick={handleDissolve}
-                    >
-                      {actionLoading === 'dissolve'
-                        ? t('dashboard.dissolving')
-                        : t('dashboard.dissolveTeam')}
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
-                      disabled={actionLoading === 'leave'}
-                      onClick={handleLeave}
-                    >
-                      {actionLoading === 'leave'
-                        ? t('dashboard.leaving')
-                        : t('dashboard.leaveTeam')}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              /* ── No team ── */
-              <div className="space-y-6 py-2">
-                {/* Create team */}
-                <div>
-                  <p className="mb-3 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    {t('dashboard.createTeam')}
-                  </p>
-                  <form onSubmit={handleCreate} className="flex gap-2">
-                    <Input
-                      placeholder={t('dashboard.teamNamePlaceholder')}
-                      value={createName}
-                      onChange={(e) => setCreateName(e.target.value)}
-                      disabled={createLoading}
-                      className="flex-1 border-hacknu-border bg-hacknu-dark font-mono text-xs text-hacknu-text placeholder:text-hacknu-text-muted/50"
-                    />
-                    <Button
-                      type="submit"
-                      disabled={createLoading || !createName.trim()}
-                      className="shrink-0 bg-hacknu-green text-xs font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
-                    >
-                      {createLoading ? '...' : t('dashboard.create')}
-                    </Button>
-                  </form>
-                  {createError && (
-                    <p className="mt-1 text-xs text-red-400">[error] {createError}</p>
-                  )}
-                </div>
-
-                <Separator className="border-hacknu-border" />
-
-                {/* Join team */}
-                <div>
-                  <p className="mb-3 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    {t('dashboard.joinTeam')}
-                  </p>
-                  <form onSubmit={handleJoin} className="flex gap-2">
-                    <Input
-                      placeholder={t('dashboard.joinPlaceholder')}
-                      value={joinInput}
-                      onChange={(e) => setJoinInput(e.target.value)}
-                      disabled={joinLoading}
-                      className="flex-1 border-hacknu-border bg-hacknu-dark font-mono text-xs text-hacknu-text placeholder:text-hacknu-text-muted/50"
-                    />
-                    <Button
-                      type="submit"
-                      disabled={joinLoading || !joinInput.trim()}
-                      className="shrink-0 border border-hacknu-border bg-transparent text-xs tracking-wider text-hacknu-purple uppercase hover:border-hacknu-purple/50 hover:bg-hacknu-purple/10"
-                    >
-                      {joinLoading ? '...' : t('dashboard.join')}
-                    </Button>
-                  </form>
-                  {joinError && <p className="mt-1 text-xs text-red-400">[error] {joinError}</p>}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <DashboardStats teamData={teamData} teamLoading={teamLoading} />
+        <ProfileCard session={session} />
+        <TeamCard
+          team={{
+            data: teamData,
+            loading: teamLoading,
+            isCaptain,
+            inviteUrl,
+          }}
+          createForm={{
+            name: createName,
+            setName: setCreateName,
+            loading: createLoading,
+            error: createError,
+            onSubmit: handleCreate,
+          }}
+          joinForm={{
+            input: joinInput,
+            setInput: setJoinInput,
+            loading: joinLoading,
+            error: joinError,
+            onSubmit: handleJoin,
+          }}
+          actions={{
+            copied,
+            onCopyLink: handleCopyLink,
+            loading: actionLoading,
+            error: actionError,
+            onKick: handleKick,
+            onLeave: handleLeave,
+            onDissolve: handleDissolve,
+          }}
+        />
       </main>
     </div>
   );

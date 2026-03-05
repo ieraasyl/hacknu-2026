@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
-import { useSession } from '../../lib/auth-client';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { supportedLngs } from '@/i18n';
+import type { Session } from '@/lib/types';
 
-export default function Navbar() {
+export default function Navbar({ session }: { session: Session | null }) {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
 
   const changeLanguage = (lng: string) => {

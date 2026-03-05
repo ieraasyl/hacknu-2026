@@ -2,8 +2,8 @@ import { drizzle } from 'drizzle-orm/d1';
 import type { D1Database } from '@cloudflare/workers-types';
 
 // Import both app and auth schemas
-import * as schema from './schema';
-import * as authSchema from './auth-schema';
+import * as schema from '@/db/schema';
+import * as authSchema from '@/db/auth-schema';
 
 // Merge all tables for Drizzle
 export const fullSchema = {
@@ -20,5 +20,5 @@ export function getDb(d1: D1Database) {
 }
 
 // Re-export individual schemas for convenience
-export * from './schema';
-export * from './auth-schema';
+export * from '@/db/schema';
+export * from '@/db/auth-schema';

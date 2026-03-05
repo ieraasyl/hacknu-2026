@@ -6,7 +6,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools';
 import { useTranslation } from 'react-i18next';
 
 import i18n from '@/i18n';
-import appCss from '../styles.css?url';
+import appCss from '@/styles.css?url';
 
 const getServerLocale = createServerFn({ method: 'GET' }).handler(async () => {
   return getCookie('locale') || 'en';

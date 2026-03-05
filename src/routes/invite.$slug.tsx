@@ -3,12 +3,12 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getSession } from '../lib/auth.server';
-import { getParticipant } from '../lib/onboarding.server';
-import { joinTeamBySlug } from '../lib/team.server';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { BackgroundGrid } from '../components/ui/background';
+import { getSession } from '@/lib/auth.server';
+import { getParticipant } from '@/lib/onboarding.server';
+import { joinTeamBySlug } from '@/lib/team.server';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BackgroundGrid } from '@/components/ui/background';
 
 /* ─── Server Functions ─── */
 

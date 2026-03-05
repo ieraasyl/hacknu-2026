@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircleIcon, XCircleIcon, SpinnerIcon, XIcon } from '@phosphor-icons/react';
-import { Input } from './input';
+import { Input } from '@/components/ui/input';
 
 const ACCEPTED_TYPES = ['application/pdf'];
 const ACCEPTED_EXT = '.pdf';

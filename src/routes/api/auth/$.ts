@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { getAuth } from '../../../lib/auth.server';
+import { getAuth } from '@/lib/auth.server';
 
 /**
  * Catch-all route for all auth endpoints.

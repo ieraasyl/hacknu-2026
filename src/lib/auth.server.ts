@@ -2,8 +2,8 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { emailOTP } from 'better-auth/plugins';
 import { env } from 'cloudflare:workers';
-import { getDb } from '../db';
-import { user, session, account, verification } from '../db/auth-schema';
+import { getDb } from '@/db';
+import { user, session, account, verification } from '@/db/auth-schema';
 
 // Type assertion for environment variables from .dev.vars or secrets
 interface AuthEnv {
