@@ -331,9 +331,7 @@ function Dashboard() {
               <CardTitle className="text-2xl text-hacknu-green">
                 {t('dashboard.registered')}
               </CardTitle>
-              <p className="mt-1 text-xs text-hacknu-text-muted">
-                {t('dashboard.participant')}
-              </p>
+              <p className="mt-1 text-xs text-hacknu-text-muted">{t('dashboard.participant')}</p>
             </CardContent>
           </Card>
           <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-purple/30">
@@ -367,9 +365,7 @@ function Dashboard() {
               <CardTitle className="text-2xl text-hacknu-text">
                 {t('dashboard.eventDate')}
               </CardTitle>
-              <p className="mt-1 text-xs text-hacknu-text-muted">
-                {t('dashboard.eventVenue')}
-              </p>
+              <p className="mt-1 text-xs text-hacknu-text-muted">{t('dashboard.eventVenue')}</p>
             </CardContent>
           </Card>
         </div>

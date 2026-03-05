@@ -35,14 +35,20 @@ const V = {
 
 // ── Email (login step 1) ─────────────────────────────────────────────────────
 export const emailSchema = z.object({
-  email: z.string().min(1, V.emailRequired).email(V.invalidEmail),
+  email: z
+    .string()
+    .min(1, { error: V.emailRequired })
+    .pipe(z.email({ error: V.invalidEmail })),
 });
 
 export type EmailInput = z.infer<typeof emailSchema>;
 
 // ── OTP (login step 2) ──────────────────────────────────────────────────────
 export const otpSchema = z.object({
-  otp: z.string().length(6, V.codeMustBe6Digits).regex(/^\d{6}$/, V.codeMustBe6Digits),
+  otp: z
+    .string()
+    .length(6, { error: V.codeMustBe6Digits })
+    .regex(/^\d{6}$/, { error: V.codeMustBe6Digits }),
 });
 
 export type OtpInput = z.infer<typeof otpSchema>;
@@ -51,38 +57,26 @@ export type OtpInput = z.infer<typeof otpSchema>;
 export const onboardingSchema = z.object({
   fullName: z
     .string()
-    .min(1, V.fullNameRequired)
-    .max(100, V.fullNameMax)
-    .transform((v) => v.trim()),
-  iin: z.string().regex(/^\d{12}$/, V.iinInvalid),
+    .trim()
+    .min(1, { error: V.fullNameRequired })
+    .max(100, { error: V.fullNameMax }),
+  iin: z.string().regex(/^\d{12}$/, { error: V.iinInvalid }),
   phone: z
     .string()
-    .min(1, V.phoneRequired)
-    .regex(/^\+?[\d][\d\s\-().]{5,24}$/, V.phoneInvalid),
-  educationLevel: z
-    .string()
-    .refine(
-      (v): v is EducationLevel => (EDUCATION_LEVELS as readonly string[]).includes(v),
-      V.educationInvalid,
-    ),
+    .min(1, { error: V.phoneRequired })
+    .regex(/^\+?[\d][\d\s\-().]{5,24}$/, { error: V.phoneInvalid }),
+  educationLevel: z.enum(EDUCATION_LEVELS, { error: V.educationInvalid }),
   cvUrl: z
-    .string()
-    .url(V.cvUrlInvalid)
+    .union([z.literal(''), z.url({ error: V.cvUrlInvalid })])
     .optional()
-    .or(z.literal(''))
     .transform((v) => v || undefined),
 });
 
 export type OnboardingInput = z.infer<typeof onboardingSchema>;
 
 // ── Team ─────────────────────────────────────────────────────────────────────
-
 export const createTeamSchema = z.object({
-  name: z
-    .string()
-    .min(3, V.teamNameMin)
-    .max(30, V.teamNameMax)
-    .transform((v) => v.trim()),
+  name: z.string().trim().min(3, { error: V.teamNameMin }).max(30, { error: V.teamNameMax }),
 });
 
 export type CreateTeamInput = z.infer<typeof createTeamSchema>;
@@ -90,9 +84,9 @@ export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 export const inviteSlugSchema = z.object({
   slug: z
     .string()
-    .min(1, V.inviteCodeRequired)
+    .min(1, { error: V.inviteCodeRequired })
     .max(50)
-    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, V.inviteCodeInvalid),
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, { error: V.inviteCodeInvalid }),
 });
 
 export type InviteSlugInput = z.infer<typeof inviteSlugSchema>;

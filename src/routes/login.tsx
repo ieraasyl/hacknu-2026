@@ -86,7 +86,9 @@ function LoginPage() {
           setCooldown(RESEND_COOLDOWN);
         }
       } catch (err) {
-        setError(`${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`);
+        setError(
+          `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
+        );
       } finally {
         setLoading(false);
       }
@@ -121,7 +123,9 @@ function LoginPage() {
           }
         }
       } catch (err) {
-        setError(`${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`);
+        setError(
+          `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
+        );
       } finally {
         setLoading(false);
       }
@@ -144,7 +148,9 @@ function LoginPage() {
         setCooldown(RESEND_COOLDOWN);
       }
     } catch (err) {
-      setError(`${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`);
+      setError(
+        `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
+      );
     } finally {
       setLoading(false);
     }
@@ -261,8 +267,7 @@ function LoginPage() {
                   {t('login.verificationCode')}
                 </CardTitle>
                 <CardDescription className="mb-6 text-hacknu-text-muted">
-                  {t('login.verificationDesc')}{' '}
-                  <span className="text-hacknu-green">{email}</span>
+                  {t('login.verificationDesc')} <span className="text-hacknu-green">{email}</span>
                 </CardDescription>
 
                 <form onSubmit={handleVerifyOtp} className="flex flex-col gap-4">
@@ -353,7 +358,9 @@ function LoginPage() {
                     className="text-hacknu-purple hover:text-hacknu-green disabled:text-hacknu-text-muted/40"
                     onClick={handleResend}
                   >
-                    {cooldown > 0 ? t('login.resendIn', { seconds: cooldown }) : t('login.resendCode')}
+                    {cooldown > 0
+                      ? t('login.resendIn', { seconds: cooldown })
+                      : t('login.resendCode')}
                   </Button>
                 </div>
               </>

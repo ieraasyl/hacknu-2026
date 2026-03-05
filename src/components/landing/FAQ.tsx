@@ -10,13 +10,7 @@ const FAQ_KEYS = [
   { catKey: 'projectDevelopment', items: ['q10', 'q11', 'q12'] },
 ] as const;
 
-function FAQItemComponent({
-  questionKey,
-  answerKey,
-}: {
-  questionKey: string;
-  answerKey: string;
-}) {
+function FAQItemComponent({ questionKey, answerKey }: { questionKey: string; answerKey: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 

@@ -101,9 +101,7 @@ function InviteResult() {
           </div>
         </CardHeader>
         <CardContent className="pt-4">
-          <CardTitle className="mb-1 font-mono text-red-400">
-            {t('invite.couldNotJoin')}
-          </CardTitle>
+          <CardTitle className="mb-1 font-mono text-red-400">{t('invite.couldNotJoin')}</CardTitle>
           <CardDescription className="mb-6 text-hacknu-text-muted">
             {errorMsg ?? t('invite.unexpectedError')}
           </CardDescription>

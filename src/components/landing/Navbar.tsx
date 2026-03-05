@@ -149,8 +149,8 @@ export default function Navbar() {
                     }}
                     className={
                       isActive
-                        ? 'px-3 py-1 text-sm font-medium uppercase text-hacknu-green'
-                        : 'px-3 py-1 text-sm font-medium uppercase text-hacknu-text-muted transition-colors hover:text-hacknu-green'
+                        ? 'px-3 py-1 text-sm font-medium text-hacknu-green uppercase'
+                        : 'px-3 py-1 text-sm font-medium text-hacknu-text-muted uppercase transition-colors hover:text-hacknu-green'
                     }
                   >
                     {lng.toUpperCase()}
