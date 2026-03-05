@@ -1,22 +1,26 @@
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '../ui/card';
 
 export default function Partners() {
+  const { t } = useTranslation();
   const partners = [
-    { name: 'Partner 1', logo: '/images/logo1.svg' },
-    { name: 'Partner 2', logo: '/images/logo2.svg' },
-    { name: 'Partner 3', logo: '/images/logo3.svg' },
-    { name: 'Partner 4', logo: '/images/logo4.svg' },
-    { name: 'Partner 5', logo: '/images/logo5.svg' },
-    { name: 'Partner 6', logo: '/images/logo6.svg' },
-    { name: 'Partner 7', logo: '/images/logo7.svg' },
+    { name: t('partners.partnerName', { index: 1 }), logo: '/images/logo1.svg' },
+    { name: t('partners.partnerName', { index: 2 }), logo: '/images/logo2.svg' },
+    { name: t('partners.partnerName', { index: 3 }), logo: '/images/logo3.svg' },
+    { name: t('partners.partnerName', { index: 4 }), logo: '/images/logo4.svg' },
+    { name: t('partners.partnerName', { index: 5 }), logo: '/images/logo5.svg' },
+    { name: t('partners.partnerName', { index: 6 }), logo: '/images/logo6.svg' },
+    { name: t('partners.partnerName', { index: 7 }), logo: '/images/logo7.svg' },
   ];
 
   return (
     <section id="partners" className="border-t border-hacknu-border bg-hacknu-dark py-20 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <p className="terminal-header mb-4"># --- Our Partners ---</p>
-        <h2 className="mb-12 text-3xl font-bold text-hacknu-text md:mb-16 md:text-5xl">Partners</h2>
+        <p className="terminal-header mb-4">{t('partners.header')}</p>
+        <h2 className="mb-12 text-3xl font-bold text-hacknu-text md:mb-16 md:text-5xl">
+          {t('partners.title')}
+        </h2>
 
         {/* Partner Logos Grid */}
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 md:gap-8">
@@ -47,7 +51,7 @@ export default function Partners() {
                   +
                 </span>
                 <span className="text-xs tracking-wider text-hacknu-text-muted uppercase transition-colors group-hover:text-hacknu-purple">
-                  Become a partner
+                  {t('partners.becomePartner')}
                 </span>
               </a>
             </CardContent>

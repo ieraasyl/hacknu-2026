@@ -2,6 +2,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getSession } from '../lib/auth.server';
 import { getParticipant } from '../lib/onboarding.server';
 import { joinTeamBySlug } from '../lib/team.server';
@@ -56,6 +57,7 @@ export const Route = createFileRoute('/invite/$slug')({
 /* ─── Component ─── */
 
 function InviteResult() {
+  const { t } = useTranslation();
   const { slug } = Route.useLoaderData();
   const navigate = useNavigate();
   const [status, setStatus] = useState<'joining' | 'error'>('joining');
@@ -77,7 +79,9 @@ function InviteResult() {
         <BackgroundGrid />
         <div className="relative z-10 text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-2 border-hacknu-green/30 border-t-hacknu-green" />
-          <p className="font-mono text-sm tracking-wider text-hacknu-text-muted">Joining team...</p>
+          <p className="font-mono text-sm tracking-wider text-hacknu-text-muted">
+            {t('invite.joining')}
+          </p>
         </div>
       </div>
     );
@@ -97,15 +101,17 @@ function InviteResult() {
           </div>
         </CardHeader>
         <CardContent className="pt-4">
-          <CardTitle className="mb-1 font-mono text-red-400">Could not join team</CardTitle>
+          <CardTitle className="mb-1 font-mono text-red-400">
+            {t('invite.couldNotJoin')}
+          </CardTitle>
           <CardDescription className="mb-6 text-hacknu-text-muted">
-            {errorMsg ?? 'An unexpected error occurred.'}
+            {errorMsg ?? t('invite.unexpectedError')}
           </CardDescription>
           <Button
             className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
             render={<a href="/dashboard" />}
           >
-            → Go to Dashboard
+            {t('invite.goToDashboard')}
           </Button>
         </CardContent>
       </Card>

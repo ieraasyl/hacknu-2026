@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSession, signOut } from '../../lib/auth-client';
 import { getSession } from '../../lib/auth.server';
 import { createTeamSchema, inviteSlugSchema } from '../../lib/validation';
@@ -89,6 +90,7 @@ export const Route = createFileRoute('/_protected/dashboard')({
 /* ─── Component ─── */
 
 function Dashboard() {
+  const { t } = useTranslation();
   const { data: session, isPending, error } = useSession();
   const navigate = useNavigate();
 
@@ -151,7 +153,7 @@ function Dashboard() {
       setTeamData(result);
       setCreateName('');
     } catch (err) {
-      setCreateError((err as Error).message);
+      setCreateError(t((err as Error).message));
     } finally {
       setCreateLoading(false);
     }
@@ -162,7 +164,7 @@ function Dashboard() {
     setJoinError(null);
     const slug = extractSlug(joinInput);
     if (!slug) {
-      setJoinError('Enter a valid invite link or code');
+      setJoinError(t('dashboard.invalidInviteInput'));
       return;
     }
     setJoinLoading(true);
@@ -171,7 +173,7 @@ function Dashboard() {
       setTeamData(result);
       setJoinInput('');
     } catch (err) {
-      setJoinError((err as Error).message);
+      setJoinError(t((err as Error).message));
     } finally {
       setJoinLoading(false);
     }
@@ -229,7 +231,9 @@ function Dashboard() {
       <div className="flex min-h-screen items-center justify-center bg-hacknu-dark">
         <div className="text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-2 border-hacknu-green/30 border-t-hacknu-green" />
-          <p className="text-sm tracking-wider text-hacknu-text-muted">Hacking into dashboard...</p>
+          <p className="text-sm tracking-wider text-hacknu-text-muted">
+            {t('dashboard.hackingInto')}
+          </p>
         </div>
       </div>
     );
@@ -248,15 +252,17 @@ function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <CardTitle className="mb-1 font-mono text-red-400">[403] Unauthorized</CardTitle>
+            <CardTitle className="mb-1 font-mono text-red-400">
+              {t('dashboard.unauthorized')}
+            </CardTitle>
             <CardDescription className="mb-6 text-hacknu-text-muted">
-              Please log in to access this page.
+              {t('dashboard.pleaseLogin')}
             </CardDescription>
             <Button
               className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
               render={<a href="/login" />}
             >
-              → Go to Login
+              {t('dashboard.goToLogin')}
             </Button>
           </CardContent>
         </Card>
@@ -296,7 +302,7 @@ function Dashboard() {
                 void navigate({ to: '/' });
               }}
             >
-              Sign Out
+              {t('dashboard.signOut')}
             </Button>
           </div>
         </div>
@@ -310,7 +316,8 @@ function Dashboard() {
             $ dashboard --user="{session.user.name}"
           </p>
           <h1 className="text-3xl font-bold text-hacknu-text md:text-5xl">
-            Welcome back, <span className="text-hacknu-green">{session.user.name}</span>
+            {t('dashboard.welcomeBack')}{' '}
+            <span className="text-hacknu-green">{session.user.name}</span>
           </h1>
         </div>
 
@@ -319,16 +326,20 @@ function Dashboard() {
           <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-green/30">
             <CardContent className="pt-4">
               <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                Status
+                {t('dashboard.status')}
               </CardDescription>
-              <CardTitle className="text-2xl text-hacknu-green">Registered</CardTitle>
-              <p className="mt-1 text-xs text-hacknu-text-muted">HackNU/26 participant</p>
+              <CardTitle className="text-2xl text-hacknu-green">
+                {t('dashboard.registered')}
+              </CardTitle>
+              <p className="mt-1 text-xs text-hacknu-text-muted">
+                {t('dashboard.participant')}
+              </p>
             </CardContent>
           </Card>
           <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-purple/30">
             <CardContent className="pt-4">
               <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                Team
+                {t('dashboard.team')}
               </CardDescription>
               {teamLoading ? (
                 <div className="h-8 w-24 animate-pulse rounded bg-hacknu-border" />
@@ -343,18 +354,22 @@ function Dashboard() {
                 {teamLoading
                   ? ''
                   : teamData
-                    ? `${teamData.members.length}/4 members`
-                    : 'No team yet'}
+                    ? t('dashboard.members', { count: teamData.members.length })
+                    : t('dashboard.noTeam')}
               </p>
             </CardContent>
           </Card>
           <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-green/30 sm:col-span-2 lg:col-span-1">
             <CardContent className="pt-4">
               <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                Event
+                {t('dashboard.event')}
               </CardDescription>
-              <CardTitle className="text-2xl text-hacknu-text">Oct 18-19</CardTitle>
-              <p className="mt-1 text-xs text-hacknu-text-muted">Nazarbayev University</p>
+              <CardTitle className="text-2xl text-hacknu-text">
+                {t('dashboard.eventDate')}
+              </CardTitle>
+              <p className="mt-1 text-xs text-hacknu-text-muted">
+                {t('dashboard.eventVenue')}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -406,14 +421,14 @@ function Dashboard() {
                 {/* Team name + invite link */}
                 <div>
                   <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    Team
+                    {t('dashboard.team')}
                   </p>
                   <p className="font-mono text-lg font-bold text-hacknu-green">{teamData.name}</p>
                 </div>
 
                 <div>
                   <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    Invite link
+                    {t('dashboard.inviteLink')}
                   </p>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 truncate rounded border border-hacknu-border bg-hacknu-dark px-2 py-1 text-xs text-hacknu-text-muted">
@@ -425,7 +440,7 @@ function Dashboard() {
                       className="shrink-0 border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-hacknu-green/50 hover:text-hacknu-green"
                       onClick={handleCopyLink}
                     >
-                      {copied ? '✓ Copied' : 'Copy'}
+                      {copied ? t('dashboard.copied') : t('dashboard.copy')}
                     </Button>
                   </div>
                 </div>
@@ -435,7 +450,7 @@ function Dashboard() {
                 {/* Members list */}
                 <div>
                   <p className="mb-2 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    Members ({teamData.members.length}/4)
+                    {t('dashboard.members', { count: teamData.members.length })}
                   </p>
                   <ul className="space-y-2">
                     {teamData.members.map((member) => (
@@ -448,7 +463,7 @@ function Dashboard() {
                           <span className="truncate text-hacknu-text">{member.fullName}</span>
                           {member.isCaptain && (
                             <span className="rounded border border-hacknu-purple/40 px-1 py-0.5 text-xs text-hacknu-purple">
-                              captain
+                              {t('dashboard.captain')}
                             </span>
                           )}
                         </span>
@@ -460,7 +475,7 @@ function Dashboard() {
                             disabled={actionLoading === member.id}
                             onClick={() => handleKick(member.id)}
                           >
-                            {actionLoading === member.id ? '...' : 'Kick'}
+                            {actionLoading === member.id ? '...' : t('dashboard.kick')}
                           </Button>
                         )}
                       </li>
@@ -471,7 +486,8 @@ function Dashboard() {
                         key={`empty-${i}`}
                         className="font-mono text-sm text-hacknu-text-muted/40"
                       >
-                        <span className="mr-2 text-hacknu-text-muted/40">{'>'}</span>— empty slot —
+                        <span className="mr-2 text-hacknu-text-muted/40">{'>'}</span>
+                        {t('dashboard.emptySlot')}
                       </li>
                     ))}
                   </ul>
@@ -490,7 +506,9 @@ function Dashboard() {
                       disabled={actionLoading === 'dissolve'}
                       onClick={handleDissolve}
                     >
-                      {actionLoading === 'dissolve' ? 'Dissolving...' : 'Dissolve Team'}
+                      {actionLoading === 'dissolve'
+                        ? t('dashboard.dissolving')
+                        : t('dashboard.dissolveTeam')}
                     </Button>
                   ) : (
                     <Button
@@ -500,7 +518,9 @@ function Dashboard() {
                       disabled={actionLoading === 'leave'}
                       onClick={handleLeave}
                     >
-                      {actionLoading === 'leave' ? 'Leaving...' : 'Leave Team'}
+                      {actionLoading === 'leave'
+                        ? t('dashboard.leaving')
+                        : t('dashboard.leaveTeam')}
                     </Button>
                   )}
                 </div>
@@ -511,11 +531,11 @@ function Dashboard() {
                 {/* Create team */}
                 <div>
                   <p className="mb-3 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    Create a team
+                    {t('dashboard.createTeam')}
                   </p>
                   <form onSubmit={handleCreate} className="flex gap-2">
                     <Input
-                      placeholder="Team name"
+                      placeholder={t('dashboard.teamNamePlaceholder')}
                       value={createName}
                       onChange={(e) => setCreateName(e.target.value)}
                       disabled={createLoading}
@@ -526,7 +546,7 @@ function Dashboard() {
                       disabled={createLoading || !createName.trim()}
                       className="shrink-0 bg-hacknu-green text-xs font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
                     >
-                      {createLoading ? '...' : 'Create →'}
+                      {createLoading ? '...' : t('dashboard.create')}
                     </Button>
                   </form>
                   {createError && (
@@ -539,11 +559,11 @@ function Dashboard() {
                 {/* Join team */}
                 <div>
                   <p className="mb-3 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    Join a team
+                    {t('dashboard.joinTeam')}
                   </p>
                   <form onSubmit={handleJoin} className="flex gap-2">
                     <Input
-                      placeholder="Paste invite link or code"
+                      placeholder={t('dashboard.joinPlaceholder')}
                       value={joinInput}
                       onChange={(e) => setJoinInput(e.target.value)}
                       disabled={joinLoading}
@@ -554,7 +574,7 @@ function Dashboard() {
                       disabled={joinLoading || !joinInput.trim()}
                       className="shrink-0 border border-hacknu-border bg-transparent text-xs tracking-wider text-hacknu-purple uppercase hover:border-hacknu-purple/50 hover:bg-hacknu-purple/10"
                     >
-                      {joinLoading ? '...' : 'Join →'}
+                      {joinLoading ? '...' : t('dashboard.join')}
                     </Button>
                   </form>
                   {joinError && <p className="mt-1 text-xs text-red-400">[error] {joinError}</p>}

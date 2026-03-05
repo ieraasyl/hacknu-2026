@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircleIcon, XCircleIcon, SpinnerIcon, XIcon } from '@phosphor-icons/react';
 import { Input } from './input';
 
@@ -29,6 +30,7 @@ export function CvDropzone({
   onUploadingChange,
   disabled = false,
 }: CvDropzoneProps) {
+  const { t } = useTranslation();
   const [state, setState] = useState<UploadState>('idle');
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileId, setFileId] = useState<string | null>(null);
@@ -41,12 +43,12 @@ export function CvDropzone({
     e.target.value = '';
 
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setErrorMsg('Only PDF files are accepted.');
+      setErrorMsg(t('cvDropzone.onlyPdf'));
       setState('error');
       return;
     }
     if (file.size > MAX_BYTES) {
-      setErrorMsg('File must be under 2 MB.');
+      setErrorMsg(t('cvDropzone.maxSize'));
       setState('error');
       return;
     }
@@ -70,7 +72,7 @@ export function CvDropzone({
     } catch (err) {
       setState('error');
       setFileName(null);
-      setErrorMsg(err instanceof Error ? err.message : 'Upload failed. Please try again.');
+      setErrorMsg(err instanceof Error ? err.message : t('cvDropzone.uploadFailed'));
     } finally {
       onUploadingChange?.(false);
     }
@@ -113,7 +115,7 @@ export function CvDropzone({
       {state === 'uploading' && (
         <p className="flex items-center gap-1.5 text-[11px] text-hacknu-text-muted">
           <SpinnerIcon size={12} className="animate-spin" />
-          Uploading {fileName}...
+          {t('cvDropzone.uploading', { fileName: fileName ?? '' })}
         </p>
       )}
 
@@ -127,7 +129,7 @@ export function CvDropzone({
             type="button"
             onClick={handleClear}
             className="ml-2 text-hacknu-text-muted/60 transition-colors hover:text-red-400"
-            aria-label="Remove file"
+            aria-label={t('cvDropzone.removeFile')}
           >
             <XIcon size={12} />
           </button>
@@ -142,7 +144,7 @@ export function CvDropzone({
       )}
 
       {state === 'idle' && (
-        <p className="text-[11px] text-hacknu-text-muted/60">PDF only — max 2 MB</p>
+        <p className="text-[11px] text-hacknu-text-muted/60">{t('cvDropzone.hint')}</p>
       )}
     </div>
   );

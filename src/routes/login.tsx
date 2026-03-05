@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { authClient, signIn, useSession } from '../lib/auth-client';
 import { getSession } from '../lib/auth.server';
@@ -39,6 +40,7 @@ export const Route = createFileRoute('/login')({
 const RESEND_COOLDOWN = 60; // seconds
 
 function LoginPage() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
@@ -67,7 +69,7 @@ function LoginPage() {
 
       const parsed = emailSchema.safeParse({ email });
       if (!parsed.success) {
-        setError(parsed.error.issues[0].message);
+        setError(t(parsed.error.issues[0].message));
         return;
       }
 
@@ -78,18 +80,18 @@ function LoginPage() {
           type: 'sign-in',
         });
         if (result.error) {
-          setError(result.error.message ?? 'Failed to send verification code');
+          setError(result.error.message ?? t('login.sendCodeFailed'));
         } else {
           setPhase('otp');
           setCooldown(RESEND_COOLDOWN);
         }
       } catch (err) {
-        setError(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        setError(`${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`);
       } finally {
         setLoading(false);
       }
     },
-    [email],
+    [email, t],
   );
 
   /* ─── Phase 2: Verify OTP & Sign In ─── */
@@ -100,7 +102,7 @@ function LoginPage() {
 
       const parsed = otpSchema.safeParse({ otp });
       if (!parsed.success) {
-        setError(parsed.error.issues[0].message);
+        setError(t(parsed.error.issues[0].message));
         return;
       }
 
@@ -108,7 +110,7 @@ function LoginPage() {
       try {
         const result = await signIn.emailOtp({ email, otp });
         if (result.error) {
-          setError(result.error.message ?? 'Invalid verification code');
+          setError(result.error.message ?? t('login.invalidCode'));
         } else {
           const destination = await getPostLoginDestination();
           const safeRedirect = redirect && redirect.startsWith('/invite/') ? redirect : undefined;
@@ -119,12 +121,12 @@ function LoginPage() {
           }
         }
       } catch (err) {
-        setError(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        setError(`${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`);
       } finally {
         setLoading(false);
       }
     },
-    [email, otp, navigate, redirect],
+    [email, otp, navigate, redirect, t],
   );
 
   /* ─── Resend OTP ─── */
@@ -137,16 +139,16 @@ function LoginPage() {
         type: 'sign-in',
       });
       if (result.error) {
-        setError(result.error.message ?? 'Failed to resend code');
+        setError(result.error.message ?? t('login.resendFailed'));
       } else {
         setCooldown(RESEND_COOLDOWN);
       }
     } catch (err) {
-      setError(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setError(`${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`);
     } finally {
       setLoading(false);
     }
-  }, [email]);
+  }, [email, t]);
 
   // Already logged in state
   if (session) {
@@ -168,7 +170,7 @@ function LoginPage() {
                 className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
                 render={<a href="/dashboard" />}
               >
-                Go to Dashboard →
+                {t('login.goToDashboard')}
               </Button>
               <div className="mt-3 text-center">
                 <Button
@@ -177,7 +179,7 @@ function LoginPage() {
                   className="text-hacknu-text-muted hover:text-hacknu-green"
                   render={<a href="/" />}
                 >
-                  ← Back to home
+                  {t('login.backToHome')}
                 </Button>
               </div>
             </CardContent>
@@ -211,9 +213,9 @@ function LoginPage() {
           <CardContent className="pt-4">
             {phase === 'email' ? (
               <>
-                <CardTitle className="mb-1 text-xl text-hacknu-text">Sign In</CardTitle>
+                <CardTitle className="mb-1 text-xl text-hacknu-text">{t('login.signIn')}</CardTitle>
                 <CardDescription className="mb-6 text-hacknu-text-muted">
-                  Enter your email to receive a verification code
+                  {t('login.signInDesc')}
                 </CardDescription>
 
                 <form onSubmit={handleSendOtp} className="flex flex-col gap-4">
@@ -222,12 +224,12 @@ function LoginPage() {
                       htmlFor="email"
                       className="tracking-wider text-hacknu-text-muted uppercase"
                     >
-                      Email
+                      {t('login.email')}
                     </FieldLabel>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="you@example.com"
+                      placeholder={t('login.emailPlaceholder')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -239,7 +241,7 @@ function LoginPage() {
 
                   {error && (
                     <FieldError className="border border-red-500/30 bg-red-500/5 px-3 py-2 text-sm text-red-400">
-                      <span className="mr-2 font-mono text-red-500">[ERROR]</span>
+                      <span className="mr-2 font-mono text-red-500">{t('login.errorPrefix')}</span>
                       {error}
                     </FieldError>
                   )}
@@ -249,15 +251,18 @@ function LoginPage() {
                     disabled={loading}
                     className="mt-2 h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
                   >
-                    {loading ? 'Sending code...' : '> Continue'}
+                    {loading ? t('login.sendingCode') : t('login.continue')}
                   </Button>
                 </form>
               </>
             ) : (
               <>
-                <CardTitle className="mb-1 text-xl text-hacknu-text">Verification Code</CardTitle>
+                <CardTitle className="mb-1 text-xl text-hacknu-text">
+                  {t('login.verificationCode')}
+                </CardTitle>
                 <CardDescription className="mb-6 text-hacknu-text-muted">
-                  We sent a 6-digit code to <span className="text-hacknu-green">{email}</span>
+                  {t('login.verificationDesc')}{' '}
+                  <span className="text-hacknu-green">{email}</span>
                 </CardDescription>
 
                 <form onSubmit={handleVerifyOtp} className="flex flex-col gap-4">
@@ -266,7 +271,7 @@ function LoginPage() {
                       htmlFor="otp"
                       className="tracking-wider text-hacknu-text-muted uppercase"
                     >
-                      Code
+                      {t('login.code')}
                     </FieldLabel>
                     <InputOTP
                       id="otp"
@@ -312,7 +317,7 @@ function LoginPage() {
 
                   {error && (
                     <FieldError className="border border-red-500/30 bg-red-500/5 px-3 py-2 text-sm text-red-400">
-                      <span className="mr-2 font-mono text-red-500">[ERROR]</span>
+                      <span className="mr-2 font-mono text-red-500">{t('login.errorPrefix')}</span>
                       {error}
                     </FieldError>
                   )}
@@ -322,7 +327,7 @@ function LoginPage() {
                     disabled={loading}
                     className="mt-2 h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
                   >
-                    {loading ? 'Verifying...' : '> Verify & Sign In'}
+                    {loading ? t('login.verifying') : t('login.verifySignIn')}
                   </Button>
                 </form>
 
@@ -339,7 +344,7 @@ function LoginPage() {
                       setError(null);
                     }}
                   >
-                    ← Different email
+                    {t('login.differentEmail')}
                   </Button>
                   <Button
                     variant="link"
@@ -348,7 +353,7 @@ function LoginPage() {
                     className="text-hacknu-purple hover:text-hacknu-green disabled:text-hacknu-text-muted/40"
                     onClick={handleResend}
                   >
-                    {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend code'}
+                    {cooldown > 0 ? t('login.resendIn', { seconds: cooldown }) : t('login.resendCode')}
                   </Button>
                 </div>
               </>
@@ -364,7 +369,7 @@ function LoginPage() {
             className="text-hacknu-text-muted hover:text-hacknu-green"
             render={<a href="/" />}
           >
-            ← Back to home
+            {t('login.backToHome')}
           </Button>
         </div>
       </div>

@@ -1,26 +1,28 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 
 export default function InfoCards() {
+  const { t } = useTranslation();
   const cards = [
     {
-      label: 'When?',
-      answer: '18-19 October',
-      detail: '2026',
+      label: t('infoCards.when'),
+      answer: t('infoCards.whenAnswer'),
+      detail: t('infoCards.whenDetail'),
     },
     {
-      label: 'Where?',
-      answer: 'Nazarbayev University',
-      detail: 'Astana, Kazakhstan',
+      label: t('infoCards.where'),
+      answer: t('infoCards.whereAnswer'),
+      detail: t('infoCards.whereDetail'),
       action: {
-        text: 'Show on map →',
+        text: t('infoCards.whereAction'),
         href: 'https://maps.google.com/?q=Nazarbayev+University',
       },
     },
     {
-      label: 'How?',
-      answer: 'In teams of 2-4',
-      detail: 'Register together or find teammates at the event',
+      label: t('infoCards.how'),
+      answer: t('infoCards.howAnswer'),
+      detail: t('infoCards.howDetail'),
     },
   ];
 

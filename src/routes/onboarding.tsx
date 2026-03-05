@@ -2,6 +2,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getSession } from '../lib/auth.server';
 import {
   getParticipant,
@@ -110,6 +111,7 @@ export const Route = createFileRoute('/onboarding')({
 });
 
 function OnboardingPage() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const navigate = useNavigate();
   const { redirect: redirectTo } = Route.useSearch();
@@ -137,7 +139,7 @@ function OnboardingPage() {
       cvUrl: cvUrl ?? '',
     });
     if (!parsed.success) {
-      setError(parsed.error.issues[0].message);
+      setError(t(parsed.error.issues[0].message));
       return;
     }
 
@@ -158,7 +160,7 @@ function OnboardingPage() {
         await navigate({ to: safeRedirect ?? (err as { to: string }).to });
         return;
       }
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? t(err.message) : t('onboarding.somethingWentWrong'));
     } finally {
       setLoading(false);
     }
@@ -180,9 +182,9 @@ function OnboardingPage() {
 
         {/* Step indicator */}
         <div className="mb-6 flex items-center gap-3">
-          <StepBadge step={1} label="Account" done />
+          <StepBadge step={1} label={t('onboarding.stepAccount')} done />
           <div className="h-px flex-1 bg-hacknu-border" />
-          <StepBadge step={2} label="Profile" active />
+          <StepBadge step={2} label={t('onboarding.stepProfile')} active />
         </div>
 
         <Card className="border-hacknu-border bg-hacknu-dark-card">
@@ -191,9 +193,11 @@ function OnboardingPage() {
           </CardHeader>
 
           <CardContent className="pt-4">
-            <CardTitle className="mb-1 text-xl text-hacknu-text">Complete your profile</CardTitle>
+            <CardTitle className="mb-1 text-xl text-hacknu-text">
+              {t('onboarding.completeProfile')}
+            </CardTitle>
             <CardDescription className="mb-6 text-hacknu-text-muted">
-              Tell us a bit about yourself to finish registration
+              {t('onboarding.completeProfileDesc')}
             </CardDescription>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -203,12 +207,12 @@ function OnboardingPage() {
                   htmlFor="fullName"
                   className="tracking-wider text-hacknu-text-muted uppercase"
                 >
-                  Full Name
+                  {t('onboarding.fullName')}
                 </FieldLabel>
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="Ada Lovelace"
+                  placeholder={t('onboarding.fullNamePlaceholder')}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -223,13 +227,13 @@ function OnboardingPage() {
                   htmlFor="iin"
                   className="tracking-wider text-hacknu-text-muted uppercase"
                 >
-                  IIN
+                  {t('onboarding.iin')}
                 </FieldLabel>
                 <Input
                   id="iin"
                   type="text"
                   inputMode="numeric"
-                  placeholder="123456789012"
+                  placeholder={t('onboarding.iinPlaceholder')}
                   maxLength={12}
                   value={iin}
                   onChange={(e) => setIin(e.target.value.replace(/\D/g, '').slice(0, 12))}
@@ -245,12 +249,12 @@ function OnboardingPage() {
                   htmlFor="phone"
                   className="tracking-wider text-hacknu-text-muted uppercase"
                 >
-                  Phone Number
+                  {t('onboarding.phone')}
                 </FieldLabel>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+7 700 000 0000"
+                  placeholder={t('onboarding.phonePlaceholder')}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
@@ -265,7 +269,7 @@ function OnboardingPage() {
                   htmlFor="educationLevel"
                   className="tracking-wider text-hacknu-text-muted uppercase"
                 >
-                  Education Level
+                  {t('onboarding.educationLevel')}
                 </FieldLabel>
                 <Select
                   value={educationLevel}
@@ -273,7 +277,7 @@ function OnboardingPage() {
                   disabled={loading}
                 >
                   <SelectTrigger className="w-full border-hacknu-border bg-hacknu-dark text-hacknu-text focus-visible:border-hacknu-green">
-                    <SelectValue placeholder="Select education level..." />
+                    <SelectValue placeholder={t('onboarding.educationPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent className="border-hacknu-border bg-hacknu-dark-card">
                     {EDUCATION_LEVELS.map((level) => (
@@ -282,7 +286,7 @@ function OnboardingPage() {
                         value={level}
                         className="text-hacknu-text focus:bg-hacknu-green/10 focus:text-hacknu-green"
                       >
-                        {level}
+                        {t(`education.${level}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -292,10 +296,10 @@ function OnboardingPage() {
               {/* CV upload */}
               <Field>
                 <FieldLabel className="tracking-wider text-hacknu-text-muted uppercase">
-                  CV / Resume
+                  {t('onboarding.cvResume')}
                 </FieldLabel>
                 <FieldDescription className="text-hacknu-text-muted/60">
-                  Optional — upload your CV in PDF, DOC, or DOCX format
+                  {t('onboarding.cvOptional')}
                 </FieldDescription>
                 <CvDropzone
                   onUpload={(url) => setCvUrl(url)}
@@ -309,7 +313,7 @@ function OnboardingPage() {
 
               {error && (
                 <FieldError className="border border-red-500/30 bg-red-500/5 px-3 py-2 text-sm text-red-400">
-                  <span className="mr-2 font-mono text-red-500">[ERROR]</span>
+                  <span className="mr-2 font-mono text-red-500">{t('onboarding.errorPrefix')}</span>
                   {error}
                 </FieldError>
               )}
@@ -319,14 +323,14 @@ function OnboardingPage() {
                 disabled={loading || cvUploading}
                 className="mt-2 h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
               >
-                {loading ? 'Saving...' : '> Complete Registration'}
+                {loading ? t('onboarding.saving') : t('onboarding.submit')}
               </Button>
             </form>
 
             <Separator className="my-4 bg-hacknu-border" />
 
             <p className="text-center text-xs text-hacknu-text-muted">
-              You can update this information later from your profile settings.
+              {t('onboarding.updateLater')}
             </p>
 
             <div className="mt-3 text-center">
@@ -339,7 +343,7 @@ function OnboardingPage() {
                   window.location.href = '/login';
                 }}
               >
-                Sign out / use a different account
+                {t('onboarding.signOutDifferent')}
               </Button>
             </div>
           </CardContent>

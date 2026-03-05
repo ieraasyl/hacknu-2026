@@ -15,19 +15,34 @@ export const EDUCATION_LEVELS = [
 
 export type EducationLevel = (typeof EDUCATION_LEVELS)[number];
 
+// Translation keys for validation messages (resolve with t() in UI).
+const V = {
+  emailRequired: 'validation.emailRequired',
+  invalidEmail: 'validation.invalidEmail',
+  codeMustBe6Digits: 'validation.codeMustBe6Digits',
+  fullNameRequired: 'validation.fullNameRequired',
+  fullNameMax: 'validation.fullNameMax',
+  iinInvalid: 'validation.iinInvalid',
+  phoneRequired: 'validation.phoneRequired',
+  phoneInvalid: 'validation.phoneInvalid',
+  educationInvalid: 'validation.educationInvalid',
+  cvUrlInvalid: 'validation.cvUrlInvalid',
+  teamNameMin: 'validation.teamNameMin',
+  teamNameMax: 'validation.teamNameMax',
+  inviteCodeRequired: 'validation.inviteCodeRequired',
+  inviteCodeInvalid: 'validation.inviteCodeInvalid',
+} as const;
+
 // ── Email (login step 1) ─────────────────────────────────────────────────────
 export const emailSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Enter a valid email address'),
+  email: z.string().min(1, V.emailRequired).email(V.invalidEmail),
 });
 
 export type EmailInput = z.infer<typeof emailSchema>;
 
 // ── OTP (login step 2) ──────────────────────────────────────────────────────
 export const otpSchema = z.object({
-  otp: z
-    .string()
-    .length(6, 'Code must be 6 digits')
-    .regex(/^\d{6}$/, 'Code must be 6 digits'),
+  otp: z.string().length(6, V.codeMustBe6Digits).regex(/^\d{6}$/, V.codeMustBe6Digits),
 });
 
 export type OtpInput = z.infer<typeof otpSchema>;
@@ -36,23 +51,23 @@ export type OtpInput = z.infer<typeof otpSchema>;
 export const onboardingSchema = z.object({
   fullName: z
     .string()
-    .min(1, 'Full name is required')
-    .max(100, 'Full name must be 100 characters or fewer')
+    .min(1, V.fullNameRequired)
+    .max(100, V.fullNameMax)
     .transform((v) => v.trim()),
-  iin: z.string().regex(/^\d{12}$/, 'IIN must be exactly 12 digits'),
+  iin: z.string().regex(/^\d{12}$/, V.iinInvalid),
   phone: z
     .string()
-    .min(1, 'Phone number is required')
-    .regex(/^\+?[\d][\d\s\-().]{5,24}$/, 'Enter a valid phone number (e.g. +7 700 000 0000)'),
+    .min(1, V.phoneRequired)
+    .regex(/^\+?[\d][\d\s\-().]{5,24}$/, V.phoneInvalid),
   educationLevel: z
     .string()
     .refine(
       (v): v is EducationLevel => (EDUCATION_LEVELS as readonly string[]).includes(v),
-      'Select a valid education level',
+      V.educationInvalid,
     ),
   cvUrl: z
     .string()
-    .url('CV URL is not valid')
+    .url(V.cvUrlInvalid)
     .optional()
     .or(z.literal(''))
     .transform((v) => v || undefined),
@@ -65,8 +80,8 @@ export type OnboardingInput = z.infer<typeof onboardingSchema>;
 export const createTeamSchema = z.object({
   name: z
     .string()
-    .min(3, 'Team name must be at least 3 characters')
-    .max(30, 'Team name must be 30 characters or fewer')
+    .min(3, V.teamNameMin)
+    .max(30, V.teamNameMax)
     .transform((v) => v.trim()),
 });
 
@@ -75,9 +90,9 @@ export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 export const inviteSlugSchema = z.object({
   slug: z
     .string()
-    .min(1, 'Invite code is required')
+    .min(1, V.inviteCodeRequired)
     .max(50)
-    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Invalid invite code format'),
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, V.inviteCodeInvalid),
 });
 
 export type InviteSlugInput = z.infer<typeof inviteSlugSchema>;

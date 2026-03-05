@@ -1,12 +1,19 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import { useSession } from '../../lib/auth-client';
+import { supportedLngs } from '@/i18n';
 
 export default function Navbar() {
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
   return (
     <nav className="fixed top-0 right-0 left-0 z-50 border-b border-hacknu-border bg-hacknu-dark/90 backdrop-blur-md">
@@ -25,7 +32,7 @@ export default function Navbar() {
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
             render={<a href="#about" />}
           >
-            About
+            {t('navbar.about')}
           </Button>
           <Button
             variant="ghost"
@@ -33,7 +40,7 @@ export default function Navbar() {
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
             render={<a href="#faq" />}
           >
-            FAQ
+            {t('navbar.faq')}
           </Button>
           <Button
             variant="ghost"
@@ -41,13 +48,29 @@ export default function Navbar() {
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
             render={<a href="#partners" />}
           >
-            Partners
+            {t('navbar.partners')}
           </Button>
+          <div className="ml-2 flex items-center gap-1">
+            {supportedLngs.map((lng) => (
+              <button
+                key={lng}
+                type="button"
+                onClick={() => changeLanguage(lng)}
+                className={`px-2 py-1 text-xs font-medium uppercase transition-colors ${
+                  i18n.language === lng
+                    ? 'text-hacknu-green'
+                    : 'text-hacknu-text-muted hover:text-hacknu-green'
+                }`}
+              >
+                {lng.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <Button
             className="ml-2 bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
             render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
           >
-            {isLoggedIn ? 'Dashboard' : 'Register'}
+            {isLoggedIn ? t('navbar.dashboard') : t('navbar.register')}
           </Button>
         </div>
 
@@ -57,7 +80,7 @@ export default function Navbar() {
           size="icon"
           onClick={() => setIsOpen(!isOpen)}
           className="text-hacknu-text-muted hover:bg-transparent hover:text-hacknu-green md:hidden"
-          aria-label="Toggle menu"
+          aria-label={t('navbar.toggleMenu')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +118,7 @@ export default function Navbar() {
               render={<a href="#about" />}
               onClick={() => setIsOpen(false)}
             >
-              About
+              {t('navbar.about')}
             </Button>
             <Button
               variant="ghost"
@@ -103,7 +126,7 @@ export default function Navbar() {
               render={<a href="#faq" />}
               onClick={() => setIsOpen(false)}
             >
-              FAQ
+              {t('navbar.faq')}
             </Button>
             <Button
               variant="ghost"
@@ -111,14 +134,36 @@ export default function Navbar() {
               render={<a href="#partners" />}
               onClick={() => setIsOpen(false)}
             >
-              Partners
+              {t('navbar.partners')}
             </Button>
+            <div className="flex gap-2 py-2">
+              {supportedLngs.map((lng) => {
+                const isActive = i18n.language === lng;
+                return (
+                  <button
+                    key={lng}
+                    type="button"
+                    onClick={() => {
+                      changeLanguage(lng);
+                      setIsOpen(false);
+                    }}
+                    className={
+                      isActive
+                        ? 'px-3 py-1 text-sm font-medium uppercase text-hacknu-green'
+                        : 'px-3 py-1 text-sm font-medium uppercase text-hacknu-text-muted transition-colors hover:text-hacknu-green'
+                    }
+                  >
+                    {lng.toUpperCase()}
+                  </button>
+                );
+              })}
+            </div>
             <Separator className="my-2 bg-hacknu-border" />
             <Button
               className="bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
               render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
             >
-              {isLoggedIn ? 'Dashboard' : 'Register'}
+              {isLoggedIn ? t('navbar.dashboard') : t('navbar.register')}
             </Button>
           </div>
         </div>

@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { useSession } from '../../lib/auth-client';
 
 export default function Hero() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
 
@@ -23,7 +25,7 @@ export default function Hero() {
       <div className="relative z-10 px-6 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
         {/* Terminal prefix */}
         <p className="mb-4 text-sm tracking-widest text-hacknu-text-muted uppercase md:text-base">
-          $ ./hackathon --edition=9
+          {t('hero.terminalPrefix')}
         </p>
 
         {/* Main Title */}
@@ -32,22 +34,23 @@ export default function Hero() {
             className="text-hacknu-green"
             style={{ animation: 'glowPulse 3s ease-in-out infinite' }}
           >
-            Hack
+            {t('hero.titleHack')}
           </span>
           <span
             className="text-hacknu-green"
             style={{ animation: 'glowPulse 3s ease-in-out infinite' }}
           >
-            NU
+            {t('hero.titleNU')}
           </span>
-          <span className="text-hacknu-purple">/26</span>
+          <span className="text-hacknu-purple">{t('hero.titleYear')}</span>
         </h1>
 
         {/* Subtitle */}
         <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-hacknu-text-muted md:mt-8 md:text-lg">
-          9th Annual 24-hour student hackathon
+          {t('hero.subtitle')}
           <br />
-          organized by <span className="text-hacknu-green">NU ACM Student Chapter</span>
+          {t('hero.subtitleOrg')}{' '}
+          <span className="text-hacknu-green">{t('hero.subtitleOrgName')}</span>
         </p>
 
         {/* Register / Dashboard CTA */}
@@ -57,20 +60,12 @@ export default function Hero() {
             className="h-auto p-0 font-mono text-lg tracking-wider text-hacknu-green hover:text-white md:text-2xl"
             render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
           >
-            {'>'} {isLoggedIn ? 'dashboard' : 'register'}
+            {'>'} {isLoggedIn ? t('hero.ctaDashboard') : t('hero.ctaRegister')}
             <span
               className="ml-1 inline-block h-5 w-3 bg-hacknu-green align-middle"
               style={{ animation: 'blink 1s step-end infinite' }}
             />
           </Button>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="mt-20 md:mt-28">
-          <div className="flex flex-col items-center gap-2 text-hacknu-text-muted/50">
-            <span className="text-xs tracking-widest uppercase">scroll</span>
-            <div className="h-8 w-px animate-pulse bg-hacknu-border" />
-          </div>
         </div>
       </div>
     </section>

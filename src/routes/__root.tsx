@@ -1,11 +1,20 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router';
+import { createServerFn } from '@tanstack/react-start';
+import { getCookie } from '@tanstack/react-start/server';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
+import { useTranslation } from 'react-i18next';
 
+import i18n from '@/i18n';
 import appCss from '../styles.css?url';
 
-export const Route = createRootRoute({
-  notFoundComponent: () => (
+const getServerLocale = createServerFn({ method: 'GET' }).handler(async () => {
+  return getCookie('locale') || 'en';
+});
+
+function NotFoundPage() {
+  const { t } = useTranslation();
+  return (
     <div className="flex min-h-screen items-center justify-center bg-hacknu-dark p-6">
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.03]"
@@ -16,7 +25,7 @@ export const Route = createRootRoute({
       />
       <div className="relative z-10 max-w-lg text-center">
         <p className="mb-6 text-xs tracking-[0.3em] text-hacknu-green/50 uppercase">
-          [ERR_NOT_FOUND]
+          {t('notFound.error')}
         </p>
         <h1 className="gradient-text mb-4 text-8xl leading-none font-black text-hacknu-green md:text-[10rem]">
           404
@@ -24,18 +33,26 @@ export const Route = createRootRoute({
         <div className="mb-6 text-xs tracking-[0.5em] text-hacknu-text-muted/30">
           ════════════════════════════════
         </div>
-        <p className="mb-8 text-sm text-hacknu-text-muted">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
+        <p className="mb-8 text-sm text-hacknu-text-muted">{t('notFound.message')}</p>
         <a
           href="/"
           className="inline-block bg-hacknu-green px-8 py-3 text-sm font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
         >
-          ← Go Home
+          {t('notFound.goHome')}
         </a>
       </div>
     </div>
-  ),
+  );
+}
+
+export const Route = createRootRoute({
+  notFoundComponent: NotFoundPage,
+  beforeLoad: async () => {
+    const locale = await getServerLocale();
+    if (i18n.language !== locale) {
+      await i18n.changeLanguage(locale);
+    }
+  },
   head: () => ({
     meta: [
       {
@@ -73,8 +90,9 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { i18n } = useTranslation();
   return (
-    <html lang="en" className="dark">
+    <html lang={i18n.language || 'en'} className="dark">
       <head>
         <HeadContent />
       </head>

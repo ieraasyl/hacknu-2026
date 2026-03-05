@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import { useSession } from '../../lib/auth-client';
 
 export default function Footer() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
 
@@ -11,14 +13,14 @@ export default function Footer() {
       {/* Register / Dashboard CTA Section */}
       <div className="mx-auto max-w-7xl px-6 py-16 text-center md:py-24">
         <p className="mb-4 text-sm tracking-widest text-hacknu-text-muted uppercase">
-          Ready to hack?
+          {t('footer.readyToHack')}
         </p>
         <Button
           variant="link"
           className="h-auto p-0 font-mono text-2xl font-bold tracking-wider text-hacknu-green hover:text-white md:text-4xl"
           render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
         >
-          {'>'} {isLoggedIn ? 'dashboard' : 'register'}
+          {'>'} {isLoggedIn ? t('footer.ctaDashboard') : t('footer.ctaRegister')}
           <span
             className="ml-1 inline-block h-7 w-4 bg-hacknu-green align-middle"
             style={{ animation: 'blink 1s step-end infinite' }}
@@ -34,7 +36,7 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-hacknu-green">HackNU</span>
           <span className="text-sm font-bold text-hacknu-purple">/26</span>
-          <span className="ml-2 text-xs text-hacknu-text-muted">© 2026 NU ACM Student Chapter</span>
+          <span className="ml-2 text-xs text-hacknu-text-muted">{t('footer.copyright')}</span>
         </div>
 
         {/* Right: Social Links */}
@@ -51,7 +53,7 @@ export default function Footer() {
               />
             }
           >
-            Instagram
+            {t('footer.instagram')}
           </Button>
           <Button
             variant="ghost"
@@ -65,7 +67,7 @@ export default function Footer() {
               />
             }
           >
-            LinkedIn
+            {t('footer.linkedin')}
           </Button>
           <Button
             variant="ghost"
@@ -79,7 +81,7 @@ export default function Footer() {
               />
             }
           >
-            YouTube
+            {t('footer.youtube')}
           </Button>
           <Button
             variant="ghost"
@@ -93,7 +95,7 @@ export default function Footer() {
               />
             }
           >
-            Email
+            {t('footer.email')}
           </Button>
         </div>
       </div>
@@ -103,7 +105,7 @@ export default function Footer() {
       {/* Credits */}
       <div className="mx-auto max-w-7xl px-6 py-4 text-center">
         <p className="text-[10px] tracking-wider text-hacknu-text-muted/50">
-          Designed and built with ❤ by the HackNU/26 team
+          {t('footer.credits')}
         </p>
       </div>
     </footer>
