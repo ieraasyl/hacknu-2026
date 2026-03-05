@@ -63,7 +63,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'HackNU/26 — 9th Annual Student Hackathon',
+        title: 'HackNU/26',
       },
       {
         name: 'description',

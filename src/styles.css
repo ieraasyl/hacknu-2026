@@ -3,6 +3,18 @@
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/jetbrains-mono';
 
+/* Kazakh Cyrillic characters missing from fontsource's cyrillic-ext subset */
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('/fonts/jetbrains-mono-kazakh-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0492-0493, U+049A-049B, U+04A2-04A3, U+04AE-04AF, U+04B0-04B1, U+04BA-04BB, U+04D8-04D9,
+    U+04E8-04E9;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* ===== HackNU/26 Theme ===== */
