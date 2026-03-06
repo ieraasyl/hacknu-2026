@@ -1,7 +1,14 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { Session } from '@/lib/types';
+import type { Participant } from '@/db/schema';
 
-export default function ProfileCard({ session }: { session: Session }) {
+export default function ProfileCard({
+  session,
+  participant,
+}: {
+  session: Session;
+  participant: Participant;
+}) {
   return (
     <Card className="mb-6 border-hacknu-border bg-hacknu-dark-card">
       <CardHeader className="border-b border-hacknu-border">
@@ -16,7 +23,7 @@ export default function ProfileCard({ session }: { session: Session }) {
         <pre className="overflow-x-auto text-sm leading-relaxed text-hacknu-text-muted">
           <code>
             {`{
-  "name": "${session.user.name}",
+  "name": "${participant.fullName}",
   "email": "${session.user.email}",
   "role": "participant",
   "event": "HackNU/26",

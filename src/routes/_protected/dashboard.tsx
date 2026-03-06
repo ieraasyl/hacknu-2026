@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useRouteContext } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
@@ -89,6 +89,7 @@ function Dashboard() {
   const { t } = useTranslation();
   const { data: session, isPending, error } = useSession();
   const navigate = useNavigate();
+  const { participant } = useRouteContext({ from: '/_protected' });
 
   const [teamLoading, setTeamLoading] = useState(true);
   const [teamData, setTeamData] = useState<TeamData | null>(null);
@@ -276,15 +277,15 @@ function Dashboard() {
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-12">
         <div className="mb-10">
           <p className="mb-2 text-sm tracking-wider text-hacknu-text-muted">
-            $ dashboard --user="{session.user.name}"
+            $ dashboard --participant="{participant.fullName}"
           </p>
           <h1 className="text-3xl font-bold text-hacknu-text md:text-5xl">
             {t('dashboard.welcomeBack')}{' '}
-            <span className="text-hacknu-green">{session.user.name}</span>
+            <span className="text-hacknu-green">{participant.fullName}</span>
           </h1>
         </div>
         <DashboardStats teamData={teamData} teamLoading={teamLoading} />
-        <ProfileCard session={session} />
+        <ProfileCard session={session} participant={participant} />
         <TeamCard
           team={{
             data: teamData,

@@ -10,16 +10,16 @@ const checkAuth = createServerFn({ method: 'GET' }).handler(async () => {
   if (!session) {
     throw redirect({ to: '/login', search: { redirect: undefined } });
   }
-  const profile = await getParticipant(session.user.id);
-  if (!profile) {
+  const participant = await getParticipant(session.user.id);
+  if (!participant) {
     throw redirect({ to: '/onboarding', search: { redirect: undefined } });
   }
-  return { user: session.user };
+  return { user: session.user, participant };
 });
 
 export const Route = createFileRoute('/_protected')({
   beforeLoad: async () => {
-    await checkAuth();
+    return await checkAuth();
   },
   component: ProtectedLayout,
 });

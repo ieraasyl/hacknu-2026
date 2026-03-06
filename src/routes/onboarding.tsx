@@ -38,7 +38,7 @@ const checkOnboardingStatus = createServerFn({ method: 'GET' }).handler(async ()
   if (profile) {
     throw redirect({ to: '/dashboard' });
   }
-  return { userId: session.user.id, name: session.user.name };
+  return { userId: session.user.id };
 });
 
 const uploadCv = createServerFn({ method: 'POST' })

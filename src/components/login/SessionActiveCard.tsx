@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { TerminalDots } from '@/components/ui/terminal-dots';
 import type { Session } from '@/lib/types';
 
@@ -14,7 +14,6 @@ export default function SessionActiveCard({ session }: { session: Session }) {
       </CardHeader>
       <CardContent className="pt-4">
         <p className="mb-2 text-sm text-hacknu-green">$ whoami</p>
-        <CardTitle className="mb-1 text-xl text-hacknu-text">{session.user.name}</CardTitle>
         <CardDescription className="mb-6 text-hacknu-text-muted">
           {session.user.email}
         </CardDescription>
