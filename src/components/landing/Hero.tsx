@@ -56,6 +56,7 @@ export default function Hero({ session }: { session: Session | null }) {
         <div className="mt-10 md:mt-14">
           <Button
             variant="link"
+            haptic="light"
             className="h-auto p-0 font-mono text-lg tracking-wider text-hacknu-green hover:text-white md:text-2xl"
             render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
           >

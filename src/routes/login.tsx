@@ -3,11 +3,13 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { authClient, signIn, useSession } from '@/lib/auth-client';
 import { Separator } from '@/components/ui/separator';
 import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
 import { emailSchema, otpSchema } from '@/lib/validation';
+import { webHapticsOptions } from '@/lib/web-haptics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { BackgroundGrid, GradientOrbs } from '@/components/ui/background';
@@ -38,6 +40,7 @@ function LoginPage() {
   const { data: session } = useSession();
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
+  const { trigger } = useWebHaptics(webHapticsOptions);
 
   const [phase, setPhase] = useState<'email' | 'otp'>('email');
   const [email, setEmail] = useState('');
@@ -59,6 +62,7 @@ function LoginPage() {
       setError(null);
       const parsed = emailSchema.safeParse({ email });
       if (!parsed.success) {
+        trigger?.('error');
         setError(t(parsed.error.issues[0].message));
         return;
       }
@@ -69,12 +73,15 @@ function LoginPage() {
           type: 'sign-in',
         });
         if (result.error) {
+          trigger?.('error');
           setError(result.error.message ?? t('login.sendCodeFailed'));
         } else {
+          trigger?.('success');
           setPhase('otp');
           setCooldown(RESEND_COOLDOWN);
         }
       } catch (err) {
+        trigger?.('error');
         setError(
           `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
         );
@@ -82,7 +89,7 @@ function LoginPage() {
         setOtpLoading(false);
       }
     },
-    [email, t],
+    [email, t, trigger],
   );
 
   const handleVerifyOtp = useCallback(
@@ -91,6 +98,7 @@ function LoginPage() {
       setError(null);
       const parsed = otpSchema.safeParse({ otp });
       if (!parsed.success) {
+        trigger?.('error');
         setError(t(parsed.error.issues[0].message));
         return;
       }
@@ -98,8 +106,10 @@ function LoginPage() {
       try {
         const result = await signIn.emailOtp({ email, otp });
         if (result.error) {
+          trigger?.('error');
           setError(result.error.message ?? t('login.invalidCode'));
         } else {
+          trigger?.('success');
           const destination = await getPostLoginDestination();
           const safeRedirect = redirect && redirect.startsWith('/invite/') ? redirect : undefined;
           if (destination === '/onboarding') {
@@ -109,6 +119,7 @@ function LoginPage() {
           }
         }
       } catch (err) {
+        trigger?.('error');
         setError(
           `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
         );
@@ -116,7 +127,7 @@ function LoginPage() {
         setOtpLoading(false);
       }
     },
-    [email, otp, navigate, redirect, t],
+    [email, otp, navigate, redirect, t, trigger],
   );
 
   const handleResend = useCallback(async () => {
@@ -128,18 +139,21 @@ function LoginPage() {
         type: 'sign-in',
       });
       if (result.error) {
+        trigger?.('error');
         setError(result.error.message ?? t('login.resendFailed'));
       } else {
+        trigger?.('success');
         setCooldown(RESEND_COOLDOWN);
       }
     } catch (err) {
+      trigger?.('error');
       setError(
         `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
       );
     } finally {
       setOtpLoading(false);
     }
-  }, [email, t]);
+  }, [email, t, trigger]);
 
   const handleBack = useCallback(() => {
     setPhase('email');
@@ -157,12 +171,13 @@ function LoginPage() {
         callbackURL,
       });
     } catch (err) {
+      trigger?.('error');
       setError(
         `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
       );
       setGoogleLoading(false);
     }
-  }, [redirect, t]);
+  }, [redirect, t, trigger]);
 
   if (session) {
     return (

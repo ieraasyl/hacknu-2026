@@ -1,8 +1,11 @@
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { Card, CardContent } from '@/components/ui/card';
+import { webHapticsOptions } from '@/lib/web-haptics';
 
 export default function Partners() {
   const { t } = useTranslation();
+  const { trigger } = useWebHaptics(webHapticsOptions);
   const partners = [
     { name: t('partners.partnerName', { index: 1 }), logo: '/images/logo1.svg' },
     { name: t('partners.partnerName', { index: 2 }), logo: '/images/logo2.svg' },
@@ -44,13 +47,16 @@ export default function Partners() {
           <Card className="aspect-3/2 border-dashed border-hacknu-border bg-transparent transition-all duration-500 hover:border-hacknu-purple/50">
             <CardContent className="h-full p-6 md:p-8">
               <a
-                href="mailto:acm@nu.edu.kz"
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=acmsc@nu.edu.kz&su=&body="
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group flex h-full flex-col items-center justify-center"
+                onClick={() => trigger?.('light')}
               >
                 <span className="mb-2 text-3xl text-hacknu-text-muted transition-colors group-hover:text-hacknu-purple">
                   +
                 </span>
-                <span className="text-xs tracking-wider text-hacknu-text-muted uppercase transition-colors group-hover:text-hacknu-purple">
+                <span className="text-center text-xs tracking-wider text-hacknu-text-muted uppercase transition-colors group-hover:text-hacknu-purple">
                   {t('partners.becomePartner')}
                 </span>
               </a>

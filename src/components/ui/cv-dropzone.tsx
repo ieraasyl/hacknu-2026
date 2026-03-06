@@ -1,7 +1,11 @@
+'use client';
+
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { CheckCircleIcon, XCircleIcon, SpinnerIcon, XIcon } from '@phosphor-icons/react';
 import { Input } from '@/components/ui/input';
+import { webHapticsOptions } from '@/lib/web-haptics';
 
 const ACCEPTED_TYPES = ['application/pdf'];
 const ACCEPTED_EXT = '.pdf';
@@ -31,6 +35,7 @@ export function CvDropzone({
   disabled = false,
 }: CvDropzoneProps) {
   const { t } = useTranslation();
+  const { trigger } = useWebHaptics(webHapticsOptions);
   const [state, setState] = useState<UploadState>('idle');
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileId, setFileId] = useState<string | null>(null);
@@ -43,11 +48,13 @@ export function CvDropzone({
     e.target.value = '';
 
     if (!ACCEPTED_TYPES.includes(file.type)) {
+      trigger?.('error');
       setErrorMsg(t('cvDropzone.onlyPdf'));
       setState('error');
       return;
     }
     if (file.size > MAX_BYTES) {
+      trigger?.('error');
       setErrorMsg(t('cvDropzone.maxSize'));
       setState('error');
       return;
@@ -66,10 +73,12 @@ export function CvDropzone({
         data: base64,
       });
 
+      trigger?.('success');
       setState('done');
       setFileId(result.fileId);
       onUpload(result.url);
     } catch (err) {
+      trigger?.('error');
       setState('error');
       setFileName(null);
       setErrorMsg(err instanceof Error ? err.message : t('cvDropzone.uploadFailed'));

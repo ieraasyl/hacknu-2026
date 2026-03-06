@@ -3,8 +3,10 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { useSession, signOut } from '@/lib/auth-client';
 import { getSession } from '@/lib/auth.server';
+import { webHapticsOptions } from '@/lib/web-haptics';
 import { createTeamSchema, inviteSlugSchema } from '@/lib/validation';
 import {
   getTeamByParticipant,
@@ -90,6 +92,7 @@ function Dashboard() {
   const { data: session, isPending, error } = useSession();
   const navigate = useNavigate();
   const { participant } = useRouteContext({ from: '/_protected' });
+  const { trigger } = useWebHaptics(webHapticsOptions);
 
   const [teamLoading, setTeamLoading] = useState(true);
   const [teamData, setTeamData] = useState<TeamData | null>(null);
@@ -138,9 +141,11 @@ function Dashboard() {
     setCreateLoading(true);
     try {
       const result = await createTeamFn({ data: { name: createName } });
+      trigger?.('success');
       setTeamData(result);
       setCreateName('');
     } catch (err) {
+      trigger?.('error');
       setCreateError(t((err as Error).message));
     } finally {
       setCreateLoading(false);
@@ -152,15 +157,18 @@ function Dashboard() {
     setJoinError(null);
     const slug = extractSlug(joinInput);
     if (!slug) {
+      trigger?.('error');
       setJoinError(t('dashboard.invalidInviteInput'));
       return;
     }
     setJoinLoading(true);
     try {
       const result = await joinTeamFn({ data: { slug } });
+      trigger?.('success');
       setTeamData(result);
       setJoinInput('');
     } catch (err) {
+      trigger?.('error');
       setJoinError(t((err as Error).message));
     } finally {
       setJoinLoading(false);
@@ -172,8 +180,10 @@ function Dashboard() {
     setActionLoading(targetUserId);
     try {
       await kickMemberFn({ data: { targetUserId } });
+      trigger?.('success');
       await refreshTeam();
     } catch (err) {
+      trigger?.('error');
       setActionError((err as Error).message);
     } finally {
       setActionLoading(null);
@@ -185,8 +195,10 @@ function Dashboard() {
     setActionLoading('leave');
     try {
       await leaveTeamFn();
+      trigger?.('success');
       setTeamData(null);
     } catch (err) {
+      trigger?.('error');
       setActionError((err as Error).message);
     } finally {
       setActionLoading(null);
@@ -198,8 +210,10 @@ function Dashboard() {
     setActionLoading('dissolve');
     try {
       await dissolveTeamFn();
+      trigger?.('success');
       setTeamData(null);
     } catch (err) {
+      trigger?.('error');
       setActionError((err as Error).message);
     } finally {
       setActionLoading(null);
@@ -210,6 +224,7 @@ function Dashboard() {
     if (!teamData) return;
     const url = `${window.location.origin}/invite/${teamData.inviteSlug}`;
     await navigator.clipboard.writeText(url);
+    trigger?.('success');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }

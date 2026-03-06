@@ -55,16 +55,9 @@ export const Route = createRootRoute({
   },
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'HackNU/26',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'HackNU/26' },
       {
         name: 'description',
         content:
@@ -72,18 +65,10 @@ export const Route = createRootRoute({
       },
     ],
     links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-      {
-        rel: 'icon',
-        href: '/favicon.svg',
-      },
-      {
-        rel: 'manifest',
-        href: '/manifest.json',
-      },
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/favicon.svg' },
+      { rel: 'manifest', href: '/manifest.json' },
+      { rel: 'canonical', href: 'https://hacknu.nuacm.kz/' },
     ],
   }),
   shellComponent: RootDocument,

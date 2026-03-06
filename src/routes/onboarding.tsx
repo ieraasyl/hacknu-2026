@@ -3,7 +3,9 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { getSession } from '@/lib/auth.server';
+import { webHapticsOptions } from '@/lib/web-haptics';
 import {
   getParticipant,
   upsertParticipant,
@@ -105,6 +107,7 @@ function OnboardingPage() {
   const navigate = useNavigate();
   const { redirect: redirectTo } = Route.useSearch();
   const safeRedirect = redirectTo?.startsWith('/invite/') ? redirectTo : undefined;
+  const { trigger } = useWebHaptics(webHapticsOptions);
 
   const [fullName, setFullName] = useState(session?.user?.name ?? '');
   const [iin, setIin] = useState('');
@@ -127,6 +130,7 @@ function OnboardingPage() {
       cvUrl: cvUrl ?? '',
     });
     if (!parsed.success) {
+      trigger?.('error');
       setError(t(parsed.error.issues[0].message));
       return;
     }
@@ -139,13 +143,16 @@ function OnboardingPage() {
       await navigate({ to: safeRedirect ?? '/dashboard' });
     } catch (err) {
       if (err instanceof Response) {
+        trigger?.('success');
         await navigate({ to: safeRedirect ?? '/dashboard' });
         return;
       }
       if (err != null && typeof err === 'object' && 'to' in err) {
+        trigger?.('success');
         await navigate({ to: safeRedirect ?? (err as { to: string }).to });
         return;
       }
+      trigger?.('error');
       setError(err instanceof Error ? t(err.message) : t('onboarding.somethingWentWrong'));
     } finally {
       setLoading(false);

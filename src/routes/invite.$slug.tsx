@@ -3,7 +3,9 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { getSession } from '@/lib/auth.server';
+import { webHapticsOptions } from '@/lib/web-haptics';
 import { getParticipant } from '@/lib/onboarding.server';
 import { joinTeamBySlug } from '@/lib/team.server';
 import { Button } from '@/components/ui/button';
@@ -60,13 +62,18 @@ function InviteResult() {
   const { t } = useTranslation();
   const { slug } = Route.useLoaderData();
   const navigate = useNavigate();
+  const { trigger } = useWebHaptics(webHapticsOptions);
   const [status, setStatus] = useState<'joining' | 'error'>('joining');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     joinByInviteFn({ data: { slug } })
-      .then(() => navigate({ to: '/dashboard' }))
+      .then(() => {
+        trigger?.('success');
+        navigate({ to: '/dashboard' });
+      })
       .catch((e: Error) => {
+        trigger?.('error');
         setErrorMsg(e.message);
         setStatus('error');
       });

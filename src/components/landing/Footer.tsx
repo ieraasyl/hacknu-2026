@@ -16,6 +16,7 @@ export default function Footer({ session }: { session: Session | null }) {
         </p>
         <Button
           variant="link"
+          haptic="light"
           className="h-auto p-0 font-mono text-2xl font-bold tracking-wider text-hacknu-green hover:text-white md:text-4xl"
           render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
         >

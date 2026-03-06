@@ -1,16 +1,20 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { supportedLngs } from '@/i18n';
+import { webHapticsOptions } from '@/lib/web-haptics';
 import type { Session } from '@/lib/types';
 
 export default function Navbar({ session }: { session: Session | null }) {
   const { t, i18n } = useTranslation();
+  const { trigger } = useWebHaptics(webHapticsOptions);
   const [isOpen, setIsOpen] = useState(false);
   const isLoggedIn = !!session?.user;
 
   const changeLanguage = (lng: string) => {
+    trigger?.('light');
     i18n.changeLanguage(lng);
   };
 
