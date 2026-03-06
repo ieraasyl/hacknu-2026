@@ -12,6 +12,8 @@ interface AuthEnv {
   BETTER_AUTH_URL: string;
   GAS_URL: string;
   GAS_SECRET: string;
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
 }
 
 /**
@@ -44,6 +46,18 @@ export function getAuth() {
   const gasUrl = authEnv.GAS_URL;
   const gasSecret = authEnv.GAS_SECRET;
 
+  const googleClientId = authEnv.GOOGLE_CLIENT_ID;
+  const googleClientSecret = authEnv.GOOGLE_CLIENT_SECRET;
+  const socialProviders =
+    googleClientId && googleClientSecret
+      ? {
+          google: {
+            clientId: googleClientId,
+            clientSecret: googleClientSecret,
+          },
+        }
+      : undefined;
+
   return betterAuth({
     database: drizzleAdapter(db, {
       provider: 'sqlite',
@@ -57,6 +71,7 @@ export function getAuth() {
     secret,
     appName: 'HackNU 2026',
     baseURL: url,
+    ...(socialProviders && { socialProviders }),
     plugins: [
       emailOTP({
         otpLength: 6,

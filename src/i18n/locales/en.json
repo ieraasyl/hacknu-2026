@@ -98,6 +98,9 @@
   },
   "login": {
     "backToHome": "← Back to home",
+    "signInWithGoogle": "Sign in with Google",
+    "redirecting": "Redirecting...",
+    "or": "or",
     "errorPrefix": "[ERROR]",
     "goToDashboard": "Go to Dashboard →",
     "signIn": "Sign In",

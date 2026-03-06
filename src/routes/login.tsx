@@ -4,6 +4,7 @@ import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authClient, signIn, useSession } from '@/lib/auth-client';
+import { Separator } from '@/components/ui/separator';
 import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
 import { emailSchema, otpSchema } from '@/lib/validation';
@@ -42,7 +43,8 @@ function LoginPage() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
@@ -60,7 +62,7 @@ function LoginPage() {
         setError(t(parsed.error.issues[0].message));
         return;
       }
-      setLoading(true);
+      setOtpLoading(true);
       try {
         const result = await authClient.emailOtp.sendVerificationOtp({
           email,
@@ -77,7 +79,7 @@ function LoginPage() {
           `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
         );
       } finally {
-        setLoading(false);
+        setOtpLoading(false);
       }
     },
     [email, t],
@@ -92,7 +94,7 @@ function LoginPage() {
         setError(t(parsed.error.issues[0].message));
         return;
       }
-      setLoading(true);
+      setOtpLoading(true);
       try {
         const result = await signIn.emailOtp({ email, otp });
         if (result.error) {
@@ -111,7 +113,7 @@ function LoginPage() {
           `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
         );
       } finally {
-        setLoading(false);
+        setOtpLoading(false);
       }
     },
     [email, otp, navigate, redirect, t],
@@ -119,7 +121,7 @@ function LoginPage() {
 
   const handleResend = useCallback(async () => {
     setError(null);
-    setLoading(true);
+    setOtpLoading(true);
     try {
       const result = await authClient.emailOtp.sendVerificationOtp({
         email,
@@ -135,7 +137,7 @@ function LoginPage() {
         `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
       );
     } finally {
-      setLoading(false);
+      setOtpLoading(false);
     }
   }, [email, t]);
 
@@ -144,6 +146,23 @@ function LoginPage() {
     setOtp('');
     setError(null);
   }, []);
+
+  const handleGoogleSignIn = useCallback(async () => {
+    setError(null);
+    setGoogleLoading(true);
+    try {
+      const callbackURL = redirect && redirect.startsWith('/invite/') ? redirect : '/dashboard';
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL,
+      });
+    } catch (err) {
+      setError(
+        `${t('login.errorLabel')}: ${err instanceof Error ? err.message : t('login.unknownError')}`,
+      );
+      setGoogleLoading(false);
+    }
+  }, [redirect, t]);
 
   if (session) {
     return (
@@ -175,19 +194,38 @@ function LoginPage() {
           </CardHeader>
           <CardContent className="pt-4">
             {phase === 'email' ? (
-              <EmailForm
-                email={email}
-                setEmail={setEmail}
-                loading={loading}
-                error={error}
-                onSubmit={handleSendOtp}
-              />
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={googleLoading}
+                  onClick={handleGoogleSignIn}
+                  className="mb-4 h-10 w-full border-hacknu-border bg-hacknu-dark text-hacknu-text hover:bg-hacknu-dark-card hover:border-hacknu-green/50"
+                >
+                  <img src="/images/google.svg" alt="" className="mr-2 h-5 w-5 shrink-0" aria-hidden />
+                  {googleLoading ? t('login.redirecting') : t('login.signInWithGoogle')}
+                </Button>
+                <div className="relative my-4 flex items-center gap-2">
+                  <Separator className="flex-1 bg-hacknu-border" />
+                  <span className="text-xs uppercase tracking-wider text-hacknu-text-muted">
+                    {t('login.or')}
+                  </span>
+                  <Separator className="flex-1 bg-hacknu-border" />
+                </div>
+                <EmailForm
+                  email={email}
+                  setEmail={setEmail}
+                  loading={otpLoading}
+                  error={error}
+                  onSubmit={handleSendOtp}
+                />
+              </>
             ) : (
               <OtpForm
                 otp={otp}
                 setOtp={setOtp}
                 email={email}
-                loading={loading}
+                loading={otpLoading}
                 error={error}
                 cooldown={cooldown}
                 onSubmit={handleVerifyOtp}

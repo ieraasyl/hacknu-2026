@@ -98,6 +98,9 @@
   },
   "login": {
     "backToHome": "← Басты бетке",
+    "signInWithGoogle": "Google арқылы кіру",
+    "redirecting": "Қайта бағыттау...",
+    "or": "немесе",
     "errorPrefix": "[ERROR]",
     "goToDashboard": "Басқару тақтасына →",
     "signIn": "Кіру",

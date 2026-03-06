@@ -98,6 +98,9 @@
   },
   "login": {
     "backToHome": "← На главную",
+    "signInWithGoogle": "Войти через Google",
+    "redirecting": "Перенаправление...",
+    "or": "или",
     "errorPrefix": "[ERROR]",
     "goToDashboard": "В панель управления →",
     "signIn": "Вход",
