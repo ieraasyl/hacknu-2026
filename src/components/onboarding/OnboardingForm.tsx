@@ -27,6 +27,12 @@ export default function OnboardingForm({
   setIin,
   phone,
   setPhone,
+  city,
+  setCity,
+  placeOfStudy,
+  setPlaceOfStudy,
+  parentPhone,
+  setParentPhone,
   educationLevel,
   setEducationLevel,
   setCvUrl,
@@ -45,6 +51,12 @@ export default function OnboardingForm({
   setIin: (v: string) => void;
   phone: string;
   setPhone: (v: string) => void;
+  city: string;
+  setCity: (v: string) => void;
+  placeOfStudy: string;
+  setPlaceOfStudy: (v: string) => void;
+  parentPhone: string;
+  setParentPhone: (v: string) => void;
   educationLevel: string;
   setEducationLevel: (v: string) => void;
   setCvUrl: (v: string | null) => void;
@@ -117,6 +129,62 @@ export default function OnboardingForm({
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
+            disabled={loading}
+            className="border-hacknu-border bg-hacknu-dark text-hacknu-text placeholder:text-hacknu-text-muted/50 focus-visible:border-hacknu-green"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="city" className="tracking-wider text-hacknu-text-muted uppercase">
+            {t('onboarding.city')}
+          </FieldLabel>
+          <Input
+            id="city"
+            type="text"
+            placeholder={t('onboarding.cityPlaceholder')}
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            required
+            disabled={loading}
+            className="border-hacknu-border bg-hacknu-dark text-hacknu-text placeholder:text-hacknu-text-muted/50 focus-visible:border-hacknu-green"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel
+            htmlFor="placeOfStudy"
+            className="tracking-wider text-hacknu-text-muted uppercase"
+          >
+            {t('onboarding.placeOfStudy')}
+          </FieldLabel>
+          <Input
+            id="placeOfStudy"
+            type="text"
+            placeholder={t('onboarding.placeOfStudyPlaceholder')}
+            value={placeOfStudy}
+            onChange={(e) => setPlaceOfStudy(e.target.value)}
+            required
+            disabled={loading}
+            className="border-hacknu-border bg-hacknu-dark text-hacknu-text placeholder:text-hacknu-text-muted/50 focus-visible:border-hacknu-green"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel
+            htmlFor="parentPhone"
+            className="tracking-wider text-hacknu-text-muted uppercase"
+          >
+            {t('onboarding.parentPhone')}
+          </FieldLabel>
+          <FieldDescription className="text-hacknu-text-muted/60">
+            {t('onboarding.parentPhoneOptional')}
+          </FieldDescription>
+          <Input
+            id="parentPhone"
+            type="tel"
+            placeholder={t('onboarding.parentPhonePlaceholder')}
+            value={parentPhone}
+            onChange={(e) => setParentPhone(e.target.value)}
             disabled={loading}
             className="border-hacknu-border bg-hacknu-dark text-hacknu-text placeholder:text-hacknu-text-muted/50 focus-visible:border-hacknu-green"
           />

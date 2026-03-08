@@ -15,6 +15,13 @@
       "when": 1772539331055,
       "tag": "0001_foamy_ted_forrester",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1772974294575,
+      "tag": "0002_overjoyed_george_stacy",
+      "breakpoints": true
     }
   ]
 }

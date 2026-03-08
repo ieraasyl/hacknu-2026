@@ -31,6 +31,11 @@ const V = {
   teamNameMax: 'validation.teamNameMax',
   inviteCodeRequired: 'validation.inviteCodeRequired',
   inviteCodeInvalid: 'validation.inviteCodeInvalid',
+  cityRequired: 'validation.cityRequired',
+  cityMax: 'validation.cityMax',
+  placeOfStudyRequired: 'validation.placeOfStudyRequired',
+  placeOfStudyMax: 'validation.placeOfStudyMax',
+  parentPhoneInvalid: 'validation.parentPhoneInvalid',
 } as const;
 
 // ── Email (login step 1) ─────────────────────────────────────────────────────
@@ -53,6 +58,8 @@ export const otpSchema = z.object({
 
 export type OtpInput = z.infer<typeof otpSchema>;
 
+const phoneRegex = /^\+?[\d][\d\s\-().]{5,24}$/;
+
 // ── Onboarding ───────────────────────────────────────────────────────────────
 export const onboardingSchema = z.object({
   fullName: z
@@ -64,7 +71,23 @@ export const onboardingSchema = z.object({
   phone: z
     .string()
     .min(1, { error: V.phoneRequired })
-    .regex(/^\+?[\d][\d\s\-().]{5,24}$/, { error: V.phoneInvalid }),
+    .regex(phoneRegex, { error: V.phoneInvalid }),
+  city: z
+    .string()
+    .trim()
+    .min(1, { error: V.cityRequired })
+    .max(100, { error: V.cityMax }),
+  placeOfStudy: z
+    .string()
+    .trim()
+    .min(1, { error: V.placeOfStudyRequired })
+    .max(100, { error: V.placeOfStudyMax }),
+  parentPhone: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => v || undefined)
+    .refine((v) => !v || phoneRegex.test(v), { message: V.parentPhoneInvalid }),
   educationLevel: z.enum(EDUCATION_LEVELS, { error: V.educationInvalid }),
   cvUrl: z
     .union([z.literal(''), z.url({ error: V.cvUrlInvalid })])

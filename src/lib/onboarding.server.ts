@@ -26,6 +26,9 @@ export async function upsertParticipant(data: {
   fullName: string;
   iin: string;
   phone: string;
+  city: string;
+  placeOfStudy: string;
+  parentPhone?: string | null;
   educationLevel: string;
   cvUrl?: string | null;
 }) {
@@ -38,6 +41,9 @@ export async function upsertParticipant(data: {
       fullName: data.fullName,
       iin: data.iin,
       phone: data.phone,
+      city: data.city,
+      placeOfStudy: data.placeOfStudy,
+      parentPhone: data.parentPhone ?? null,
       educationLevel: data.educationLevel,
       cvUrl: data.cvUrl ?? null,
     })
@@ -47,6 +53,9 @@ export async function upsertParticipant(data: {
         fullName: data.fullName,
         iin: data.iin,
         phone: data.phone,
+        city: data.city,
+        placeOfStudy: data.placeOfStudy,
+        parentPhone: data.parentPhone ?? null,
         educationLevel: data.educationLevel,
         cvUrl: data.cvUrl ?? null,
         updatedAt: new Date(),

@@ -26,6 +26,9 @@ type OnboardingInput = {
   fullName: string;
   iin: string;
   phone: string;
+  city: string;
+  placeOfStudy: string;
+  parentPhone?: string;
   educationLevel: string;
   cvUrl?: string;
 };
@@ -83,6 +86,9 @@ const saveOnboarding = createServerFn({ method: 'POST' })
       fullName: data.fullName,
       iin: data.iin,
       phone: data.phone,
+      city: data.city,
+      placeOfStudy: data.placeOfStudy,
+      parentPhone: data.parentPhone || null,
       educationLevel: data.educationLevel,
       cvUrl: data.cvUrl || null,
     });
@@ -112,6 +118,9 @@ function OnboardingPage() {
   const [fullName, setFullName] = useState(session?.user?.name ?? '');
   const [iin, setIin] = useState('');
   const [phone, setPhone] = useState('');
+  const [city, setCity] = useState('');
+  const [placeOfStudy, setPlaceOfStudy] = useState('');
+  const [parentPhone, setParentPhone] = useState('');
   const [educationLevel, setEducationLevel] = useState('');
   const [cvUrl, setCvUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -126,6 +135,9 @@ function OnboardingPage() {
       fullName,
       iin,
       phone,
+      city,
+      placeOfStudy,
+      parentPhone: parentPhone || undefined,
       educationLevel,
       cvUrl: cvUrl ?? '',
     });
@@ -138,7 +150,16 @@ function OnboardingPage() {
     setLoading(true);
     try {
       await saveOnboarding({
-        data: { fullName, iin, phone, educationLevel, cvUrl: cvUrl ?? undefined },
+        data: {
+          fullName,
+          iin,
+          phone,
+          city,
+          placeOfStudy,
+          parentPhone: parentPhone || undefined,
+          educationLevel,
+          cvUrl: cvUrl ?? undefined,
+        },
       });
       await navigate({ to: safeRedirect ?? '/dashboard' });
     } catch (err) {
@@ -195,6 +216,12 @@ function OnboardingPage() {
               setIin={setIin}
               phone={phone}
               setPhone={setPhone}
+              city={city}
+              setCity={setCity}
+              placeOfStudy={placeOfStudy}
+              setPlaceOfStudy={setPlaceOfStudy}
+              parentPhone={parentPhone}
+              setParentPhone={setParentPhone}
               educationLevel={educationLevel}
               setEducationLevel={setEducationLevel}
               setCvUrl={setCvUrl}
