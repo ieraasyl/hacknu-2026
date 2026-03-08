@@ -14,16 +14,73 @@ function getAppDb() {
 
 // ── Slug helpers ──────────────────────────────────────────────────────────────
 
+const CYRILLIC_MAP: Record<string, string> = {
+  а: 'a',
+  б: 'b',
+  в: 'v',
+  г: 'g',
+  д: 'd',
+  е: 'e',
+  ё: 'e',
+  ж: 'z',
+  з: 'z',
+  и: 'i',
+  й: 'y',
+  к: 'k',
+  л: 'l',
+  м: 'm',
+  н: 'n',
+  о: 'o',
+  п: 'p',
+  р: 'r',
+  с: 's',
+  т: 't',
+  у: 'u',
+  ф: 'f',
+  х: 'h',
+  ц: 's',
+  ч: 'c',
+  ш: 's',
+  щ: 's',
+  ъ: 'j',
+  ы: 'y',
+  ь: 'y',
+  э: 'e',
+  ю: 'u',
+  я: 'a',
+  // Kazakh-specific
+  ә: 'a',
+  ғ: 'g',
+  қ: 'k',
+  ң: 'n',
+  ө: 'o',
+  ұ: 'u',
+  ү: 'u',
+  һ: 'h',
+  і: 'i',
+};
+
+function transliterate(s: string): string {
+  return s.replace(/[\u0400-\u04FF]/g, (ch) => CYRILLIC_MAP[ch] ?? ch);
+}
+
 /**
- * Convert a team name to a URL-safe slug.
+ * Convert a team name to a URL-safe ASCII slug.
+ * "Команда Альфа" → "komanda-alfa"
  * "Cool Hackers!!" → "cool-hackers"
  */
 export function slugify(name: string): string {
-  return name
-    .trim()
-    .toLowerCase()
+  return transliterate(name.trim().toLowerCase())
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Canonicalize team names for case-insensitive uniqueness.
+ * Keeps user-facing name unchanged while normalizing whitespace/case for matching.
+ */
+export function canonicalizeTeamName(name: string): string {
+  return name.trim().normalize('NFKC').toLowerCase().replace(/\s+/g, ' ');
 }
 
 /**
@@ -33,6 +90,9 @@ export function slugify(name: string): string {
 export async function generateUniqueSlug(name: string): Promise<string> {
   const db = getAppDb();
   const base = slugify(name);
+
+  if (!base)
+    throw new Error('Team name produced an empty slug, please use at least one letter or digit');
 
   const existing = await db.query.team.findFirst({
     where: eq(team.inviteSlug, base),
@@ -115,6 +175,7 @@ export async function getTeamByParticipant(userId: string): Promise<TeamData | n
  */
 export async function createTeam(userId: string, name: string): Promise<TeamData> {
   const db = getAppDb();
+  const canonicalName = canonicalizeTeamName(name);
 
   const p = await db.query.participant.findFirst({
     where: eq(participant.id, userId),
@@ -124,7 +185,7 @@ export async function createTeam(userId: string, name: string): Promise<TeamData
   if (p.teamId) throw new Error('You are already in a team');
 
   const existing = await db.query.team.findFirst({
-    where: eq(team.name, name),
+    where: eq(team.nameCanonical, canonicalName),
     columns: { id: true },
   });
   if (existing) throw new Error('Team name is already taken');
@@ -133,14 +194,25 @@ export async function createTeam(userId: string, name: string): Promise<TeamData
   const id = crypto.randomUUID();
   const now = new Date();
 
-  await db.insert(team).values({
-    id,
-    name,
-    inviteSlug,
-    captainId: userId,
-    createdAt: now,
-    updatedAt: now,
-  });
+  try {
+    await db.insert(team).values({
+      id,
+      name,
+      nameCanonical: canonicalName,
+      inviteSlug,
+      captainId: userId,
+      createdAt: now,
+      updatedAt: now,
+    });
+  } catch (error) {
+    // DB constraint is the final guard against race conditions.
+    const message =
+      error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+    if (message.includes('name_canonical') || message.includes('team_name_canonical_unique')) {
+      throw new Error('Team name is already taken', { cause: error });
+    }
+    throw error;
+  }
 
   await db
     .update(participant)

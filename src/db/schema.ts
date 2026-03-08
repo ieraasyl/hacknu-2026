@@ -14,6 +14,8 @@ import { user } from '@/db/auth-schema';
 export const team = sqliteTable('team', {
   id: text('id').primaryKey(), // crypto.randomUUID()
   name: text('name').notNull().unique(),
+  // Canonicalized form of team name for case-insensitive uniqueness checks.
+  nameCanonical: text('name_canonical').notNull().unique(),
   inviteSlug: text('invite_slug').notNull().unique(),
   captainId: text('captain_id')
     .notNull()

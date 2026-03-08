@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InviteSlugRouteImport } from './routes/invite.$slug'
+import { Route as ApiReportRouteImport } from './routes/api/report'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -41,6 +42,11 @@ const InviteSlugRoute = InviteSlugRouteImport.update({
   path: '/invite/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReportRoute = ApiReportRouteImport.update({
+  id: '/api/report',
+  path: '/api/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
+  '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/dashboard'
+    | '/api/report'
     | '/invite/$slug'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
@@ -93,6 +103,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/dashboard'
+    | '/api/report'
     | '/invite/$slug'
     | '/api/auth/$'
   id:
@@ -102,6 +113,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/_protected/dashboard'
+    | '/api/report'
     | '/invite/$slug'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
@@ -111,6 +123,7 @@ export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRouteWithChildren
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  ApiReportRoute: typeof ApiReportRoute
   InviteSlugRoute: typeof InviteSlugRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InviteSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/report': {
+      id: '/api/report'
+      path: '/api/report'
+      fullPath: '/api/report'
+      preLoaderRoute: typeof ApiReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_protected/dashboard': {
       id: '/_protected/dashboard'
       path: '/dashboard'
@@ -186,6 +206,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  ApiReportRoute: ApiReportRoute,
   InviteSlugRoute: InviteSlugRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
