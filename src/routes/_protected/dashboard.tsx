@@ -106,15 +106,15 @@ function Dashboard() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const refreshTeam = useCallback(async () => {
-    setTeamLoading(true);
+  const refreshTeam = useCallback(async (silent = false) => {
+    if (!silent) setTeamLoading(true);
     try {
       const data = await getMyTeamFn();
       setTeamData(data);
     } catch {
       setTeamData(null);
     } finally {
-      setTeamLoading(false);
+      if (!silent) setTeamLoading(false);
     }
   }, []);
 
@@ -181,7 +181,7 @@ function Dashboard() {
     try {
       await kickMemberFn({ data: { targetUserId } });
       trigger?.('success');
-      await refreshTeam();
+      await refreshTeam(true);
     } catch (err) {
       trigger?.('error');
       setActionError((err as Error).message);
