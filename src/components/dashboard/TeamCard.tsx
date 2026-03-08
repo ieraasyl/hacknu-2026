@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { ConfirmButton } from '@/components/ui/confirm-button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -130,15 +131,16 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
                       )}
                     </span>
                     {isCaptain && !member.isCaptain && (
-                      <Button
-                        size="sm"
+                      <ConfirmButton
+                        label={t('dashboard.kick')}
+                        confirmLabel={t('dashboard.confirmAction')}
+                        onConfirm={() => handleKick(member.id)}
+                        loading={actionLoading === member.id}
+                        loadingLabel="..."
                         variant="outline"
+                        size="sm"
                         className="shrink-0 border-hacknu-border px-2 text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
-                        disabled={actionLoading === member.id}
-                        onClick={() => handleKick(member.id)}
-                      >
-                        {actionLoading === member.id ? '...' : t('dashboard.kick')}
-                      </Button>
+                      />
                     )}
                   </li>
                 ))}
@@ -155,27 +157,27 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
 
             <div className="flex justify-end pt-2">
               {isCaptain ? (
-                <Button
-                  size="sm"
+                <ConfirmButton
+                  label={t('dashboard.dissolveTeam')}
+                  confirmLabel={t('dashboard.confirmAction')}
+                  onConfirm={handleDissolve}
+                  loading={actionLoading === 'dissolve'}
+                  loadingLabel={t('dashboard.dissolving')}
                   variant="outline"
+                  size="sm"
                   className="border-red-500/30 text-xs tracking-wider text-red-400/70 uppercase hover:border-red-500 hover:text-red-400"
-                  disabled={actionLoading === 'dissolve'}
-                  onClick={handleDissolve}
-                >
-                  {actionLoading === 'dissolve'
-                    ? t('dashboard.dissolving')
-                    : t('dashboard.dissolveTeam')}
-                </Button>
+                />
               ) : (
-                <Button
-                  size="sm"
+                <ConfirmButton
+                  label={t('dashboard.leaveTeam')}
+                  confirmLabel={t('dashboard.confirmAction')}
+                  onConfirm={handleLeave}
+                  loading={actionLoading === 'leave'}
+                  loadingLabel={t('dashboard.leaving')}
                   variant="outline"
+                  size="sm"
                   className="border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
-                  disabled={actionLoading === 'leave'}
-                  onClick={handleLeave}
-                >
-                  {actionLoading === 'leave' ? t('dashboard.leaving') : t('dashboard.leaveTeam')}
-                </Button>
+                />
               )}
             </div>
           </div>
