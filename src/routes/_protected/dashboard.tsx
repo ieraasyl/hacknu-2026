@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate, useRouteContext } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
+import { useQueryClient, useMutation, useSuspenseQuery, queryOptions } from '@tanstack/react-query';
 import { useSession, signOut } from '@/lib/auth-client';
 import { getSession } from '@/lib/auth.server';
 import { webHapticsOptions } from '@/lib/web-haptics';
@@ -15,7 +16,6 @@ import {
   kickMember,
   leaveTeam,
   dissolveTeam,
-  type TeamData,
 } from '@/lib/team.server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -79,9 +79,15 @@ const dissolveTeamFn = createServerFn({ method: 'POST' }).handler(async () => {
   await dissolveTeam(session.user.id);
 });
 
+const teamQueryOptions = queryOptions({
+  queryKey: ['team'],
+  queryFn: () => getMyTeamFn(),
+});
+
 /* ─── Route ─── */
 
 export const Route = createFileRoute('/_protected/dashboard')({
+  loader: ({ context }) => context.queryClient.ensureQueryData(teamQueryOptions),
   component: Dashboard,
 });
 
@@ -89,38 +95,86 @@ export const Route = createFileRoute('/_protected/dashboard')({
 
 function Dashboard() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const { data: session, isPending, error } = useSession();
   const navigate = useNavigate();
   const { participant } = useRouteContext({ from: '/_protected' });
   const { trigger } = useWebHaptics(webHapticsOptions);
 
-  const [teamLoading, setTeamLoading] = useState(true);
-  const [teamData, setTeamData] = useState<TeamData | null>(null);
+  const { data: teamData } = useSuspenseQuery(teamQueryOptions);
   const [createName, setCreateName] = useState('');
-  const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [joinInput, setJoinInput] = useState('');
-  const [joinLoading, setJoinLoading] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
-  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const refreshTeam = useCallback(async (silent = false) => {
-    if (!silent) setTeamLoading(true);
-    try {
-      const data = await getMyTeamFn();
-      setTeamData(data);
-    } catch {
-      setTeamData(null);
-    } finally {
-      if (!silent) setTeamLoading(false);
-    }
-  }, []);
+  const createMutation = useMutation({
+    mutationFn: (name: string) => createTeamFn({ data: { name } }),
+    onSuccess: () => {
+      trigger?.('success');
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      setCreateName('');
+      setCreateError(null);
+    },
+    onError: (err) => {
+      trigger?.('error');
+      setCreateError(t((err as Error).message));
+    },
+  });
 
-  useEffect(() => {
-    void refreshTeam();
-  }, [refreshTeam]);
+  const joinMutation = useMutation({
+    mutationFn: (slug: string) => joinTeamFn({ data: { slug } }),
+    onSuccess: () => {
+      trigger?.('success');
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      setJoinInput('');
+      setJoinError(null);
+    },
+    onError: (err) => {
+      trigger?.('error');
+      setJoinError(t((err as Error).message));
+    },
+  });
+
+  const kickMutation = useMutation({
+    mutationFn: (targetUserId: string) => kickMemberFn({ data: { targetUserId } }),
+    onSuccess: () => {
+      trigger?.('success');
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      setActionError(null);
+    },
+    onError: (err) => {
+      trigger?.('error');
+      setActionError((err as Error).message);
+    },
+  });
+
+  const leaveMutation = useMutation({
+    mutationFn: () => leaveTeamFn(),
+    onSuccess: () => {
+      trigger?.('success');
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      setActionError(null);
+    },
+    onError: (err) => {
+      trigger?.('error');
+      setActionError((err as Error).message);
+    },
+  });
+
+  const dissolveMutation = useMutation({
+    mutationFn: () => dissolveTeamFn(),
+    onSuccess: () => {
+      trigger?.('success');
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      setActionError(null);
+    },
+    onError: (err) => {
+      trigger?.('error');
+      setActionError((err as Error).message);
+    },
+  });
 
   function extractSlug(input: string): string {
     const trimmed = input.trim();
@@ -135,24 +189,13 @@ function Dashboard() {
     return trimmed.replace(/.*\/invite\//, '');
   }
 
-  async function handleCreate(e: React.FormEvent) {
+  function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setCreateError(null);
-    setCreateLoading(true);
-    try {
-      const result = await createTeamFn({ data: { name: createName } });
-      trigger?.('success');
-      setTeamData(result);
-      setCreateName('');
-    } catch (err) {
-      trigger?.('error');
-      setCreateError(t((err as Error).message));
-    } finally {
-      setCreateLoading(false);
-    }
+    createMutation.mutate(createName);
   }
 
-  async function handleJoin(e: React.FormEvent) {
+  function handleJoin(e: React.FormEvent) {
     e.preventDefault();
     setJoinError(null);
     const slug = extractSlug(joinInput);
@@ -161,63 +204,22 @@ function Dashboard() {
       setJoinError(t('dashboard.invalidInviteInput'));
       return;
     }
-    setJoinLoading(true);
-    try {
-      const result = await joinTeamFn({ data: { slug } });
-      trigger?.('success');
-      setTeamData(result);
-      setJoinInput('');
-    } catch (err) {
-      trigger?.('error');
-      setJoinError(t((err as Error).message));
-    } finally {
-      setJoinLoading(false);
-    }
+    joinMutation.mutate(slug);
   }
 
-  async function handleKick(targetUserId: string) {
+  function handleKick(targetUserId: string) {
     setActionError(null);
-    setActionLoading(targetUserId);
-    try {
-      await kickMemberFn({ data: { targetUserId } });
-      trigger?.('success');
-      await refreshTeam(true);
-    } catch (err) {
-      trigger?.('error');
-      setActionError((err as Error).message);
-    } finally {
-      setActionLoading(null);
-    }
+    kickMutation.mutate(targetUserId);
   }
 
-  async function handleLeave() {
+  function handleLeave() {
     setActionError(null);
-    setActionLoading('leave');
-    try {
-      await leaveTeamFn();
-      trigger?.('success');
-      setTeamData(null);
-    } catch (err) {
-      trigger?.('error');
-      setActionError((err as Error).message);
-    } finally {
-      setActionLoading(null);
-    }
+    leaveMutation.mutate();
   }
 
-  async function handleDissolve() {
+  function handleDissolve() {
     setActionError(null);
-    setActionLoading('dissolve');
-    try {
-      await dissolveTeamFn();
-      trigger?.('success');
-      setTeamData(null);
-    } catch (err) {
-      trigger?.('error');
-      setActionError((err as Error).message);
-    } finally {
-      setActionLoading(null);
-    }
+    dissolveMutation.mutate();
   }
 
   async function handleCopyLink() {
@@ -285,6 +287,15 @@ function Dashboard() {
       : `/invite/${teamData.inviteSlug}`
     : '';
 
+  const actionLoading =
+    kickMutation.isPending && kickMutation.variables
+      ? kickMutation.variables
+      : leaveMutation.isPending
+        ? 'leave'
+        : dissolveMutation.isPending
+          ? 'dissolve'
+          : null;
+
   return (
     <div className="min-h-screen bg-hacknu-dark">
       <BackgroundGrid />
@@ -299,26 +310,26 @@ function Dashboard() {
             <span className="text-hacknu-green">{participant.fullName}</span>
           </h1>
         </div>
-        <DashboardStats teamData={teamData} teamLoading={teamLoading} />
+        <DashboardStats teamData={teamData} teamLoading={false} />
         <ProfileCard session={session} participant={participant} />
         <TeamCard
           team={{
             data: teamData,
-            loading: teamLoading,
+            loading: false,
             isCaptain,
             inviteUrl,
           }}
           createForm={{
             name: createName,
             setName: setCreateName,
-            loading: createLoading,
+            loading: createMutation.isPending,
             error: createError,
             onSubmit: handleCreate,
           }}
           joinForm={{
             input: joinInput,
             setInput: setJoinInput,
-            loading: joinLoading,
+            loading: joinMutation.isPending,
             error: joinError,
             onSubmit: handleJoin,
           }}

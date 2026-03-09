@@ -19,27 +19,27 @@ export const Route = createFileRoute('/api/report')({
         const secret = appEnv.GAS_SECRET;
 
         if (!secret) {
-          return new Response(
-            JSON.stringify({ error: 'Report API not configured' }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } },
-          );
+          return new Response(JSON.stringify({ error: 'Report API not configured' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          });
         }
 
         let body: { secret?: string };
         try {
           body = (await request.json()) as { secret?: string };
         } catch {
-          return new Response(
-            JSON.stringify({ error: 'Invalid JSON body' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } },
-          );
+          return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
         }
 
         if (body.secret !== secret) {
-          return new Response(
-            JSON.stringify({ error: 'Unauthorized' }),
-            { status: 401, headers: { 'Content-Type': 'application/json' } },
-          );
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+          });
         }
 
         try {
@@ -50,10 +50,10 @@ export const Route = createFileRoute('/api/report')({
           });
         } catch (err) {
           console.error('[Report API]', err);
-          return new Response(
-            JSON.stringify({ error: 'Failed to fetch report data' }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } },
-          );
+          return new Response(JSON.stringify({ error: 'Failed to fetch report data' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          });
         }
       },
     },

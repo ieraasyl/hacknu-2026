@@ -1,7 +1,8 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { getSession } from '@/lib/auth.server';
@@ -65,20 +66,26 @@ function InviteResult() {
   const { trigger } = useWebHaptics(webHapticsOptions);
   const [status, setStatus] = useState<'joining' | 'error'>('joining');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const joinedRef = useRef(false);
+
+  const joinMutation = useMutation({
+    mutationFn: (s: string) => joinByInviteFn({ data: { slug: s } }),
+    onSuccess: () => {
+      trigger?.('success');
+      navigate({ to: '/dashboard' });
+    },
+    onError: (e: Error) => {
+      trigger?.('error');
+      setErrorMsg(e.message);
+      setStatus('error');
+    },
+  });
 
   useEffect(() => {
-    joinByInviteFn({ data: { slug } })
-      .then(() => {
-        trigger?.('success');
-        navigate({ to: '/dashboard' });
-      })
-      .catch((e: Error) => {
-        trigger?.('error');
-        setErrorMsg(e.message);
-        setStatus('error');
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (joinedRef.current) return;
+    joinedRef.current = true;
+    joinMutation.mutate(slug);
+  }, [slug, joinMutation]);
 
   if (status === 'joining') {
     return (

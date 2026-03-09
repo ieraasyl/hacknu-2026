@@ -127,12 +127,7 @@ function AlertDialogDescription({
 
 function AlertDialogAction({ className, ...props }: React.ComponentProps<typeof Button>) {
   return (
-    <Button
-      data-slot="alert-dialog-action"
-      haptic="medium"
-      className={cn(className)}
-      {...props}
-    />
+    <Button data-slot="alert-dialog-action" haptic="medium" className={cn(className)} {...props} />
   );
 }
 

@@ -28,6 +28,7 @@
     "@better-auth/drizzle-adapter": "^1.5.3",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@phosphor-icons/react": "^2.1.10",
+    "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-router": "^1.166.2",
     "@tanstack/react-router-ssr-query": "^1.166.2",
     "@tanstack/react-start": "^1.166.2",

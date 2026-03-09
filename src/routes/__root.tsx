@@ -1,4 +1,5 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router';
+import type { QueryClient } from '@tanstack/react-query';
+import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie } from '@tanstack/react-start/server';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
@@ -45,7 +46,9 @@ function NotFoundPage() {
   );
 }
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   notFoundComponent: NotFoundPage,
   beforeLoad: async () => {
     const locale = await getServerLocale();
