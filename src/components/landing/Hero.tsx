@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { SymbolBackground } from '@/components/ui/symbol-background';
 import type { Session } from '@/lib/types';
 
 export default function Hero({ session }: { session: Session | null }) {
@@ -8,6 +9,9 @@ export default function Hero({ session }: { session: Session | null }) {
 
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-hacknu-dark">
+      {/* Symbol background with hover color transition */}
+      <SymbolBackground />
+
       {/* Subtle grid background */}
       <div
         className="absolute inset-0 opacity-[0.03]"
