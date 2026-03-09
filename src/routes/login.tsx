@@ -215,14 +215,19 @@ function LoginPage() {
                   variant="outline"
                   disabled={googleLoading}
                   onClick={handleGoogleSignIn}
-                  className="mb-4 h-10 w-full border-hacknu-border bg-hacknu-dark text-hacknu-text hover:bg-hacknu-dark-card hover:border-hacknu-green/50"
+                  className="mb-4 h-10 w-full border-hacknu-border bg-hacknu-dark text-hacknu-text hover:border-hacknu-green/50 hover:bg-hacknu-dark-card"
                 >
-                  <img src="/images/google.svg" alt="" className="mr-2 h-5 w-5 shrink-0" aria-hidden />
+                  <img
+                    src="/images/google.svg"
+                    alt=""
+                    className="mr-2 h-5 w-5 shrink-0"
+                    aria-hidden
+                  />
                   {googleLoading ? t('login.redirecting') : t('login.signInWithGoogle')}
                 </Button>
                 <div className="relative my-4 flex items-center gap-2">
                   <Separator className="flex-1 bg-hacknu-border" />
-                  <span className="text-xs uppercase tracking-wider text-hacknu-text-muted">
+                  <span className="text-xs tracking-wider text-hacknu-text-muted uppercase">
                     {t('login.or')}
                   </span>
                   <Separator className="flex-1 bg-hacknu-border" />

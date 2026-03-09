@@ -80,7 +80,7 @@ export function ConfirmButton({
         className,
       )}
     >
-      {loading ? loadingLabel ?? '...' : showConfirm ? confirmLabel : label}
+      {loading ? (loadingLabel ?? '...') : showConfirm ? confirmLabel : label}
     </Button>
   );
 }

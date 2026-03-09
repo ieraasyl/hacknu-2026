@@ -62,9 +62,7 @@ export async function getReportData(): Promise<{
     teamName: p.team?.name ?? null,
     cvUrl: p.cvUrl,
     createdAt:
-      p.createdAt instanceof Date
-        ? p.createdAt.toISOString()
-        : new Date(p.createdAt).toISOString(),
+      p.createdAt instanceof Date ? p.createdAt.toISOString() : new Date(p.createdAt).toISOString(),
   }));
 
   const teamsRows = await db.query.team.findMany({

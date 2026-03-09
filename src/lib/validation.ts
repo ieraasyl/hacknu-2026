@@ -68,15 +68,8 @@ export const onboardingSchema = z.object({
     .min(1, { error: V.fullNameRequired })
     .max(100, { error: V.fullNameMax }),
   iin: z.string().regex(/^\d{12}$/, { error: V.iinInvalid }),
-  phone: z
-    .string()
-    .min(1, { error: V.phoneRequired })
-    .regex(phoneRegex, { error: V.phoneInvalid }),
-  city: z
-    .string()
-    .trim()
-    .min(1, { error: V.cityRequired })
-    .max(100, { error: V.cityMax }),
+  phone: z.string().min(1, { error: V.phoneRequired }).regex(phoneRegex, { error: V.phoneInvalid }),
+  city: z.string().trim().min(1, { error: V.cityRequired }).max(100, { error: V.cityMax }),
   placeOfStudy: z
     .string()
     .trim()
