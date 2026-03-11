@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Canvas, useThree, type CanvasProps, type ThreeEvent } from '@react-three/fiber';
 import { shaderMaterial, useTrailTexture } from '@react-three/drei';
 import * as THREE from 'three';
@@ -124,6 +124,7 @@ function Scene({
   const size = useThree((s) => s.size);
   const viewport = useThree((s) => s.viewport);
   const invalidate = useThree((s) => s.invalidate);
+  const lastMoveTime = useRef(0);
 
   const dotMaterial = useMemo(() => {
     const mat = new (DotMaterial as unknown as DotMaterialConstructor)();
@@ -155,9 +156,23 @@ function Scene({
   const scale = Math.max(viewport.width, viewport.height) / 2;
 
   const handleMove = (e: ThreeEvent<PointerEvent>) => {
+    lastMoveTime.current = Date.now();
     onMove(e);
     invalidate();
   };
+
+  const decayWindowMs = Math.max(maxAge * 3, 500);
+  useEffect(() => {
+    let rafId: number;
+    const tick = () => {
+      rafId = requestAnimationFrame(tick);
+      if (Date.now() - lastMoveTime.current < decayWindowMs) {
+        invalidate();
+      }
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [decayWindowMs, invalidate]);
 
   return (
     <mesh scale={[scale, scale, 1]} onPointerMove={handleMove}>
