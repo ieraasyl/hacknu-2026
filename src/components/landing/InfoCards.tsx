@@ -37,12 +37,7 @@ export default function InfoCards() {
               {/* Label */}
               <div className="md:w-1/4">
                 <span className="text-sm tracking-[0.2em] text-hacknu-text-muted uppercase md:text-base">
-                  <DecryptedText
-                    text={`# ${card.label}`}
-                    animateOn="view"
-                    sequential
-                    encryptedClassName="text-hacknu-purple/60"
-                  />
+                  # {card.label}
                 </span>
               </div>
 
@@ -57,14 +52,7 @@ export default function InfoCards() {
                   />
                 </h2>
                 {card.detail && (
-                  <p className="mt-2 text-sm text-hacknu-text-muted md:text-base">
-                    <DecryptedText
-                      text={card.detail}
-                      animateOn="view"
-                      sequential
-                      encryptedClassName="text-hacknu-purple/60"
-                    />
-                  </p>
+                  <p className="mt-2 text-sm text-hacknu-text-muted md:text-base">{card.detail}</p>
                 )}
                 {card.action && (
                   <Button
@@ -72,12 +60,7 @@ export default function InfoCards() {
                     className="mt-4 h-auto p-0 tracking-wider text-hacknu-purple uppercase hover:text-hacknu-green"
                     render={<a href={card.action.href} target="_blank" rel="noopener noreferrer" />}
                   >
-                    <DecryptedText
-                      text={card.action.text}
-                      animateOn="view"
-                      sequential
-                      encryptedClassName="text-hacknu-purple/60"
-                    />
+                    {card.action.text}
                   </Button>
                 )}
               </div>

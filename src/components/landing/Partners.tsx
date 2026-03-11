@@ -21,14 +21,7 @@ export default function Partners() {
     <section id="partners" className="border-t border-hacknu-border bg-hacknu-dark py-20 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <p className="terminal-header mb-4">
-          <DecryptedText
-            text={t('partners.header')}
-            animateOn="view"
-            sequential
-            encryptedClassName="text-hacknu-purple/60"
-          />
-        </p>
+        <p className="terminal-header mb-4">{t('partners.header')}</p>
         <h2 className="mb-12 text-3xl font-bold text-hacknu-text md:mb-16 md:text-5xl">
           <DecryptedText
             text={t('partners.title')}

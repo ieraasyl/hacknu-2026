@@ -37,14 +37,7 @@ function FAQItemComponent({ questionKey, answerKey }: { questionKey: string; ans
       {isOpen && (
         <div className="px-4 pb-5">
           <p className="border-l-2 border-hacknu-green/20 pl-4 text-sm leading-relaxed text-hacknu-text-muted">
-            <DecryptedText
-              text={t(answerKey)}
-              animateOn="view"
-              sequential
-              revealDirection="start"
-              speed={28}
-              encryptedClassName="text-hacknu-purple/60"
-            />
+            {t(answerKey)}
           </p>
         </div>
       )}
@@ -59,14 +52,7 @@ export default function FAQ() {
     <section id="faq" className="bg-hacknu-dark py-20 md:py-32">
       <div className="mx-auto max-w-4xl px-6">
         {/* Section Header */}
-        <p className="terminal-header mb-4">
-          <DecryptedText
-            text={t('faq.header')}
-            animateOn="view"
-            sequential
-            encryptedClassName="text-hacknu-purple/60"
-          />
-        </p>
+        <p className="terminal-header mb-4">{t('faq.header')}</p>
         <h2 className="mb-12 text-3xl font-bold text-hacknu-text md:mb-16 md:text-5xl">
           <DecryptedText
             text={t('faq.title')}
@@ -83,13 +69,7 @@ export default function FAQ() {
               {/* Category Header */}
               <div className="mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs tracking-wider text-hacknu-purple uppercase md:text-sm">
-                  #{' '}
-                  <DecryptedText
-                    text={t(`faq.${category.catKey}`)}
-                    animateOn="view"
-                    sequential
-                    encryptedClassName="text-hacknu-purple/60"
-                  />
+                  # {t(`faq.${category.catKey}`)}
                 </span>
                 <Separator className="flex-1 bg-hacknu-border" />
               </div>
