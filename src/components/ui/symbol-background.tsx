@@ -6,13 +6,16 @@ const ROWS = 30;
 const GREEN = '#58E191';
 const PURPLE = '#E256FF';
 
+/** Deterministic "random" from index for purity (no Math.random in render). */
+function cellForIndex(i: number): { char: string; initialColor: 'green' | 'purple' } {
+  return {
+    char: SYMBOLS[(i * 7 + 13) % SYMBOLS.length] ?? SYMBOLS[0],
+    initialColor: ((i * 11) % 2 === 0 ? 'green' : 'purple') as 'green' | 'purple',
+  };
+}
+
 export function SymbolBackground() {
-  const symbols = useMemo(() => {
-    return Array.from({ length: COLS * ROWS }, () => ({
-      char: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-      initialColor: (Math.random() > 0.5 ? 'green' : 'purple') as 'green' | 'purple',
-    }));
-  }, []);
+  const symbols = useMemo(() => Array.from({ length: COLS * ROWS }, (_, i) => cellForIndex(i)), []);
 
   return (
     <div className="symbol-bg absolute inset-0 size-full overflow-hidden" aria-hidden>

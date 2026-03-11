@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
+import DecryptedText from '@/components/landing/DecryptedText';
 
 export default function About() {
   const { t } = useTranslation();
@@ -22,7 +23,14 @@ export default function About() {
     <section id="about" className="bg-hacknu-dark py-20 md:py-32">
       {/* Section Header */}
       <div className="mx-auto max-w-7xl px-6">
-        <p className="terminal-header mb-12 md:mb-16">{t('about.header')}</p>
+        <p className="terminal-header mb-12 md:mb-16">
+          <DecryptedText
+            text={t('about.header')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
+        </p>
 
         {/* Highlights Grid */}
         <div className="mb-20 grid grid-cols-1 gap-8 md:mb-32 md:grid-cols-3">
@@ -33,11 +41,30 @@ export default function About() {
             >
               <CardContent className="p-8">
                 <div className="gradient-text mb-2 text-5xl leading-none font-black md:text-7xl">
-                  {item.number}
+                  <DecryptedText
+                    text={item.number}
+                    animateOn="view"
+                    sequential
+                    encryptedClassName="text-hacknu-purple/60"
+                  />
                 </div>
-                {item.unit && <div className="text-lg text-hacknu-text-muted">{item.unit}</div>}
+                {item.unit && (
+                  <div className="text-lg text-hacknu-text-muted">
+                    <DecryptedText
+                      text={item.unit}
+                      animateOn="view"
+                      sequential
+                      encryptedClassName="text-hacknu-purple/60"
+                    />
+                  </div>
+                )}
                 <div className="mt-2 text-xl font-light text-hacknu-text transition-colors group-hover:text-hacknu-green md:text-2xl">
-                  {item.text}
+                  <DecryptedText
+                    text={item.text}
+                    animateOn="view"
+                    sequential
+                    encryptedClassName="text-hacknu-purple/60"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -54,14 +81,44 @@ export default function About() {
           <div className="relative z-10 grid grid-cols-1 items-start gap-12 md:gap-20 lg:grid-cols-2">
             <div>
               <h3 className="mb-6 text-3xl leading-tight font-bold text-hacknu-text md:text-5xl">
-                {t('about.title')}
+                <DecryptedText
+                  text={t('about.title')}
+                  animateOn="view"
+                  sequential
+                  encryptedClassName="text-hacknu-purple/60"
+                />
                 <br />
-                <span className="gradient-text-green">{t('about.titleHighlight')}</span>
+                <span className="gradient-text-green">
+                  <DecryptedText
+                    text={t('about.titleHighlight')}
+                    animateOn="view"
+                    sequential
+                    encryptedClassName="text-hacknu-purple/60"
+                  />
+                </span>
               </h3>
             </div>
             <div className="space-y-6">
-              <p className="leading-relaxed text-hacknu-text-muted">{t('about.para1')}</p>
-              <p className="leading-relaxed text-hacknu-text-muted">{t('about.para2')}</p>
+              <p className="leading-relaxed text-hacknu-text-muted">
+                <DecryptedText
+                  text={t('about.para1')}
+                  animateOn="view"
+                  sequential
+                  revealDirection="start"
+                  speed={28}
+                  encryptedClassName="text-hacknu-purple/60"
+                />
+              </p>
+              <p className="leading-relaxed text-hacknu-text-muted">
+                <DecryptedText
+                  text={t('about.para2')}
+                  animateOn="view"
+                  sequential
+                  revealDirection="start"
+                  speed={28}
+                  encryptedClassName="text-hacknu-purple/60"
+                />
+              </p>
             </div>
           </div>
         </div>

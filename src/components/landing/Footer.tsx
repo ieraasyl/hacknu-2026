@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import type { Session } from '@/lib/types';
+import DecryptedText from '@/components/landing/DecryptedText';
 
 export default function Footer({ session }: { session: Session | null }) {
   const { t } = useTranslation();
@@ -12,7 +13,12 @@ export default function Footer({ session }: { session: Session | null }) {
       {/* Register / Dashboard CTA Section */}
       <div className="mx-auto max-w-7xl px-6 py-16 text-center md:py-24">
         <p className="mb-4 text-sm tracking-widest text-hacknu-text-muted uppercase">
-          {t('footer.readyToHack')}
+          <DecryptedText
+            text={t('footer.readyToHack')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
         </p>
         <Button
           variant="link"
@@ -20,7 +26,13 @@ export default function Footer({ session }: { session: Session | null }) {
           className="h-auto p-0 font-mono text-2xl font-bold tracking-wider text-hacknu-green hover:text-white md:text-4xl"
           render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
         >
-          {'>'} {isLoggedIn ? t('footer.ctaDashboard') : t('footer.ctaRegister')}
+          {'> '}
+          <DecryptedText
+            text={isLoggedIn ? t('footer.ctaDashboard') : t('footer.ctaRegister')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
           <span
             className="ml-1 inline-block h-7 w-4 bg-hacknu-green align-middle"
             style={{ animation: 'blink 1s step-end infinite' }}
@@ -36,7 +48,14 @@ export default function Footer({ session }: { session: Session | null }) {
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-hacknu-green">HackNU</span>
           <span className="text-sm font-bold text-hacknu-purple">/26</span>
-          <span className="ml-2 text-xs text-hacknu-text-muted">{t('footer.copyright')}</span>
+          <span className="ml-2 text-xs text-hacknu-text-muted">
+            <DecryptedText
+              text={t('footer.copyright')}
+              animateOn="view"
+              sequential
+              encryptedClassName="text-hacknu-purple/60"
+            />
+          </span>
         </div>
 
         {/* Right: Social Links */}
@@ -53,7 +72,12 @@ export default function Footer({ session }: { session: Session | null }) {
               />
             }
           >
-            {t('footer.instagram')}
+            <DecryptedText
+              text={t('footer.instagram')}
+              animateOn="view"
+              sequential
+              encryptedClassName="text-hacknu-purple/60"
+            />
           </Button>
           <Button
             variant="ghost"
@@ -67,7 +91,12 @@ export default function Footer({ session }: { session: Session | null }) {
               />
             }
           >
-            {t('footer.linkedin')}
+            <DecryptedText
+              text={t('footer.linkedin')}
+              animateOn="view"
+              sequential
+              encryptedClassName="text-hacknu-purple/60"
+            />
           </Button>
           <Button
             variant="ghost"
@@ -81,7 +110,12 @@ export default function Footer({ session }: { session: Session | null }) {
               />
             }
           >
-            {t('footer.youtube')}
+            <DecryptedText
+              text={t('footer.youtube')}
+              animateOn="view"
+              sequential
+              encryptedClassName="text-hacknu-purple/60"
+            />
           </Button>
           <Button
             variant="ghost"
@@ -95,7 +129,12 @@ export default function Footer({ session }: { session: Session | null }) {
               />
             }
           >
-            {t('footer.email')}
+            <DecryptedText
+              text={t('footer.email')}
+              animateOn="view"
+              sequential
+              encryptedClassName="text-hacknu-purple/60"
+            />
           </Button>
         </div>
       </div>
@@ -105,7 +144,12 @@ export default function Footer({ session }: { session: Session | null }) {
       {/* Credits */}
       <div className="mx-auto max-w-7xl px-6 py-4 text-center">
         <p className="text-[10px] tracking-wider text-hacknu-text-muted/50">
-          {t('footer.credits')}
+          <DecryptedText
+            text={t('footer.credits')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
         </p>
       </div>
     </footer>

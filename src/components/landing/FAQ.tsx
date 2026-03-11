@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import DecryptedText from '@/components/landing/DecryptedText';
 
 const FAQ_KEYS = [
   { catKey: 'general', items: ['q1', 'q2', 'q3'] },
@@ -22,7 +23,12 @@ function FAQItemComponent({ questionKey, answerKey }: { questionKey: string; ans
         className="group flex h-auto w-full items-start justify-between px-4 py-5 text-left hover:bg-white/2"
       >
         <span className="pr-4 text-sm text-wrap text-hacknu-text transition-colors group-hover:text-hacknu-green md:text-base">
-          {t(questionKey)}
+          <DecryptedText
+            text={t(questionKey)}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
         </span>
         <span className="mt-0.5 shrink-0 font-mono text-sm text-hacknu-green">
           [{isOpen ? '−' : '+'}]
@@ -31,7 +37,14 @@ function FAQItemComponent({ questionKey, answerKey }: { questionKey: string; ans
       {isOpen && (
         <div className="px-4 pb-5">
           <p className="border-l-2 border-hacknu-green/20 pl-0 text-sm leading-relaxed text-hacknu-text-muted md:ml-0 md:pl-4">
-            {t(answerKey)}
+            <DecryptedText
+              text={t(answerKey)}
+              animateOn="view"
+              sequential
+              revealDirection="start"
+              speed={28}
+              encryptedClassName="text-hacknu-purple/60"
+            />
           </p>
         </div>
       )}
@@ -46,9 +59,21 @@ export default function FAQ() {
     <section id="faq" className="bg-hacknu-dark py-20 md:py-32">
       <div className="mx-auto max-w-4xl px-6">
         {/* Section Header */}
-        <p className="terminal-header mb-4">{t('faq.header')}</p>
+        <p className="terminal-header mb-4">
+          <DecryptedText
+            text={t('faq.header')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
+        </p>
         <h2 className="mb-12 text-3xl font-bold text-hacknu-text md:mb-16 md:text-5xl">
-          {t('faq.title')}
+          <DecryptedText
+            text={t('faq.title')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
         </h2>
 
         {/* FAQ Categories */}
@@ -58,7 +83,13 @@ export default function FAQ() {
               {/* Category Header */}
               <div className="mb-4 flex items-center gap-3">
                 <span className="font-mono text-xs tracking-wider text-hacknu-purple uppercase md:text-sm">
-                  # {t(`faq.${category.catKey}`)}
+                  #{' '}
+                  <DecryptedText
+                    text={t(`faq.${category.catKey}`)}
+                    animateOn="view"
+                    sequential
+                    encryptedClassName="text-hacknu-purple/60"
+                  />
                 </span>
                 <Separator className="flex-1 bg-hacknu-border" />
               </div>

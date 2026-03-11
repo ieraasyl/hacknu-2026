@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { Card, CardContent } from '@/components/ui/card';
 import { webHapticsOptions } from '@/lib/web-haptics';
+import DecryptedText from '@/components/landing/DecryptedText';
 
 export default function Partners() {
   const { t } = useTranslation();
@@ -20,9 +21,21 @@ export default function Partners() {
     <section id="partners" className="border-t border-hacknu-border bg-hacknu-dark py-20 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <p className="terminal-header mb-4">{t('partners.header')}</p>
+        <p className="terminal-header mb-4">
+          <DecryptedText
+            text={t('partners.header')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
+        </p>
         <h2 className="mb-12 text-3xl font-bold text-hacknu-text md:mb-16 md:text-5xl">
-          {t('partners.title')}
+          <DecryptedText
+            text={t('partners.title')}
+            animateOn="view"
+            sequential
+            encryptedClassName="text-hacknu-purple/60"
+          />
         </h2>
 
         {/* Partner Logos Grid */}
@@ -57,7 +70,12 @@ export default function Partners() {
                   +
                 </span>
                 <span className="text-center text-xs tracking-wider text-hacknu-text-muted uppercase transition-colors group-hover:text-hacknu-purple">
-                  {t('partners.becomePartner')}
+                  <DecryptedText
+                    text={t('partners.becomePartner')}
+                    animateOn="view"
+                    sequential
+                    encryptedClassName="text-hacknu-purple/60"
+                  />
                 </span>
               </a>
             </CardContent>
