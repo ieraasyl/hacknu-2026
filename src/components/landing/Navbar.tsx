@@ -19,7 +19,7 @@ export default function Navbar({ session }: { session: Session | null }) {
   };
 
   return (
-    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-hacknu-border bg-hacknu-dark/90 backdrop-blur-md">
+    <nav className="relative z-50 border-b border-hacknu-border bg-hacknu-dark">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <a href="/" className="group flex items-center gap-2">
