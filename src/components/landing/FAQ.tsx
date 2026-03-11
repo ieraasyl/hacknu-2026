@@ -36,7 +36,7 @@ function FAQItemComponent({ questionKey, answerKey }: { questionKey: string; ans
       </Button>
       {isOpen && (
         <div className="px-4 pb-5">
-          <p className="border-l-2 border-hacknu-green/20 pl-0 text-sm leading-relaxed text-hacknu-text-muted md:ml-0 md:pl-4">
+          <p className="border-l-2 border-hacknu-green/20 pl-4 text-sm leading-relaxed text-hacknu-text-muted">
             <DecryptedText
               text={t(answerKey)}
               animateOn="view"
