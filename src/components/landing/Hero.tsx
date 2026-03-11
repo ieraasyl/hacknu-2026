@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { SymbolBackground } from '@/components/ui/symbol-background';
+import LetterGlitch from '@/components/ui/letter-glitch';
 import type { Session } from '@/lib/types';
 
 export default function Hero({ session }: { session: Session | null }) {
@@ -8,31 +8,39 @@ export default function Hero({ session }: { session: Session | null }) {
   const isLoggedIn = !!session?.user;
 
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-hacknu-dark">
-      {/* Symbol background with hover color transition */}
-      <SymbolBackground />
+    <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center overflow-hidden bg-hacknu-dark">
+      {/* LetterGlitch matrix-style background (matches Figma design) */}
+      <div className="absolute inset-0">
+        <LetterGlitch
+          glitchColors={['#58e191', '#e256ff']}
+          glitchSpeed={30}
+          centerVignette
+          outerVignette={false}
+          smooth
+        />
+      </div>
 
-      {/* Subtle grid background */}
+      {/* Dark overlay for text contrast - stronger in center */}
+      <div className="pointer-events-none absolute inset-0 bg-hacknu-dark/50" aria-hidden />
       <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(88,225,145,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(88,225,145,0.5) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-        }}
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(10,10,10,0.6),transparent)]"
+        aria-hidden
       />
-
-      {/* Gradient orbs */}
-      <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-hacknu-green/5 blur-[120px]" />
-      <div className="absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full bg-hacknu-purple/5 blur-[120px]" />
 
       <div className="relative z-10 px-6 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
         {/* Terminal prefix */}
-        <p className="mb-4 text-sm tracking-widest text-hacknu-text-muted uppercase md:text-base">
+        <p
+          className="mb-4 text-sm tracking-widest text-hacknu-text-muted uppercase md:text-base"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.8)' }}
+        >
           {t('hero.terminalPrefix')}
         </p>
 
         {/* Main Title */}
-        <h1 className="text-7xl leading-none font-black tracking-tighter select-none sm:text-8xl md:text-[10rem] lg:text-[14rem]">
+        <h1
+          className="text-7xl leading-none font-black tracking-tighter select-none sm:text-8xl md:text-[10rem] lg:text-[14rem]"
+          style={{ textShadow: '0 0 40px rgba(0,0,0,0.9), 0 0 80px rgba(0,0,0,0.6)' }}
+        >
           <span
             className="text-hacknu-green"
             style={{ animation: 'glowPulse 3s ease-in-out infinite' }}
@@ -49,7 +57,10 @@ export default function Hero({ session }: { session: Session | null }) {
         </h1>
 
         {/* Subtitle */}
-        <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-hacknu-text-muted md:mt-8 md:text-lg">
+        <p
+          className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-hacknu-text-muted md:mt-8 md:text-lg"
+          style={{ textShadow: '0 0 24px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.9)' }}
+        >
           {t('hero.subtitle')}
           <br />
           {t('hero.subtitleOrg')}{' '}
@@ -57,7 +68,10 @@ export default function Hero({ session }: { session: Session | null }) {
         </p>
 
         {/* Register / Dashboard CTA */}
-        <div className="mt-10 md:mt-14">
+        <div
+          className="mt-10 md:mt-14"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.8)' }}
+        >
           <Button
             variant="link"
             haptic="light"
