@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
@@ -8,6 +9,7 @@ import About from '@/components/landing/About';
 import FAQ from '@/components/landing/FAQ';
 import Partners from '@/components/landing/Partners';
 import Footer from '@/components/landing/Footer';
+import PixelTrail from '@/components/landing/PixelTrail';
 import { getSession } from '@/lib/auth.server';
 
 const getSessionFn = createServerFn({ method: 'GET' }).handler(async () => {
@@ -22,16 +24,32 @@ export const Route = createFileRoute('/')({
 
 function LandingPage() {
   const session = Route.useLoaderData();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="min-h-screen bg-hacknu-dark">
-      <Navbar session={session} />
-      <Hero session={session} />
-      <InfoCards />
-      <About />
-      <FAQ />
-      <Partners />
-      <Footer session={session} />
-    </div>
+    <>
+      <div ref={containerRef} className="relative min-h-screen bg-hacknu-dark">
+        <div className="pointer-events-none fixed inset-0 z-50 hidden md:block">
+          <PixelTrail
+            gridSize={70}
+            trailSize={0.05}
+            maxAge={150}
+            interpolate={3}
+            color="#e257ff"
+            gooeyEnabled={false}
+            eventSource={containerRef}
+            eventPrefix="client"
+          />
+        </div>
+
+        <Navbar session={session} />
+        <Hero session={session} />
+        <InfoCards />
+        <About />
+        <FAQ />
+        <Partners />
+        <Footer session={session} />
+      </div>
+    </>
   );
 }

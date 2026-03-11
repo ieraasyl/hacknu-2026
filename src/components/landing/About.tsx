@@ -44,18 +44,25 @@ export default function About() {
           ))}
         </div>
 
-        {/* About Text */}
-        <div className="mb-20 grid grid-cols-1 items-start gap-12 md:gap-20 lg:grid-cols-2">
-          <div>
-            <h3 className="mb-6 text-3xl leading-tight font-bold text-hacknu-text md:text-5xl">
-              {t('about.title')}
-              <br />
-              <span className="gradient-text-green">{t('about.titleHighlight')}</span>
-            </h3>
-          </div>
-          <div className="space-y-6">
-            <p className="leading-relaxed text-hacknu-text-muted">{t('about.para1')}</p>
-            <p className="leading-relaxed text-hacknu-text-muted">{t('about.para2')}</p>
+        <div className="relative -mt-24 mb-20 min-h-[560px] overflow-hidden pt-24 md:min-h-[400px]">
+          <img
+            src="/images/aboutBG.svg"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 hidden h-full w-full object-contain object-top opacity-60 md:block"
+          />
+          <div className="relative z-10 grid grid-cols-1 items-start gap-12 md:gap-20 lg:grid-cols-2">
+            <div>
+              <h3 className="mb-6 text-3xl leading-tight font-bold text-hacknu-text md:text-5xl">
+                {t('about.title')}
+                <br />
+                <span className="gradient-text-green">{t('about.titleHighlight')}</span>
+              </h3>
+            </div>
+            <div className="space-y-6">
+              <p className="leading-relaxed text-hacknu-text-muted">{t('about.para1')}</p>
+              <p className="leading-relaxed text-hacknu-text-muted">{t('about.para2')}</p>
+            </div>
           </div>
         </div>
 
@@ -63,11 +70,16 @@ export default function About() {
         <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
           {photos.map((photo, index) => (
             <div key={index} className="group relative aspect-4/3 overflow-hidden">
+              <div className="absolute inset-0 animate-pulse bg-hacknu-border/40" />
               <img
                 src={photo}
                 alt={t('about.photoAlt', { index: index + 1 })}
-                className="h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-100"
+                className="relative h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 [&.loaded]:opacity-70"
                 loading="lazy"
+                onLoad={(e) => e.currentTarget.classList.add('loaded')}
+                ref={(img) => {
+                  if (img?.complete) img.classList.add('loaded');
+                }}
               />
               <div className="absolute inset-0 bg-hacknu-green/5 transition-all duration-500 group-hover:bg-transparent" />
             </div>
