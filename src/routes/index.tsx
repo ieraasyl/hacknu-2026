@@ -46,7 +46,7 @@ function LandingPage() {
         <Hero session={session} />
         <InfoCards />
         <About />
-        <FAQ />
+        <FAQ session={session} />
         <Partners />
         <Footer session={session} />
       </div>

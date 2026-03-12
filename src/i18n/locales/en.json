@@ -216,6 +216,75 @@
     "Self-taught": "Self-taught",
     "Other": "Other"
   },
+  "nervOverlay": {
+    "header": "NERV HQ — ASTANA",
+    "esc": "[ESC]",
+    "closeHint": "[ CLICK ANYWHERE TO DISMISS ]",
+    "readyMessage": "■ ■ ■ ALL SYSTEMS NOMINAL. GOOD LUCK, PILOT. ■ ■ ■",
+    "lines": {
+      "unknown": {
+        "0": "MAGI SYSTEM v3.0 — AUTHORIZED ACCESS ONLY",
+        "1": "─────────────────────────────────────────",
+        "2": "RUNNING PILOT IDENTIFICATION SCAN...",
+        "3": "CASPAR  ......  NO MATCH",
+        "4": "BALTHASAR  ...  NO MATCH",
+        "5": "MELCHIOR  ....  NO MATCH",
+        "6": "─────────────────────────────────────────",
+        "7": "PILOT IDENTITY:  UNKNOWN",
+        "8": "SYNCHRONIZATION RATIO:  ---",
+        "9": "CLEARANCE LEVEL:  NONE",
+        "10": "─────────────────────────────────────────",
+        "11": "YOU CANNOT PILOT WITHOUT IDENTITY."
+      },
+      "unregistered": {
+        "0": "MAGI SYSTEM v3.0 — AUTHORIZED ACCESS ONLY",
+        "1": "─────────────────────────────────────────",
+        "2": "RUNNING PILOT IDENTIFICATION SCAN...",
+        "3": "CASPAR  ......  IDENTITY CONFIRMED",
+        "4": "BALTHASAR  ...  PROFILE INCOMPLETE",
+        "5": "MELCHIOR  ....  PROFILE INCOMPLETE",
+        "6": "─────────────────────────────────────────",
+        "7": "PILOT STATUS:  IDENTITY KNOWN",
+        "8": "REGISTRATION:  PENDING",
+        "9": "SYNCHRONIZATION RATIO:  0%",
+        "10": "─────────────────────────────────────────",
+        "11": "COMPLETE YOUR REGISTRATION TO PROCEED."
+      },
+      "noteam": {
+        "0": "MAGI SYSTEM v3.0 — AUTHORIZED ACCESS ONLY",
+        "1": "─────────────────────────────────────────",
+        "2": "RUNNING PILOT IDENTIFICATION SCAN...",
+        "3": "CASPAR  ......  CONFIRMED",
+        "4": "BALTHASAR  ...  CONFIRMED",
+        "5": "MELCHIOR  ....  UNIT UNASSIGNED",
+        "6": "─────────────────────────────────────────",
+        "7": "PILOT STATUS:  REGISTERED",
+        "8": "UNIT ASSIGNMENT:  NONE",
+        "9": "SYNCHRONIZATION RATIO:  33%",
+        "10": "─────────────────────────────────────────",
+        "11": "YOU CANNOT FIGHT ALONE. FIND YOUR UNIT."
+      },
+      "ready": {
+        "0": "MAGI SYSTEM v3.0 — AUTHORIZED ACCESS ONLY",
+        "1": "─────────────────────────────────────────",
+        "2": "RUNNING PILOT IDENTIFICATION SCAN...",
+        "3": "CASPAR  ......  CONFIRMED",
+        "4": "BALTHASAR  ...  CONFIRMED",
+        "5": "MELCHIOR  ....  CONFIRMED",
+        "6": "─────────────────────────────────────────",
+        "7": "PILOT STATUS:  REGISTERED",
+        "8": "UNIT ASSIGNMENT:  ACTIVE",
+        "9": "SYNCHRONIZATION RATIO:  100%",
+        "10": "─────────────────────────────────────────",
+        "11": "ALL SYSTEMS NOMINAL. GOOD LUCK, PILOT."
+      }
+    },
+    "cta": {
+      "unknown": "[ ESTABLISH IDENTITY ]",
+      "unregistered": "[ INITIATE SYNC ]",
+      "noteam": "[ FIND YOUR UNIT ]"
+    }
+  },
   "validation": {
     "emailRequired": "Email is required",
     "invalidEmail": "Enter a valid email address",

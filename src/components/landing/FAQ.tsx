@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import DecryptedText from '@/components/landing/DecryptedText';
 import ModelViewer from '@/components/landing/ModelViewer';
+import { NERVOverlay } from '@/components/landing/NERVOverlay';
+import { getPilotState, type PilotState } from '@/lib/pilot-state.functions';
+import type { Session } from '@/lib/types';
 
-function FloatingModel() {
+function FloatingModel({ onModelClick }: { onModelClick: () => void }) {
   return (
     <div className="fixed right-6 bottom-6 z-40 hidden md:block">
       <ModelViewer
@@ -32,6 +35,7 @@ function FloatingModel() {
         autoRotateSpeed={0.35}
         fadeIn={false}
         showScreenshotButton={false}
+        onModelClick={onModelClick}
       />
     </div>
   );
@@ -78,12 +82,39 @@ function FAQItemComponent({ questionKey, answerKey }: { questionKey: string; ans
   );
 }
 
-export default function FAQ() {
+export default function FAQ({ session }: { session: Session | null }) {
   const { t } = useTranslation();
+
+  const [overlayState, setOverlayState] = useState<PilotState | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleClose = useCallback(() => setOverlayState(null), []);
+  const handleModelClick = useCallback(async () => {
+    if (loading) return;
+
+    // Short-circuit: no session means state is known without hitting the server
+    if (!session?.user) {
+      setOverlayState('unknown');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const state = await getPilotState();
+      setOverlayState(state);
+    } catch {
+      setOverlayState('unknown');
+    } finally {
+      setLoading(false);
+    }
+  }, [session, loading]);
 
   return (
     <section id="faq" className="relative bg-hacknu-dark py-20 md:py-32">
-      <FloatingModel />
+      <FloatingModel onModelClick={handleModelClick} />
+      {overlayState !== null && (
+        <NERVOverlay state={overlayState} onClose={handleClose} />
+      )}
       <div className="mx-auto max-w-4xl px-6">
         {/* Section Header */}
         <p className="terminal-header mb-4">{t('faq.header')}</p>

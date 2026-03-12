@@ -48,6 +48,7 @@ export interface ViewerProps {
   autoRotate?: boolean;
   autoRotateSpeed?: number;
   onModelLoaded?: () => void;
+  onModelClick?: () => void;
 }
 
 const isTouch =
@@ -452,6 +453,7 @@ const ModelViewer: FC<ViewerProps> = ({
   autoRotate = false,
   autoRotateSpeed = 0.35,
   onModelLoaded,
+  onModelClick,
 }) => {
   useEffect(() => void useGLTF.preload(url), [url]);
   const pivot = useMemo(() => new THREE.Vector3(), []);
@@ -492,7 +494,27 @@ const ModelViewer: FC<ViewerProps> = ({
   };
 
   return (
-    <div style={{ width, height, touchAction: 'pan-y pinch-zoom' }} className="relative">
+    <div
+      style={{ width, height, touchAction: 'pan-y pinch-zoom' }}
+      className="relative"
+      onPointerDown={(e) => {
+        (e.currentTarget as HTMLDivElement & { _pd?: { x: number; y: number } })._pd = {
+          x: e.clientX,
+          y: e.clientY,
+        };
+      }}
+      onPointerUp={(e) => {
+        const el = e.currentTarget as HTMLDivElement & { _pd?: { x: number; y: number } };
+        const start = el._pd;
+        if (!start) return;
+        const dx = e.clientX - start.x;
+        const dy = e.clientY - start.y;
+        if (Math.hypot(dx, dy) < 6) {
+          onModelClick?.();
+        }
+        el._pd = undefined;
+      }}
+    >
       {showScreenshotButton && (
         <button
           onClick={capture}
