@@ -3,20 +3,37 @@ import { Card, CardContent } from '@/components/ui/card';
 import DecryptedText from '@/components/landing/DecryptedText';
 import CircularGallery from '@/components/landing/CircularGallery';
 
-const GALLERY_ITEMS = [
-  { image: '/images/aboutGallery/DSCF2203 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSC_2033 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSCF1530 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSCF1524 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSCF1946 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSCF1666 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSC_2142 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSCF1638 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSC_2087 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSC_2119 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSC_2091 1.png', text: 'HackNU' },
-  { image: '/images/aboutGallery/DSC_2143 1.png', text: 'HackNU' },
+const GALLERY_ORDER = [
+  'DSCF2203 1.png',
+  'DSC_2033 1.png',
+  'DSCF1530 1.png',
+  'DSCF1524 1.png',
+  'DSCF1946 1.png',
+  'DSCF1666 1.png',
+  'DSC_2142 1.png',
+  'DSCF1638 1.png',
+  'DSC_2087 1.png',
+  'DSC_2119 1.png',
+  'DSC_2091 1.png',
+  'DSC_2143 1.png',
 ];
+
+const galleryModules = import.meta.glob<string>(
+  '../../assets/images/aboutGallery/*.png',
+  {
+    eager: true,
+    query: { w: '900', format: 'webp', quality: '80' },
+    import: 'default',
+  }
+);
+
+const GALLERY_ITEMS = Object.entries(galleryModules)
+  .sort(([a], [b]) => {
+    const nameA = a.split(/[/\\]/).pop() ?? '';
+    const nameB = b.split(/[/\\]/).pop() ?? '';
+    return GALLERY_ORDER.indexOf(nameA) - GALLERY_ORDER.indexOf(nameB);
+  })
+  .map(([, src]) => ({ image: src, text: 'HackNU' }));
 
 export default function About() {
   const { t } = useTranslation();
