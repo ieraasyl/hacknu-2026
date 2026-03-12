@@ -31,10 +31,10 @@ function LandingPage() {
       <div ref={containerRef} className="relative min-h-screen bg-hacknu-dark">
         <div className="pointer-events-none fixed inset-0 z-50 hidden md:block">
           <PixelTrail
-            gridSize={70}
-            trailSize={0.05}
+            gridSize={100}
+            trailSize={0.03}
             maxAge={150}
-            interpolate={3}
+            interpolate={1.5}
             color="#57ffb6"
             gooeyEnabled={false}
             eventSource={containerRef}
