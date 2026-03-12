@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { ConfirmButton } from '@/components/ui/confirm-button';
 import { CardTitle, CardDescription } from '@/components/ui/card';
 import { CvDropzone } from '@/components/ui/cv-dropzone';
 import { Input } from '@/components/ui/input';
@@ -257,14 +258,14 @@ export default function OnboardingForm({
       <p className="text-center text-xs text-hacknu-text-muted">{t('onboarding.updateLater')}</p>
 
       <div className="mt-3 text-center">
-        <Button
+        <ConfirmButton
+          label={t('onboarding.signOutDifferent')}
+          confirmLabel={t('dashboard.confirmAction')}
+          onConfirm={onSignOut}
           variant="link"
           size="xs"
           className="text-hacknu-text-muted/60 hover:text-red-400"
-          onClick={onSignOut}
-        >
-          {t('onboarding.signOutDifferent')}
-        </Button>
+        />
       </div>
     </>
   );

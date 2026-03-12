@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+import { ConfirmButton } from '@/components/ui/confirm-button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { Session } from '@/lib/types';
 
@@ -24,14 +24,14 @@ export default function DashboardHeader({
           <span className="hidden text-xs text-hacknu-text-muted sm:inline">
             {session.user.email}
           </span>
-          <Button
+          <ConfirmButton
+            label={t('dashboard.signOut')}
+            confirmLabel={t('dashboard.confirmAction')}
+            onConfirm={onSignOut}
             variant="outline"
             size="sm"
             className="border-hacknu-border tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
-            onClick={onSignOut}
-          >
-            {t('dashboard.signOut')}
-          </Button>
+          />
         </div>
       </div>
     </header>
