@@ -3,6 +3,39 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import DecryptedText from '@/components/landing/DecryptedText';
+import ModelViewer from '@/components/landing/ModelViewer';
+
+function FloatingModel() {
+  return (
+    <div className="fixed right-6 bottom-6 z-40 hidden md:block">
+      <ModelViewer
+        url="/models/chibi+character+3d+model.glb"
+        width={260}
+        height={260}
+        modelXOffset={0}
+        modelYOffset={0}
+        defaultRotationX={0}
+        defaultRotationY={20}
+        defaultZoom={2.5}
+        minZoomDistance={1}
+        maxZoomDistance={8}
+        enableMouseParallax
+        enableHoverRotation
+        enableManualRotation
+        enableManualZoom={false}
+        environmentPreset="none"
+        ambientIntensity={1.2}
+        keyLightIntensity={1.5}
+        fillLightIntensity={0.8}
+        rimLightIntensity={1}
+        autoRotate
+        autoRotateSpeed={0.35}
+        fadeIn={false}
+        showScreenshotButton={false}
+      />
+    </div>
+  );
+}
 
 const FAQ_KEYS = [
   { catKey: 'general', items: ['q1', 'q2', 'q3'] },
@@ -49,7 +82,8 @@ export default function FAQ() {
   const { t } = useTranslation();
 
   return (
-    <section id="faq" className="bg-hacknu-dark py-20 md:py-32">
+    <section id="faq" className="relative bg-hacknu-dark py-20 md:py-32">
+      <FloatingModel />
       <div className="mx-auto max-w-4xl px-6">
         {/* Section Header */}
         <p className="terminal-header mb-4">{t('faq.header')}</p>

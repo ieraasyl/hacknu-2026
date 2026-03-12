@@ -203,68 +203,68 @@ function LoginPage() {
 
         <div className="relative z-10 w-full max-w-sm">
           <Card className="border-hacknu-border bg-hacknu-dark-card">
-          <CardHeader className="border-b border-hacknu-border">
-            <TerminalDots label={phase === 'email' ? 'login.sh' : 'verify_otp.sh'} />
-          </CardHeader>
-          <CardContent className="pt-4">
-            {phase === 'email' ? (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={googleLoading}
-                  onClick={handleGoogleSignIn}
-                  className="mb-4 h-10 w-full border-hacknu-border bg-hacknu-dark text-hacknu-text hover:border-hacknu-green/50 hover:bg-hacknu-dark-card"
-                >
-                  <img
-                    src="/images/google.svg"
-                    alt=""
-                    className="mr-2 h-5 w-5 shrink-0"
-                    aria-hidden
+            <CardHeader className="border-b border-hacknu-border">
+              <TerminalDots label={phase === 'email' ? 'login.sh' : 'verify_otp.sh'} />
+            </CardHeader>
+            <CardContent className="pt-4">
+              {phase === 'email' ? (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={googleLoading}
+                    onClick={handleGoogleSignIn}
+                    className="mb-4 h-10 w-full border-hacknu-border bg-hacknu-dark text-hacknu-text hover:border-hacknu-green/50 hover:bg-hacknu-dark-card"
+                  >
+                    <img
+                      src="/images/google.svg"
+                      alt=""
+                      className="mr-2 h-5 w-5 shrink-0"
+                      aria-hidden
+                    />
+                    {googleLoading ? t('login.redirecting') : t('login.signInWithGoogle')}
+                  </Button>
+                  <div className="relative my-4 flex items-center gap-2">
+                    <Separator className="flex-1 bg-hacknu-border" />
+                    <span className="text-xs tracking-wider text-hacknu-text-muted uppercase">
+                      {t('login.or')}
+                    </span>
+                    <Separator className="flex-1 bg-hacknu-border" />
+                  </div>
+                  <EmailForm
+                    email={email}
+                    setEmail={setEmail}
+                    loading={otpLoading}
+                    error={error}
+                    onSubmit={handleSendOtp}
                   />
-                  {googleLoading ? t('login.redirecting') : t('login.signInWithGoogle')}
-                </Button>
-                <div className="relative my-4 flex items-center gap-2">
-                  <Separator className="flex-1 bg-hacknu-border" />
-                  <span className="text-xs tracking-wider text-hacknu-text-muted uppercase">
-                    {t('login.or')}
-                  </span>
-                  <Separator className="flex-1 bg-hacknu-border" />
-                </div>
-                <EmailForm
+                </>
+              ) : (
+                <OtpForm
+                  otp={otp}
+                  setOtp={setOtp}
                   email={email}
-                  setEmail={setEmail}
                   loading={otpLoading}
                   error={error}
-                  onSubmit={handleSendOtp}
+                  cooldown={cooldown}
+                  onSubmit={handleVerifyOtp}
+                  onResend={handleResend}
+                  onBack={handleBack}
                 />
-              </>
-            ) : (
-              <OtpForm
-                otp={otp}
-                setOtp={setOtp}
-                email={email}
-                loading={otpLoading}
-                error={error}
-                cooldown={cooldown}
-                onSubmit={handleVerifyOtp}
-                onResend={handleResend}
-                onBack={handleBack}
-              />
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
 
-        <div className="mt-6 text-center">
-          <Button
-            variant="link"
-            size="xs"
-            className="text-hacknu-text-muted hover:text-hacknu-green"
-            render={<a href="/" />}
-          >
-            {t('login.backToHome')}
-          </Button>
-        </div>
+          <div className="mt-6 text-center">
+            <Button
+              variant="link"
+              size="xs"
+              className="text-hacknu-text-muted hover:text-hacknu-green"
+              render={<a href="/" />}
+            >
+              {t('login.backToHome')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

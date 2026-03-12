@@ -9,12 +9,16 @@ export function AuthHeader({ logoSize = 'md' }: AuthHeaderProps) {
   const logoClass = logoSize === 'sm' ? 'text-2xl' : 'text-3xl';
 
   return (
-    <header className="flex items-center justify-between border-b border-hacknu-border/50 bg-hacknu-dark/80 px-6 py-4 backdrop-blur-md">
-      <a href="/" className="flex items-center gap-2">
-        <span className={`font-bold tracking-tighter text-hacknu-green ${logoClass}`}>HackNU</span>
-        <span className={`font-bold tracking-tighter text-hacknu-purple ${logoClass}`}>/26</span>
-      </a>
-      <LanguageSwitcher size="sm" />
+    <header className="sticky top-0 z-50 border-b border-hacknu-border/50 bg-hacknu-dark/95 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <a href="/" className="flex items-center gap-2">
+          <span className={`font-bold tracking-tighter text-hacknu-green ${logoClass}`}>
+            HackNU
+          </span>
+          <span className={`font-bold tracking-tighter text-hacknu-purple ${logoClass}`}>/26</span>
+        </a>
+        <LanguageSwitcher size="sm" />
+      </div>
     </header>
   );
 }

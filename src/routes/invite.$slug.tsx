@@ -95,10 +95,10 @@ function InviteResult() {
         <div className="relative flex flex-1 items-center justify-center">
           <BackgroundGrid />
           <div className="relative z-10 text-center">
-          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-2 border-hacknu-green/30 border-t-hacknu-green" />
-          <p className="font-mono text-sm tracking-wider text-hacknu-text-muted">
-            {t('invite.joining')}
-          </p>
+            <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-2 border-hacknu-green/30 border-t-hacknu-green" />
+            <p className="font-mono text-sm tracking-wider text-hacknu-text-muted">
+              {t('invite.joining')}
+            </p>
           </div>
         </div>
       </div>
@@ -112,27 +112,29 @@ function InviteResult() {
       <div className="relative flex flex-1 items-center justify-center p-6">
         <BackgroundGrid />
         <Card className="relative z-10 w-full max-w-sm border-hacknu-border bg-hacknu-dark-card">
-        <CardHeader className="border-b border-hacknu-border">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-red-500/60" />
-            <div className="h-3 w-3 rounded-full bg-red-500/30" />
-            <div className="h-3 w-3 rounded-full bg-red-500/10" />
-            <span className="ml-2 text-xs text-red-400">invite_error</span>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <CardTitle className="mb-1 font-mono text-red-400">{t('invite.couldNotJoin')}</CardTitle>
-          <CardDescription className="mb-6 text-hacknu-text-muted">
-            {errorMsg ?? t('invite.unexpectedError')}
-          </CardDescription>
-          <Button
-            className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
-            render={<a href="/dashboard" />}
-          >
-            {t('invite.goToDashboard')}
-          </Button>
-        </CardContent>
-      </Card>
+          <CardHeader className="border-b border-hacknu-border">
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-3 rounded-full bg-red-500/60" />
+              <div className="h-3 w-3 rounded-full bg-red-500/30" />
+              <div className="h-3 w-3 rounded-full bg-red-500/10" />
+              <span className="ml-2 text-xs text-red-400">invite_error</span>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <CardTitle className="mb-1 font-mono text-red-400">
+              {t('invite.couldNotJoin')}
+            </CardTitle>
+            <CardDescription className="mb-6 text-hacknu-text-muted">
+              {errorMsg ?? t('invite.unexpectedError')}
+            </CardDescription>
+            <Button
+              className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
+              render={<a href="/dashboard" />}
+            >
+              {t('invite.goToDashboard')}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

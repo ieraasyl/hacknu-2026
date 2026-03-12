@@ -195,43 +195,43 @@ function OnboardingPage() {
 
         <div className="relative z-10 w-full max-w-md">
           <div className="mb-6 flex items-center gap-3">
-          <StepBadge step={1} label={t('onboarding.stepAccount')} done />
-          <div className="h-px flex-1 bg-hacknu-border" />
-          <StepBadge step={2} label={t('onboarding.stepProfile')} active />
-        </div>
+            <StepBadge step={1} label={t('onboarding.stepAccount')} done />
+            <div className="h-px flex-1 bg-hacknu-border" />
+            <StepBadge step={2} label={t('onboarding.stepProfile')} active />
+          </div>
 
-        <Card className="border-hacknu-border bg-hacknu-dark-card">
-          <CardHeader className="border-b border-hacknu-border">
-            <TerminalDots label="onboarding.sh" />
-          </CardHeader>
-          <CardContent className="pt-4">
-            <OnboardingForm
-              fullName={fullName}
-              setFullName={setFullName}
-              iin={iin}
-              setIin={setIin}
-              phone={phone}
-              setPhone={setPhone}
-              city={city}
-              setCity={setCity}
-              placeOfStudy={placeOfStudy}
-              setPlaceOfStudy={setPlaceOfStudy}
-              parentPhone={parentPhone}
-              setParentPhone={setParentPhone}
-              educationLevel={educationLevel}
-              setEducationLevel={setEducationLevel}
-              setCvUrl={setCvUrl}
-              loading={loading}
-              cvUploading={cvUploading}
-              setCvUploading={setCvUploading}
-              error={error}
-              onSubmit={handleSubmit}
-              onSignOut={handleSignOut}
-              uploadFile={(data) => uploadCv({ data: { ...data, fullName, iin } })}
-              deleteFile={(fileId) => deleteCv({ data: { fileId } })}
-            />
-          </CardContent>
-        </Card>
+          <Card className="border-hacknu-border bg-hacknu-dark-card">
+            <CardHeader className="border-b border-hacknu-border">
+              <TerminalDots label="onboarding.sh" />
+            </CardHeader>
+            <CardContent className="pt-4">
+              <OnboardingForm
+                fullName={fullName}
+                setFullName={setFullName}
+                iin={iin}
+                setIin={setIin}
+                phone={phone}
+                setPhone={setPhone}
+                city={city}
+                setCity={setCity}
+                placeOfStudy={placeOfStudy}
+                setPlaceOfStudy={setPlaceOfStudy}
+                parentPhone={parentPhone}
+                setParentPhone={setParentPhone}
+                educationLevel={educationLevel}
+                setEducationLevel={setEducationLevel}
+                setCvUrl={setCvUrl}
+                loading={loading}
+                cvUploading={cvUploading}
+                setCvUploading={setCvUploading}
+                error={error}
+                onSubmit={handleSubmit}
+                onSignOut={handleSignOut}
+                uploadFile={(data) => uploadCv({ data: { ...data, fullName, iin } })}
+                deleteFile={(fileId) => deleteCv({ data: { fileId } })}
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

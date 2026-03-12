@@ -1,18 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import DecryptedText from '@/components/landing/DecryptedText';
+import CircularGallery from '@/components/landing/CircularGallery';
 
-const photoModules = import.meta.glob<{ default: { src: string; width: number; height: number } }>(
-  '../../assets/images/image*.jpg',
-  {
-    eager: true,
-    query: { format: 'webp', quality: '80', w: '900', as: 'metadata' },
-  }
-);
-
-const photos = Object.entries(photoModules)
-  .sort(([a], [b]) => a.localeCompare(b))
-  .map(([, m]) => m.default);
+const GALLERY_ITEMS = [
+  { image: '/images/aboutGallery/DSCF2203 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSC_2033 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSCF1530 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSCF1524 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSCF1946 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSCF1666 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSC_2142 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSCF1638 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSC_2087 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSC_2119 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSC_2091 1.png', text: 'HackNU' },
+  { image: '/images/aboutGallery/DSC_2143 1.png', text: 'HackNU' },
+];
 
 export default function About() {
   const { t } = useTranslation();
@@ -101,21 +105,16 @@ export default function About() {
           </div>
         </div>
 
-        {/* Photo Grid */}
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
-          {photos.map((photo, index) => (
-            <div key={index} className="group relative aspect-4/3 overflow-hidden">
-              <img
-                src={photo.src}
-                width={photo.width}
-                height={photo.height}
-                alt={t('about.photoAlt', { index: index + 1 })}
-                className="h-full w-full object-cover opacity-70 transition-opacity duration-500 group-hover:opacity-100"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-hacknu-green/5 transition-all duration-500 group-hover:bg-transparent" />
-            </div>
-          ))}
+        {/* Gallery */}
+        <div className="h-[400px] md:h-[500px]">
+          <CircularGallery
+            items={GALLERY_ITEMS}
+            bend={0}
+            textColor="#57ffb6"
+            borderRadius={0.05}
+            scrollSpeed={3.6}
+            scrollEase={0.09}
+          />
         </div>
       </div>
     </section>

@@ -28,22 +28,22 @@ function NotFoundPage() {
           }}
         />
         <div className="relative z-10 max-w-lg text-center">
-        <p className="mb-6 text-xs tracking-[0.3em] text-hacknu-green/50 uppercase">
-          {t('notFound.error')}
-        </p>
-        <h1 className="gradient-text mb-4 text-8xl leading-none font-black text-hacknu-green md:text-[10rem]">
-          404
-        </h1>
-        <div className="mb-6 text-xs tracking-[0.5em] text-hacknu-text-muted/30">
-          ════════════════════════════════
-        </div>
-        <p className="mb-8 text-sm text-hacknu-text-muted">{t('notFound.message')}</p>
-        <a
-          href="/"
-          className="inline-block bg-hacknu-green px-8 py-3 text-sm font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
-        >
-          {t('notFound.goHome')}
-        </a>
+          <p className="mb-6 text-xs tracking-[0.3em] text-hacknu-green/50 uppercase">
+            {t('notFound.error')}
+          </p>
+          <h1 className="gradient-text mb-4 text-8xl leading-none font-black text-hacknu-green md:text-[10rem]">
+            404
+          </h1>
+          <div className="mb-6 text-xs tracking-[0.5em] text-hacknu-text-muted/30">
+            ════════════════════════════════
+          </div>
+          <p className="mb-8 text-sm text-hacknu-text-muted">{t('notFound.message')}</p>
+          <a
+            href="/"
+            className="inline-block bg-hacknu-green px-8 py-3 text-sm font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
+          >
+            {t('notFound.goHome')}
+          </a>
         </div>
       </div>
     </div>

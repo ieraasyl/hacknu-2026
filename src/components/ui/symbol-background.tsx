@@ -6,7 +6,6 @@ const ROWS = 30;
 const GREEN = '#58E191';
 const PURPLE = '#E256FF';
 
-/** Deterministic "random" from index for purity (no Math.random in render). */
 function cellForIndex(i: number): { char: string; initialColor: 'green' | 'purple' } {
   return {
     char: SYMBOLS[(i * 7 + 13) % SYMBOLS.length] ?? SYMBOLS[0],
