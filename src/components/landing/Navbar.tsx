@@ -1,22 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Separator } from '@/components/ui/separator';
-import { supportedLngs } from '@/i18n';
-import { webHapticsOptions } from '@/lib/web-haptics';
 import type { Session } from '@/lib/types';
 
 export default function Navbar({ session }: { session: Session | null }) {
-  const { t, i18n } = useTranslation();
-  const { trigger } = useWebHaptics(webHapticsOptions);
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const isLoggedIn = !!session?.user;
-
-  const changeLanguage = (lng: string) => {
-    trigger?.('light');
-    i18n.changeLanguage(lng);
-  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/95 backdrop-blur-md">
@@ -53,22 +45,7 @@ export default function Navbar({ session }: { session: Session | null }) {
           >
             {t('navbar.partners')}
           </Button>
-          <div className="ml-2 flex items-center gap-1">
-            {supportedLngs.map((lng) => (
-              <button
-                key={lng}
-                type="button"
-                onClick={() => changeLanguage(lng)}
-                className={`px-2 py-1 text-xs font-medium uppercase transition-colors ${
-                  i18n.language === lng
-                    ? 'text-hacknu-green'
-                    : 'text-hacknu-text-muted hover:text-hacknu-green'
-                }`}
-              >
-                {lng.toUpperCase()}
-              </button>
-            ))}
-          </div>
+          <LanguageSwitcher className="ml-2" />
           <Button
             className="ml-2 bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
             render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
@@ -139,27 +116,8 @@ export default function Navbar({ session }: { session: Session | null }) {
             >
               {t('navbar.partners')}
             </Button>
-            <div className="flex gap-2 py-2">
-              {supportedLngs.map((lng) => {
-                const isActive = i18n.language === lng;
-                return (
-                  <button
-                    key={lng}
-                    type="button"
-                    onClick={() => {
-                      changeLanguage(lng);
-                      setIsOpen(false);
-                    }}
-                    className={
-                      isActive
-                        ? 'px-3 py-1 text-sm font-medium text-hacknu-green uppercase'
-                        : 'px-3 py-1 text-sm font-medium text-hacknu-text-muted uppercase transition-colors hover:text-hacknu-green'
-                    }
-                  >
-                    {lng.toUpperCase()}
-                  </button>
-                );
-              })}
+            <div className="py-2">
+              <LanguageSwitcher size="md" onLanguageChange={() => setIsOpen(false)} />
             </div>
             <Separator className="my-2 bg-hacknu-border" />
             <Button

@@ -9,6 +9,7 @@ import { getSession } from '@/lib/auth.server';
 import { webHapticsOptions } from '@/lib/web-haptics';
 import { getParticipant } from '@/lib/onboarding.server';
 import { joinTeamBySlug } from '@/lib/team.server';
+import { AuthHeader } from '@/components/AuthHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BackgroundGrid } from '@/components/ui/background';
@@ -89,13 +90,16 @@ function InviteResult() {
 
   if (status === 'joining') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-hacknu-dark">
-        <BackgroundGrid />
-        <div className="relative z-10 text-center">
+      <div className="flex min-h-screen flex-col bg-hacknu-dark">
+        <AuthHeader logoSize="sm" />
+        <div className="relative flex flex-1 items-center justify-center">
+          <BackgroundGrid />
+          <div className="relative z-10 text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-2 border-hacknu-green/30 border-t-hacknu-green" />
           <p className="font-mono text-sm tracking-wider text-hacknu-text-muted">
             {t('invite.joining')}
           </p>
+          </div>
         </div>
       </div>
     );
@@ -103,9 +107,11 @@ function InviteResult() {
 
   // Error state
   return (
-    <div className="flex min-h-screen items-center justify-center bg-hacknu-dark p-6">
-      <BackgroundGrid />
-      <Card className="relative z-10 w-full max-w-sm border-hacknu-border bg-hacknu-dark-card">
+    <div className="flex min-h-screen flex-col bg-hacknu-dark">
+      <AuthHeader logoSize="sm" />
+      <div className="relative flex flex-1 items-center justify-center p-6">
+        <BackgroundGrid />
+        <Card className="relative z-10 w-full max-w-sm border-hacknu-border bg-hacknu-dark-card">
         <CardHeader className="border-b border-hacknu-border">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-red-500/60" />
@@ -127,6 +133,7 @@ function InviteResult() {
           </Button>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

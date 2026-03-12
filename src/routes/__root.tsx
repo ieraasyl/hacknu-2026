@@ -6,6 +6,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { useTranslation } from 'react-i18next';
 
+import { AuthHeader } from '@/components/AuthHeader';
 import i18n from '@/i18n';
 import appCss from '@/styles.css?url';
 
@@ -16,15 +17,17 @@ const getServerLocale = createServerFn({ method: 'GET' }).handler(async () => {
 function NotFoundPage() {
   const { t } = useTranslation();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-hacknu-dark p-6">
-      <div
-        className="pointer-events-none fixed inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(88,225,145,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(88,225,145,0.5) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-        }}
-      />
-      <div className="relative z-10 max-w-lg text-center">
+    <div className="flex min-h-screen flex-col bg-hacknu-dark">
+      <AuthHeader logoSize="sm" />
+      <div className="relative flex flex-1 items-center justify-center p-6">
+        <div
+          className="pointer-events-none fixed inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(88,225,145,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(88,225,145,0.5) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        <div className="relative z-10 max-w-lg text-center">
         <p className="mb-6 text-xs tracking-[0.3em] text-hacknu-green/50 uppercase">
           {t('notFound.error')}
         </p>
@@ -41,6 +44,7 @@ function NotFoundPage() {
         >
           {t('notFound.goHome')}
         </a>
+        </div>
       </div>
     </div>
   );

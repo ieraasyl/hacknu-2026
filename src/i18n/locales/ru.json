@@ -1,4 +1,7 @@
 {
+  "common": {
+    "switchLanguage": "Сменить язык"
+  },
   "hero": {
     "terminalPrefix": "$ ./hackathon --edition=9",
     "titleHack": "Hack",

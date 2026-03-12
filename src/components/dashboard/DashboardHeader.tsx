@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { Session } from '@/lib/types';
 
 export default function DashboardHeader({
@@ -19,6 +20,7 @@ export default function DashboardHeader({
           <span className="text-xl font-bold tracking-tighter text-hacknu-purple">/26</span>
         </a>
         <div className="flex items-center gap-4">
+          <LanguageSwitcher />
           <span className="hidden text-xs text-hacknu-text-muted sm:inline">
             {session.user.email}
           </span>

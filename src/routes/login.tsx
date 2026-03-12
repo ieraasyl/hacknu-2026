@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { BackgroundGrid, GradientOrbs } from '@/components/ui/background';
 import { TerminalDots } from '@/components/ui/terminal-dots';
+import { AuthHeader } from '@/components/AuthHeader';
 import SessionActiveCard from '@/components/login/SessionActiveCard';
 import EmailForm from '@/components/login/EmailForm';
 import OtpForm from '@/components/login/OtpForm';
@@ -181,29 +182,27 @@ function LoginPage() {
 
   if (session) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-hacknu-dark p-6">
-        <BackgroundGrid />
-        <div className="relative z-10 w-full max-w-sm">
-          <SessionActiveCard session={session} />
+      <div className="flex min-h-screen flex-col bg-hacknu-dark">
+        <AuthHeader />
+        <div className="relative flex flex-1 items-center justify-center p-6">
+          <BackgroundGrid />
+          <div className="relative z-10 w-full max-w-sm">
+            <SessionActiveCard session={session} />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-hacknu-dark p-6">
-      <BackgroundGrid />
-      <GradientOrbs />
+    <div className="flex min-h-screen flex-col bg-hacknu-dark">
+      <AuthHeader />
+      <div className="relative flex flex-1 items-center justify-center p-6">
+        <BackgroundGrid />
+        <GradientOrbs />
 
-      <div className="relative z-10 w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <a href="/" className="inline-block">
-            <span className="text-3xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
-            <span className="text-3xl font-bold tracking-tighter text-hacknu-purple">/26</span>
-          </a>
-        </div>
-
-        <Card className="border-hacknu-border bg-hacknu-dark-card">
+        <div className="relative z-10 w-full max-w-sm">
+          <Card className="border-hacknu-border bg-hacknu-dark-card">
           <CardHeader className="border-b border-hacknu-border">
             <TerminalDots label={phase === 'email' ? 'login.sh' : 'verify_otp.sh'} />
           </CardHeader>
@@ -265,6 +264,7 @@ function LoginPage() {
           >
             {t('login.backToHome')}
           </Button>
+        </div>
         </div>
       </div>
     </div>

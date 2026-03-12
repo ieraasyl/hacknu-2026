@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { TerminalDots } from '@/components/ui/terminal-dots';
 import { BackgroundGrid, GradientOrbs } from '@/components/ui/background';
 import { StepBadge } from '@/components/ui/step-badge';
+import { AuthHeader } from '@/components/AuthHeader';
 import OnboardingForm from '@/components/onboarding/OnboardingForm';
 
 /* ─── Server Functions ─── */
@@ -186,19 +187,14 @@ function OnboardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-hacknu-dark p-6">
-      <BackgroundGrid />
-      <GradientOrbs />
+    <div className="flex min-h-screen flex-col bg-hacknu-dark">
+      <AuthHeader />
+      <div className="relative flex flex-1 items-center justify-center p-6">
+        <BackgroundGrid />
+        <GradientOrbs />
 
-      <div className="relative z-10 w-full max-w-md">
-        <div className="mb-8 text-center">
-          <a href="/" className="inline-block">
-            <span className="text-3xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
-            <span className="text-3xl font-bold tracking-tighter text-hacknu-purple">/26</span>
-          </a>
-        </div>
-
-        <div className="mb-6 flex items-center gap-3">
+        <div className="relative z-10 w-full max-w-md">
+          <div className="mb-6 flex items-center gap-3">
           <StepBadge step={1} label={t('onboarding.stepAccount')} done />
           <div className="h-px flex-1 bg-hacknu-border" />
           <StepBadge step={2} label={t('onboarding.stepProfile')} active />
@@ -236,6 +232,7 @@ function OnboardingPage() {
             />
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
