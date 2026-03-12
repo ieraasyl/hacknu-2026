@@ -7,6 +7,8 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { cloudflare } from '@cloudflare/vite-plugin';
+import { imagetools } from 'vite-imagetools';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
 const config = defineConfig({
   plugins: [
@@ -16,6 +18,12 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
+    imagetools(),
+    ViteImageOptimizer({
+      includePublic: true,
+      png: { quality: 80 },
+      svg: { multipass: true },
+    }),
   ],
 });
 

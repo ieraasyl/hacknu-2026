@@ -4,17 +4,25 @@ import { Card, CardContent } from '@/components/ui/card';
 import { webHapticsOptions } from '@/lib/web-haptics';
 import DecryptedText from '@/components/landing/DecryptedText';
 
+import logo1 from '../../assets/images/logo1.svg?url';
+import logo2 from '../../assets/images/logo2.svg?url';
+import logo3 from '../../assets/images/logo3.svg?url';
+import logo4 from '../../assets/images/logo4.svg?url';
+import logo5 from '../../assets/images/logo5.svg?url';
+import logo6 from '../../assets/images/logo6.svg?url';
+import logo7 from '../../assets/images/logo7.svg?url';
+
 export default function Partners() {
   const { t } = useTranslation();
   const { trigger } = useWebHaptics(webHapticsOptions);
   const partners = [
-    { name: t('partners.partnerName', { index: 1 }), logo: '/images/logo1.svg' },
-    { name: t('partners.partnerName', { index: 2 }), logo: '/images/logo2.svg' },
-    { name: t('partners.partnerName', { index: 3 }), logo: '/images/logo3.svg' },
-    { name: t('partners.partnerName', { index: 4 }), logo: '/images/logo4.svg' },
-    { name: t('partners.partnerName', { index: 5 }), logo: '/images/logo5.svg' },
-    { name: t('partners.partnerName', { index: 6 }), logo: '/images/logo6.svg' },
-    { name: t('partners.partnerName', { index: 7 }), logo: '/images/logo7.svg' },
+    { name: t('partners.partnerName', { index: 1 }), logo: logo1 },
+    { name: t('partners.partnerName', { index: 2 }), logo: logo2 },
+    { name: t('partners.partnerName', { index: 3 }), logo: logo3 },
+    { name: t('partners.partnerName', { index: 4 }), logo: logo4 },
+    { name: t('partners.partnerName', { index: 5 }), logo: logo5 },
+    { name: t('partners.partnerName', { index: 6 }), logo: logo6 },
+    { name: t('partners.partnerName', { index: 7 }), logo: logo7 },
   ];
 
   return (

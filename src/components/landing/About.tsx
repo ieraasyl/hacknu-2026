@@ -2,21 +2,24 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import DecryptedText from '@/components/landing/DecryptedText';
 
+const photoModules = import.meta.glob<{ default: { src: string; width: number; height: number } }>(
+  '../../assets/images/image*.jpg',
+  {
+    eager: true,
+    query: { format: 'webp', quality: '80', w: '900', as: 'metadata' },
+  }
+);
+
+const photos = Object.entries(photoModules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, m]) => m.default);
+
 export default function About() {
   const { t } = useTranslation();
   const highlights = [
     { number: '24', unit: t('about.hour'), text: t('about.hackathon') },
     { number: '500+', unit: '', text: t('about.participants') },
     { number: '9th', unit: '', text: t('about.annualEdition') },
-  ];
-
-  const photos = [
-    '/images/image1.jpg',
-    '/images/image2.jpg',
-    '/images/image3.jpg',
-    '/images/image4.jpg',
-    '/images/image5.jpg',
-    '/images/image6.jpg',
   ];
 
   return (
@@ -102,16 +105,13 @@ export default function About() {
         <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
           {photos.map((photo, index) => (
             <div key={index} className="group relative aspect-4/3 overflow-hidden">
-              <div className="absolute inset-0 animate-pulse bg-hacknu-border/40" />
               <img
-                src={photo}
+                src={photo.src}
+                width={photo.width}
+                height={photo.height}
                 alt={t('about.photoAlt', { index: index + 1 })}
-                className="relative h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 [&.loaded]:opacity-70"
+                className="h-full w-full object-cover opacity-70 transition-opacity duration-500 group-hover:opacity-100"
                 loading="lazy"
-                onLoad={(e) => e.currentTarget.classList.add('loaded')}
-                ref={(img) => {
-                  if (img?.complete) img.classList.add('loaded');
-                }}
               />
               <div className="absolute inset-0 bg-hacknu-green/5 transition-all duration-500 group-hover:bg-transparent" />
             </div>
