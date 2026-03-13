@@ -112,9 +112,7 @@ export default function FAQ({ session }: { session: Session | null }) {
   return (
     <section id="faq" className="relative bg-hacknu-dark py-20 md:py-32">
       <FloatingModel onModelClick={handleModelClick} />
-      {overlayState !== null && (
-        <NERVOverlay state={overlayState} onClose={handleClose} />
-      )}
+      {overlayState !== null && <NERVOverlay state={overlayState} onClose={handleClose} />}
       <div className="mx-auto max-w-4xl px-6">
         {/* Section Header */}
         <p className="terminal-header mb-4">{t('faq.header')}</p>

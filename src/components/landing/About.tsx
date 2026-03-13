@@ -18,14 +18,11 @@ const GALLERY_ORDER = [
   'DSC_2143 1.png',
 ];
 
-const galleryModules = import.meta.glob<string>(
-  '../../assets/images/aboutGallery/*.png',
-  {
-    eager: true,
-    query: { w: '900', format: 'webp', quality: '80' },
-    import: 'default',
-  }
-);
+const galleryModules = import.meta.glob<string>('../../assets/images/aboutGallery/*.png', {
+  eager: true,
+  query: { w: '900', format: 'webp', quality: '80' },
+  import: 'default',
+});
 
 const GALLERY_ITEMS = Object.entries(galleryModules)
   .sort(([a], [b]) => {
