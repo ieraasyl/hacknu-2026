@@ -30,8 +30,8 @@ export default function InfoCards() {
   return (
     <section id="info" className="relative bg-hacknu-dark">
       {cards.map((card, index) => (
-        <div key={index}>
-          <Separator className="bg-hacknu-border" />
+        <div key={index} className={index === 0 ? 'relative overflow-visible' : ''}>
+          {index !== 1 && index !== 0 && <Separator className="bg-hacknu-border" />}
           <div className="px-6 py-12 md:py-20">
             <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-baseline md:gap-16">
               {/* Label */}
@@ -66,6 +66,14 @@ export default function InfoCards() {
               </div>
             </div>
           </div>
+          {index === 0 && (
+            <img
+              src="/images/whenLeafImage.svg"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute right-6 bottom-0 z-10 hidden h-40 translate-y-1/2 md:block lg:right-12"
+            />
+          )}
         </div>
       ))}
       <Separator className="bg-hacknu-border" />

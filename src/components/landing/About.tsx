@@ -24,13 +24,28 @@ const galleryModules = import.meta.glob<string>('../../assets/images/aboutGaller
   import: 'default',
 });
 
+const GALLERY_TEXTS = [
+  'Support',
+  'ACM@NU',
+  'at',
+  'NU',
+  'Awards',
+  '♥',
+  'Support',
+  'HackNU',
+  'at',
+  'NU',
+  'Awards',
+  '♥',
+];
+
 const GALLERY_ITEMS = Object.entries(galleryModules)
   .sort(([a], [b]) => {
     const nameA = a.split(/[/\\]/).pop() ?? '';
     const nameB = b.split(/[/\\]/).pop() ?? '';
     return GALLERY_ORDER.indexOf(nameA) - GALLERY_ORDER.indexOf(nameB);
   })
-  .map(([, src]) => ({ image: src, text: 'HackNU' }));
+  .map(([, src], i) => ({ image: src, text: GALLERY_TEXTS[i % GALLERY_TEXTS.length] }));
 
 export default function About() {
   const { t } = useTranslation();
@@ -102,7 +117,7 @@ export default function About() {
                   encryptedClassName="text-hacknu-purple/60"
                 />
                 <br />
-                <span className="gradient-text-green">
+                <span className="text-hacknu-purple">
                   <DecryptedText
                     text={t('about.titleHighlight')}
                     animateOn="view"

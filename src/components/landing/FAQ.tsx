@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -9,8 +9,19 @@ import { getPilotState, type PilotState } from '@/lib/pilot-state.functions';
 import type { Session } from '@/lib/types';
 
 function FloatingModel({ onModelClick }: { onModelClick: () => void }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const check = () => setVisible(window.scrollY > window.innerHeight * 0.7);
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    return () => window.removeEventListener('scroll', check);
+  }, []);
+
   return (
-    <div className="fixed right-6 bottom-6 z-40 hidden md:block">
+    <div
+      className={`fixed right-6 bottom-6 z-40 hidden transition-opacity duration-700 md:block ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+    >
       <ModelViewer
         url="/models/chibi+character+3d+model.glb"
         width={260}

@@ -12,7 +12,10 @@ function getAdminEmails(): string[] {
   const appEnv = env as unknown as AppEnv;
   const raw = appEnv.ADMIN_EMAILS?.trim();
   if (!raw) return [];
-  return raw.split(/[,\s]+/).map((e) => e.trim().toLowerCase()).filter(Boolean);
+  return raw
+    .split(/[,\s]+/)
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
 }
 
 const checkAdmin = createServerFn({ method: 'GET' }).handler(async () => {
@@ -20,10 +23,7 @@ const checkAdmin = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await getSession(request);
   const adminEmails = getAdminEmails();
   const email = session?.user.email?.toLowerCase();
-  const isAdmin =
-    adminEmails.length > 0 &&
-    email &&
-    adminEmails.includes(email);
+  const isAdmin = adminEmails.length > 0 && email && adminEmails.includes(email);
   if (!isAdmin) {
     throw notFound();
   }
