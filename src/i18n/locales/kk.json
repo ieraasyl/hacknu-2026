@@ -148,7 +148,7 @@
     "educationLevel": "Білім деңгейі",
     "educationPlaceholder": "Білім деңгейін таңдаңыз...",
     "cvResume": "Резюме",
-    "cvOptional": "Қосымша — PDF, DOC немесе DOCX форматында жүктеңіз",
+    "cvOptional": "Қосымша — PDF форматында жүктеңіз (макс 2 МБ)",
     "submit": "> Тіркелуді аяқтау",
     "saving": "Сақталуда...",
     "signOutDifferent": "Шығу / басқа аккаунтты қолдану",
@@ -196,12 +196,12 @@
     "goToDashboard": "→ Басқару тақтасына"
   },
   "cvDropzone": {
+    "chooseFile": "Файл таңдау",
     "onlyPdf": "Тек PDF файлдар қабылданады.",
     "maxSize": "Файл 2 МБ-дан кіші болуы керек.",
     "uploadFailed": "Жүктеу сәтсіз аяқталды. Қайта көріңіз.",
-    "uploading": "{{fileName}} жүктелуде...",
-    "removeFile": "Файлды өшіру",
-    "hint": "Тек PDF — макс 2 МБ"
+    "uploading": "Жүктелуде...",
+    "removeFile": "Файлды өшіру"
   },
   "education": {
     "High School": "Жоғары мектеп",

@@ -148,7 +148,7 @@
     "educationLevel": "Уровень образования",
     "educationPlaceholder": "Выберите уровень образования...",
     "cvResume": "Резюме",
-    "cvOptional": "По желанию — загрузите резюме в PDF, DOC или DOCX",
+    "cvOptional": "По желанию — загрузите резюме в PDF (макс. 2 МБ)",
     "submit": "> Завершить регистрацию",
     "saving": "Сохранение...",
     "signOutDifferent": "Выйти / использовать другой аккаунт",
@@ -196,12 +196,12 @@
     "goToDashboard": "→ В панель управления"
   },
   "cvDropzone": {
+    "chooseFile": "Выбрать файл",
     "onlyPdf": "Принимаются только PDF-файлы.",
     "maxSize": "Размер файла не более 2 МБ.",
     "uploadFailed": "Ошибка загрузки. Попробуйте снова.",
-    "uploading": "Загрузка {{fileName}}...",
-    "removeFile": "Удалить файл",
-    "hint": "Только PDF — макс. 2 МБ"
+    "uploading": "Загрузка...",
+    "removeFile": "Удалить файл"
   },
   "education": {
     "High School": "Средняя школа",

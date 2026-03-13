@@ -3,8 +3,13 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
-import { CheckCircleIcon, XCircleIcon, SpinnerIcon, XIcon } from '@phosphor-icons/react';
-import { Input } from '@/components/ui/input';
+import {
+  CheckCircleIcon,
+  UploadSimpleIcon,
+  XCircleIcon,
+  SpinnerIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import { webHapticsOptions } from '@/lib/web-haptics';
 
 const ACCEPTED_TYPES = ['application/pdf'];
@@ -41,6 +46,7 @@ export function CvDropzone({
   const [fileId, setFileId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isDisabled = disabled || state === 'uploading';
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -105,27 +111,44 @@ export function CvDropzone({
   return (
     <div className="flex flex-col gap-1.5">
       {state !== 'done' && (
-        <Input
-          ref={inputRef}
-          type="file"
-          accept={ACCEPTED_EXT}
-          onChange={handleChange}
-          disabled={disabled || state === 'uploading'}
-          className={[
-            'border-hacknu-border bg-hacknu-dark text-hacknu-text',
-            'file:text-hacknu-text-muted focus-visible:border-hacknu-green',
-            state === 'error' ? 'border-red-500/50' : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        />
-      )}
-
-      {state === 'uploading' && (
-        <p className="flex items-center gap-1.5 text-[11px] text-hacknu-text-muted">
-          <SpinnerIcon size={12} className="animate-spin" />
-          {t('cvDropzone.uploading', { fileName: fileName ?? '' })}
-        </p>
+        <>
+          <input
+            ref={inputRef}
+            type="file"
+            accept={ACCEPTED_EXT}
+            onChange={handleChange}
+            disabled={isDisabled}
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={isDisabled}
+            className={[
+              'flex h-8 w-full items-center gap-1.5 rounded-none border px-2.5 py-1 text-xs transition-colors outline-none',
+              'border-hacknu-border bg-input/30 text-hacknu-text',
+              'focus-visible:border-hacknu-green focus-visible:ring-1 focus-visible:ring-hacknu-green/50',
+              'disabled:cursor-not-allowed disabled:opacity-50',
+              state === 'error' ? 'border-red-500/50' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {state === 'uploading' ? (
+              <>
+                <SpinnerIcon size={13} className="shrink-0 animate-spin" />
+                {t('cvDropzone.uploading')}
+              </>
+            ) : (
+              <>
+                <UploadSimpleIcon size={13} className="shrink-0" />
+                {t('cvDropzone.chooseFile')}
+              </>
+            )}
+          </button>
+        </>
       )}
 
       {state === 'done' && (
@@ -150,10 +173,6 @@ export function CvDropzone({
           <XCircleIcon size={12} weight="fill" />
           {errorMsg}
         </p>
-      )}
-
-      {state === 'idle' && (
-        <p className="text-[11px] text-hacknu-text-muted/60">{t('cvDropzone.hint')}</p>
       )}
     </div>
   );
