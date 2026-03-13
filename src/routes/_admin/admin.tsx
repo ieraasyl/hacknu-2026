@@ -164,7 +164,9 @@ function AdminPage() {
     const el = document.getElementById(scrollToId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const cls = scrollToId.startsWith('participant-') ? 'admin-highlight-green' : 'admin-highlight-purple';
+      const cls = scrollToId.startsWith('participant-')
+        ? 'admin-highlight-green'
+        : 'admin-highlight-purple';
       el.classList.add(cls);
       setTimeout(() => el.classList.remove(cls), 2000);
       queueMicrotask(() => setScrollToId(null));

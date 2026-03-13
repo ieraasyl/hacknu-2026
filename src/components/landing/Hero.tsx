@@ -30,8 +30,8 @@ export default function Hero({ session }: { session: Session | null }) {
       <div className="relative z-10 px-6 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
         {/* Terminal prefix */}
         <p
-          className="mb-4 text-sm tracking-widest text-hacknu-text-muted uppercase md:text-base"
-          style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.8)' }}
+          className="mb-4 text-sm tracking-widest text-white uppercase md:text-base"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 4px rgba(0,0,0,1)' }}
         >
           {t('hero.terminalPrefix')}
         </p>
@@ -39,7 +39,10 @@ export default function Hero({ session }: { session: Session | null }) {
         {/* Main Title */}
         <h1
           className="text-7xl leading-none font-black tracking-tighter select-none sm:text-8xl md:text-[10rem] lg:text-[14rem]"
-          style={{ textShadow: '0 0 40px rgba(0,0,0,0.9), 0 0 80px rgba(0,0,0,0.6)' }}
+          style={{
+            textShadow:
+              '0 0 40px rgba(0,0,0,1), 0 0 80px rgba(0,0,0,1), 0 0 140px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,1)',
+          }}
         >
           <span
             className="text-hacknu-green"
@@ -58,8 +61,10 @@ export default function Hero({ session }: { session: Session | null }) {
 
         {/* Subtitle */}
         <p
-          className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-hacknu-text-muted md:mt-8 md:text-lg"
-          style={{ textShadow: '0 0 24px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.9)' }}
+          className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white md:mt-8 md:text-lg"
+          style={{
+            textShadow: '0 0 30px rgba(0,0,0,1), 0 0 60px rgba(0,0,0,1), 0 2px 8px rgba(0,0,0,1)',
+          }}
         >
           {t('hero.subtitle')}
           <br />
