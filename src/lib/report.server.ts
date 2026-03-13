@@ -67,7 +67,7 @@ export async function getReportData(): Promise<{
 
   const teamsRows = await db.query.team.findMany({
     with: {
-      captain: { columns: { name: true } },
+      captain: { columns: { fullName: true } },
       members: { columns: { id: true, fullName: true } },
     },
   });
@@ -83,7 +83,7 @@ export async function getReportData(): Promise<{
     return {
       name: t.name,
       inviteSlug: t.inviteSlug,
-      captainName: t.captain?.name ?? '',
+      captainName: t.captain?.fullName ?? '',
       memberCount: t.members.length,
       createdAt:
         t.createdAt instanceof Date

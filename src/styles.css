@@ -133,6 +133,54 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Admin report: highlight row when scrolled to via cross-tab navigation */
+.admin-highlight-green {
+  background-color: rgb(88 225 145 / 0.08);
+  outline: 1px solid rgb(88 225 145 / 0.3);
+}
+
+.admin-highlight-purple {
+  background-color: rgb(226 86 255 / 0.08);
+  outline: 1px solid rgb(226 86 255 / 0.3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .admin-highlight-green {
+    animation: row-highlight-green 2s ease-out forwards;
+  }
+  .admin-highlight-purple {
+    animation: row-highlight-purple 2s ease-out forwards;
+  }
+}
+
+@keyframes row-highlight-green {
+  0% {
+    background-color: rgb(88 225 145 / 0.2);
+    outline-color: rgb(88 225 145 / 0.3);
+  }
+  100% {
+    background-color: rgb(88 225 145 / 0);
+    outline-color: rgb(88 225 145 / 0);
+  }
+}
+
+@keyframes row-highlight-purple {
+  0% {
+    background-color: rgb(226 86 255 / 0.2);
+    outline-color: rgb(226 86 255 / 0.3);
+  }
+  100% {
+    background-color: rgb(226 86 255 / 0);
+    outline-color: rgb(226 86 255 / 0);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

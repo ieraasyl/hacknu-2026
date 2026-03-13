@@ -63,7 +63,7 @@ export type NewParticipant = typeof participant.$inferInsert;
 
 export const teamRelations = relations(team, ({ many, one }) => ({
   members: many(participant),
-  captain: one(user, { fields: [team.captainId], references: [user.id] }),
+  captain: one(participant, { fields: [team.captainId], references: [participant.id] }),
 }));
 
 export const participantRelations = relations(participant, ({ one }) => ({

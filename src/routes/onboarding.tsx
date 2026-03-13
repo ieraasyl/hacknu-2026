@@ -13,7 +13,7 @@ import {
   deleteCvFromGas,
 } from '@/lib/onboarding.server';
 import { onboardingSchema } from '@/lib/validation';
-import { useSession, signOut } from '@/lib/auth-client';
+import { signOut } from '@/lib/auth-client';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { TerminalDots } from '@/components/ui/terminal-dots';
 import { BackgroundGrid, GradientOrbs } from '@/components/ui/background';
@@ -110,13 +110,12 @@ export const Route = createFileRoute('/onboarding')({
 
 function OnboardingPage() {
   const { t } = useTranslation();
-  const { data: session } = useSession();
   const navigate = useNavigate();
   const { redirect: redirectTo } = Route.useSearch();
   const safeRedirect = redirectTo?.startsWith('/invite/') ? redirectTo : undefined;
   const { trigger } = useWebHaptics(webHapticsOptions);
 
-  const [fullName, setFullName] = useState(session?.user?.name ?? '');
+  const [fullName, setFullName] = useState('');
   const [iin, setIin] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');

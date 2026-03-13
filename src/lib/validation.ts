@@ -60,6 +60,11 @@ export type OtpInput = z.infer<typeof otpSchema>;
 
 const phoneRegex = /^\+?[\d][\d\s\-().]{5,24}$/;
 
+/** Strip phone to digits only for consistent storage and search. */
+export function stripPhoneDigits(phone: string): string {
+  return phone.replace(/\D/g, '');
+}
+
 // ── Onboarding ───────────────────────────────────────────────────────────────
 export const onboardingSchema = z.object({
   fullName: z
@@ -68,7 +73,11 @@ export const onboardingSchema = z.object({
     .min(1, { error: V.fullNameRequired })
     .max(100, { error: V.fullNameMax }),
   iin: z.string().regex(/^\d{12}$/, { error: V.iinInvalid }),
-  phone: z.string().min(1, { error: V.phoneRequired }).regex(phoneRegex, { error: V.phoneInvalid }),
+  phone: z
+    .string()
+    .min(1, { error: V.phoneRequired })
+    .regex(phoneRegex, { error: V.phoneInvalid })
+    .transform(stripPhoneDigits),
   city: z.string().trim().min(1, { error: V.cityRequired }).max(100, { error: V.cityMax }),
   placeOfStudy: z
     .string()
@@ -80,7 +89,8 @@ export const onboardingSchema = z.object({
     .trim()
     .optional()
     .transform((v) => v || undefined)
-    .refine((v) => !v || phoneRegex.test(v), { message: V.parentPhoneInvalid }),
+    .refine((v) => !v || phoneRegex.test(v), { message: V.parentPhoneInvalid })
+    .transform((v) => (v ? stripPhoneDigits(v) : undefined)),
   educationLevel: z.enum(EDUCATION_LEVELS, { error: V.educationInvalid }),
   cvUrl: z
     .union([z.literal(''), z.url({ error: V.cvUrlInvalid })])
