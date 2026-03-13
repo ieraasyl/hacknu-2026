@@ -34,7 +34,7 @@
   },
   "infoCards": {
     "when": "Когда?",
-    "whenAnswer": "18–19 октября",
+    "whenAnswer": "4–5 апреля",
     "whenDetail": "2026",
     "where": "Где?",
     "whereAnswer": "Назарбаев Университет",
@@ -46,7 +46,7 @@
   },
   "about": {
     "header": "# --- Несколько фактов о HackNU ---",
-    "hour": "час",
+    "hour": "часа",
     "hackathon": "хакатон",
     "participants": "участников",
     "annualEdition": "ежегодное мероприятие",
