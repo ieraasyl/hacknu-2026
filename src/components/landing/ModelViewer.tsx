@@ -525,7 +525,7 @@ const ModelViewer: FC<ViewerProps> = ({
       )}
 
       <Canvas
-        shadows
+        shadows={{ type: THREE.PCFShadowMap }}
         frameloop="demand"
         gl={{ preserveDrawingBuffer: true }}
         onCreated={({ gl, scene, camera }) => {
@@ -573,7 +573,7 @@ const ModelViewer: FC<ViewerProps> = ({
             onLoaded={onModelLoaded}
           />
         </Suspense>
-        {!isTouch && (
+        {!isTouch && enableManualZoom && (
           <DesktopControls
             pivot={pivot}
             min={minZoomDistance}

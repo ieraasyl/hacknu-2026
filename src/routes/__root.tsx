@@ -8,6 +8,15 @@ import { useTranslation } from 'react-i18next';
 
 import { AuthHeader } from '@/components/AuthHeader';
 import i18n from '@/i18n';
+
+if (typeof window !== 'undefined') {
+  const _warn = console.warn.bind(console);
+  console.warn = (...args: unknown[]) => {
+    const msg = typeof args[0] === 'string' ? args[0] : '';
+    if (msg.includes('THREE.Clock') || msg.includes('THREE.THREE.Clock')) return;
+    _warn(...args);
+  };
+}
 import appCss from '@/styles.css?url';
 
 const getServerLocale = createServerFn({ method: 'GET' }).handler(async () => {

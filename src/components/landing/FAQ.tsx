@@ -20,7 +20,7 @@ function FloatingModel({ onModelClick }: { onModelClick: () => void }) {
 
   return (
     <div
-      className={`fixed right-6 bottom-6 z-40 hidden transition-opacity duration-700 md:block ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+      className={`fixed right-0 bottom-0 z-40 hidden transition-opacity duration-700 md:block ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
     >
       <ModelViewer
         url="/models/chibi+character+3d+model.glb"

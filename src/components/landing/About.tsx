@@ -102,7 +102,7 @@ export default function About() {
 
         <div className="relative -mt-24 mb-20 min-h-[560px] overflow-hidden pt-24 md:min-h-[400px]">
           <img
-            src="/images/aboutBG.svg"
+            src="/images/aboutBG2.svg"
             alt=""
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-0 hidden h-full w-full object-contain object-top opacity-60 md:block"
