@@ -255,8 +255,6 @@ export default function OnboardingForm({
 
       <Separator className="my-4 bg-hacknu-border" />
 
-      <p className="text-center text-xs text-hacknu-text-muted">{t('onboarding.updateLater')}</p>
-
       <div className="mt-3 text-center">
         <ConfirmButton
           label={t('onboarding.signOutDifferent')}
