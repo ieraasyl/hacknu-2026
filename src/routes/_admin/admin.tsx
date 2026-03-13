@@ -500,9 +500,7 @@ function AdminPage() {
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.email}</td>
                         )}
                         {visibleParticipantCols.iin !== false && (
-                          <td className="px-4 py-3 font-mono text-xs text-hacknu-text-muted">
-                            {p.iin}
-                          </td>
+                          <td className="px-4 py-3 text-hacknu-text-muted">{p.iin}</td>
                         )}
                         {visibleParticipantCols.phone !== false && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.phone}</td>
@@ -559,7 +557,7 @@ function AdminPage() {
                           </td>
                         )}
                         {visibleParticipantCols.createdAt !== false && (
-                          <td className="px-4 py-3 text-xs whitespace-nowrap text-hacknu-text-muted">
+                          <td className="px-4 py-3 text-hacknu-text-muted">
                             {new Date(p.createdAt).toLocaleDateString()}
                           </td>
                         )}

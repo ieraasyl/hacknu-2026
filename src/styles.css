@@ -203,8 +203,8 @@ html {
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0px 1000px var(--card) inset !important;
-    box-shadow: 0 0 0px 1000px var(--card) inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px var(--hacknu-dark-card) inset !important;
+    box-shadow: 0 0 0px 1000px var(--hacknu-dark-card) inset !important;
     -webkit-text-fill-color: var(--foreground) !important;
     font-family: 'JetBrains Mono Variable', monospace !important;
     font-size: inherit !important;
