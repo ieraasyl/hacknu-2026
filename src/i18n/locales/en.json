@@ -148,7 +148,7 @@
     "educationLevel": "Education Level",
     "educationPlaceholder": "Select education level...",
     "cvResume": "CV / Resume",
-    "cvOptional": "Optional — upload your CV in PDF, DOC, or DOCX format",
+    "cvOptional": "Optional — upload your CV in PDF format (max 2 MB)",
     "submit": "> Complete Registration",
     "saving": "Saving...",
     "signOutDifferent": "Sign out / use a different account",
@@ -196,12 +196,12 @@
     "goToDashboard": "→ Go to Dashboard"
   },
   "cvDropzone": {
+    "chooseFile": "Choose file",
     "onlyPdf": "Only PDF files are accepted.",
     "maxSize": "File must be under 2 MB.",
     "uploadFailed": "Upload failed. Please try again.",
-    "uploading": "Uploading {{fileName}}...",
-    "removeFile": "Remove file",
-    "hint": "PDF only — max 2 MB"
+    "uploading": "Uploading...",
+    "removeFile": "Remove file"
   },
   "education": {
     "High School": "High School",
