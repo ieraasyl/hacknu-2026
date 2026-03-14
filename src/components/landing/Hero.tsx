@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import LetterGlitch from '@/components/ui/letter-glitch';
 import type { Session } from '@/lib/types';
 
 export default function Hero({ session }: { session: Session | null }) {
@@ -9,24 +8,6 @@ export default function Hero({ session }: { session: Session | null }) {
 
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center overflow-hidden bg-hacknu-dark">
-      {/* LetterGlitch matrix-style background (matches Figma design) */}
-      <div className="absolute inset-0">
-        <LetterGlitch
-          glitchColors={['#58e191', '#e256ff']}
-          glitchSpeed={30}
-          centerVignette
-          outerVignette={false}
-          smooth
-        />
-      </div>
-
-      {/* Dark overlay for text contrast - stronger in center */}
-      <div className="pointer-events-none absolute inset-0 bg-hacknu-dark/50" aria-hidden />
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(10,10,10,0.6),transparent)]"
-        aria-hidden
-      />
-
       <div className="relative z-10 px-6 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
         {/* Terminal prefix */}
         <p

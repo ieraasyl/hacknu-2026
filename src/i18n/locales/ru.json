@@ -91,8 +91,12 @@
   "partners": {
     "header": "# --- Наши партнёры ---",
     "title": "Партнёры",
-    "becomePartner": "Стать партнёром",
-    "partnerName": "Партнёр {{index}}"
+    "higgsfield": "Higgsfield",
+    "railway": "Казахстанские железные дороги",
+    "categories": {
+      "generalSponsor": "Генеральный спонсор",
+      "officialSponsor": "Официальный спонсор"
+    }
   },
   "notFound": {
     "error": "[ERR_NOT_FOUND]",
@@ -168,7 +172,7 @@
     "members": "{{count}}/4 участников",
     "noTeam": "Команды пока нет",
     "event": "Мероприятие",
-    "eventDate": "18–19 окт",
+    "eventDate": "4-5 апреля",
     "eventVenue": "Назарбаев Университет",
     "inviteLink": "Ссылка-приглашение",
     "copy": "Копировать",

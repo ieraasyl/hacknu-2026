@@ -91,8 +91,12 @@
   "partners": {
     "header": "# --- Our Partners ---",
     "title": "Partners",
-    "becomePartner": "Become a partner",
-    "partnerName": "Partner {{index}}"
+    "higgsfield": "Higgsfield",
+    "railway": "Qazaqstan Temır Joly",
+    "categories": {
+      "generalSponsor": "General Sponsor",
+      "officialSponsor": "Official Sponsor"
+    }
   },
   "notFound": {
     "error": "[ERR_NOT_FOUND]",
@@ -168,7 +172,7 @@
     "members": "{{count}}/4 members",
     "noTeam": "No team yet",
     "event": "Event",
-    "eventDate": "Oct 18-19",
+    "eventDate": "April 4-5",
     "eventVenue": "Nazarbayev University",
     "inviteLink": "Invite link",
     "copy": "Copy",

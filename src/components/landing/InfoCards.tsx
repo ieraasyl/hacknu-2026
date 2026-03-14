@@ -28,7 +28,7 @@ export default function InfoCards() {
   ];
 
   return (
-    <section id="info" className="relative bg-hacknu-dark">
+    <section id="info" className="relative border-t border-hacknu-border bg-hacknu-dark">
       {cards.map((card, index) => (
         <div key={index} className={index === 0 ? 'relative overflow-visible' : ''}>
           {index !== 1 && index !== 0 && <Separator className="bg-hacknu-border" />}

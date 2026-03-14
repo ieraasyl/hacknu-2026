@@ -91,8 +91,12 @@
   "partners": {
     "header": "# --- Біздің серіктестер ---",
     "title": "Серіктестер",
-    "becomePartner": "Серіктес болу",
-    "partnerName": "Серіктес {{index}}"
+    "higgsfield": "Higgsfield",
+    "railway": "Қазақстан темір жолы",
+    "categories": {
+      "generalSponsor": "Жалпы спонсор",
+      "officialSponsor": "Ресми спонсор"
+    }
   },
   "notFound": {
     "error": "[ERR_NOT_FOUND]",
@@ -168,7 +172,7 @@
     "members": "{{count}}/4 мүше",
     "noTeam": "Топ жоқ",
     "event": "Іс-шара",
-    "eventDate": "18-19 қазан",
+    "eventDate": "4-5 сәуір",
     "eventVenue": "Назарбаев Университеті",
     "inviteLink": "Шақыру сілтемесі",
     "copy": "Көшіру",

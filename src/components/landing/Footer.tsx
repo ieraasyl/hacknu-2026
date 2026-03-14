@@ -44,18 +44,34 @@ export default function Footer({ session }: { session: Session | null }) {
 
       {/* Bottom Bar */}
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 md:flex-row">
-        {/* Left: Branding */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-hacknu-green">HackNU</span>
-          <span className="text-sm font-bold text-hacknu-purple">/26</span>
-          <span className="ml-2 text-xs text-hacknu-text-muted">
-            <DecryptedText
-              text={t('footer.copyright')}
-              animateOn="view"
-              sequential
-              encryptedClassName="text-hacknu-purple/60"
-            />
-          </span>
+        {/* Left: Branding + Legal */}
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:justify-start">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-hacknu-green">HackNU</span>
+            <span className="text-sm font-bold text-hacknu-purple">/26</span>
+            <span className="ml-2 text-xs text-hacknu-text-muted">
+              <DecryptedText
+                text={t('footer.copyright')}
+                animateOn="view"
+                sequential
+                encryptedClassName="text-hacknu-purple/60"
+              />
+            </span>
+          </div>
+          <div className="flex gap-4">
+            <a
+              href="/privacy"
+              className="text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
+            >
+              Privacy
+            </a>
+            <a
+              href="/terms"
+              className="text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
+            >
+              Terms
+            </a>
+          </div>
         </div>
 
         {/* Right: Social Links */}
