@@ -85,13 +85,6 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
           <div className="space-y-4">
             <div>
               <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                {t('dashboard.team')}
-              </p>
-              <p className="font-mono text-lg font-bold text-hacknu-green">{teamData.name}</p>
-            </div>
-
-            <div>
-              <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
                 {t('dashboard.inviteLink')}
               </p>
               <div className="flex items-center gap-2">

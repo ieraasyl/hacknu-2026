@@ -22,7 +22,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { BackgroundGrid } from '@/components/ui/background';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardStats from '@/components/dashboard/DashboardStats';
-import ProfileCard from '@/components/dashboard/ProfileCard';
 import TeamCard from '@/components/dashboard/TeamCard';
 
 /* ─── Server Functions ─── */
@@ -302,16 +301,11 @@ function Dashboard() {
       <DashboardHeader session={session} onSignOut={handleSignOut} />
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-12">
         <div className="mb-10">
-          <p className="mb-2 text-sm tracking-wider text-hacknu-text-muted">
+          <p className="text-sm tracking-wider text-hacknu-text-muted">
             $ dashboard --participant="{participant.fullName}"
           </p>
-          <h1 className="text-3xl font-bold text-hacknu-text md:text-5xl">
-            {t('dashboard.welcomeBack')}{' '}
-            <span className="text-hacknu-green">{participant.fullName}</span>
-          </h1>
         </div>
         <DashboardStats teamData={teamData} teamLoading={false} />
-        <ProfileCard session={session} participant={participant} />
         <TeamCard
           team={{
             data: teamData,
