@@ -69,7 +69,7 @@ export default function About() {
               className="group border-hacknu-border bg-transparent transition-all duration-500 hover:border-hacknu-green/30"
             >
               <CardContent className="p-8">
-                <div className="gradient-text mb-2 flex flex-wrap items-baseline gap-x-2 text-5xl leading-none font-black md:text-7xl">
+                <div className="mb-2 flex flex-wrap items-baseline gap-x-2 text-5xl leading-none font-black text-hacknu-purple md:text-7xl">
                   <DecryptedText
                     text={item.number}
                     animateOn="view"
@@ -77,7 +77,7 @@ export default function About() {
                     encryptedClassName="text-hacknu-purple/60"
                   />
                   {item.unit && (
-                    <span className="text-lg font-normal text-hacknu-text-muted">
+                    <span className="text-lg font-normal">
                       <DecryptedText
                         text={item.unit}
                         animateOn="view"
@@ -100,7 +100,7 @@ export default function About() {
           ))}
         </div>
 
-        <div className="relative -mt-24 mb-20 min-h-[560px] overflow-hidden pt-24 md:min-h-[400px]">
+        <div className="relative -mt-24 mb-20 min-h-140 overflow-hidden pt-24 md:min-h-100">
           <img
             src="/images/aboutBG2.svg"
             alt=""
@@ -135,7 +135,7 @@ export default function About() {
         </div>
 
         {/* Gallery */}
-        <div className="h-[400px] md:h-[500px]">
+        <div className="h-100 md:h-125">
           <CircularGallery
             items={GALLERY_ITEMS}
             bend={0}
