@@ -162,12 +162,14 @@ function Scene({
   };
 
   const decayWindowMs = Math.max(maxAge * 3, 500);
+  const frameSkip = useRef(0);
   useEffect(() => {
     let rafId: number;
     const tick = () => {
       rafId = requestAnimationFrame(tick);
       if (Date.now() - lastMoveTime.current < decayWindowMs) {
-        invalidate();
+        frameSkip.current += 1;
+        if (frameSkip.current % 2 === 0) invalidate();
       }
     };
     rafId = requestAnimationFrame(tick);

@@ -237,15 +237,14 @@ html {
   }
 }
 
+/* GPU-friendly: animate opacity instead of text-shadow to avoid repaints */
 @keyframes glowPulse {
   0%,
   100% {
-    text-shadow: 0 0 20px rgba(88, 225, 145, 0.3);
+    opacity: 0.92;
   }
   50% {
-    text-shadow:
-      0 0 40px rgba(88, 225, 145, 0.6),
-      0 0 80px rgba(88, 225, 145, 0.2);
+    opacity: 1;
   }
 }
 

@@ -27,13 +27,21 @@ export default function Hero({ session }: { session: Session | null }) {
         >
           <span
             className="text-hacknu-green"
-            style={{ animation: 'glowPulse 3s ease-in-out infinite' }}
+            style={{
+              animation: 'glowPulse 3s ease-in-out infinite',
+              willChange: 'opacity',
+              textShadow: '0 0 30px rgba(88, 225, 145, 0.5), 0 0 60px rgba(88, 225, 145, 0.2)',
+            }}
           >
             {t('hero.titleHack')}
           </span>
           <span
             className="text-hacknu-green"
-            style={{ animation: 'glowPulse 3s ease-in-out infinite' }}
+            style={{
+              animation: 'glowPulse 3s ease-in-out infinite',
+              willChange: 'opacity',
+              textShadow: '0 0 30px rgba(88, 225, 145, 0.5), 0 0 60px rgba(88, 225, 145, 0.2)',
+            }}
           >
             {t('hero.titleNU')}
           </span>
