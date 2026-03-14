@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { HexagonBackground } from '@/components/landing/HexagonBackground';
 import type { Session } from '@/lib/types';
 
 export default function Hero({ session }: { session: Session | null }) {
@@ -7,7 +8,15 @@ export default function Hero({ session }: { session: Session | null }) {
   const isLoggedIn = !!session?.user;
 
   return (
-    <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center overflow-hidden bg-hacknu-dark">
+    <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center overflow-hidden">
+      <HexagonBackground className="absolute inset-0" />
+      {/* Dark vignette overlay — obscures hexagons behind central text */}
+      <div
+        className="pointer-events-none absolute inset-0 z-5"
+        style={{
+          background: `radial-gradient(ellipse 60% 50% at 50% 50%, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.45) 50%, transparent 100%)`,
+        }}
+      />
       <div className="relative z-10 px-6 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
         {/* Terminal prefix */}
         <p
@@ -17,35 +26,23 @@ export default function Hero({ session }: { session: Session | null }) {
           {t('hero.terminalPrefix')}
         </p>
 
-        {/* Main Title */}
+        {/* Main Title — outline + shadow to separate from dark background */}
         <h1
           className="text-7xl leading-none font-black tracking-tighter select-none sm:text-8xl md:text-[10rem] lg:text-[14rem]"
           style={{
             textShadow:
-              '0 0 40px rgba(0,0,0,1), 0 0 80px rgba(0,0,0,1), 0 0 140px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,1)',
+              '-1px 0 0 rgba(0,0,0,0.9), 1px 0 0 rgba(0,0,0,0.9), 0 -1px 0 rgba(0,0,0,0.9), 0 1px 0 rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.6)',
           }}
         >
-          <span
-            className="text-hacknu-green"
-            style={{
-              animation: 'glowPulse 3s ease-in-out infinite',
-              willChange: 'opacity',
-              textShadow: '0 0 30px rgba(88, 225, 145, 0.5), 0 0 60px rgba(88, 225, 145, 0.2)',
-            }}
-          >
+          <span className="text-hacknu-green">
             {t('hero.titleHack')}
           </span>
-          <span
-            className="text-hacknu-green"
-            style={{
-              animation: 'glowPulse 3s ease-in-out infinite',
-              willChange: 'opacity',
-              textShadow: '0 0 30px rgba(88, 225, 145, 0.5), 0 0 60px rgba(88, 225, 145, 0.2)',
-            }}
-          >
+          <span className="text-hacknu-green">
             {t('hero.titleNU')}
           </span>
-          <span className="text-hacknu-purple">{t('hero.titleYear')}</span>
+          <span className="text-hacknu-purple">
+            {t('hero.titleYear')}
+          </span>
         </h1>
 
         {/* Subtitle */}
