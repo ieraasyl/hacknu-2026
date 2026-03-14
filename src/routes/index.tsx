@@ -34,7 +34,7 @@ function LandingPage() {
             gridSize={100}
             trailSize={0.03}
             maxAge={150}
-            interpolate={1.5}
+            interpolate={0.5}
             color="#57ffb6"
             gooeyEnabled={false}
             eventSource={containerRef}
