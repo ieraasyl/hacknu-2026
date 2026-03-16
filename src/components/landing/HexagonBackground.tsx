@@ -132,12 +132,6 @@ export function HexagonBackground({
   }, [updateGrid]);
 
   useEffect(() => {
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) return;
-
     const animate = () => {
       if (grid.rows === 0 || grid.cols === 0) return;
 

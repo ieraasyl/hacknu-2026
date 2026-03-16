@@ -17,3 +17,5 @@ todos.json
 !.env.example
 
 worker-configuration.d.ts
+
+.claude/
