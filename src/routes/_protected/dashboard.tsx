@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useRouteContext } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { useQueryClient, useMutation, useSuspenseQuery, queryOptions } from '@tanstack/react-query';
@@ -107,11 +107,20 @@ function Dashboard() {
   const [joinError, setJoinError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const kickTargetNameRef = useRef<string>('');
+
+  useEffect(() => {
+    if (!feedback) return;
+    const timer = setTimeout(() => setFeedback(null), 3000);
+    return () => clearTimeout(timer);
+  }, [feedback]);
 
   const createMutation = useMutation({
     mutationFn: (name: string) => createTeamFn({ data: { name } }),
-    onSuccess: () => {
+    onSuccess: (_, name) => {
       trigger?.('success');
+      setFeedback({ message: `create "${name}" --status=success`, type: 'success' });
       queryClient.invalidateQueries({ queryKey: ['team'] });
       setCreateName('');
       setCreateError(null);
@@ -126,6 +135,7 @@ function Dashboard() {
     mutationFn: (slug: string) => joinTeamFn({ data: { slug } }),
     onSuccess: () => {
       trigger?.('success');
+      setFeedback({ message: 'join via invite --status=success', type: 'success' });
       queryClient.invalidateQueries({ queryKey: ['team'] });
       setJoinInput('');
       setJoinError(null);
@@ -140,6 +150,7 @@ function Dashboard() {
     mutationFn: (targetUserId: string) => kickMemberFn({ data: { targetUserId } }),
     onSuccess: () => {
       trigger?.('success');
+      setFeedback({ message: `kick @${kickTargetNameRef.current} --status=success`, type: 'success' });
       queryClient.invalidateQueries({ queryKey: ['team'] });
       setActionError(null);
     },
@@ -153,6 +164,7 @@ function Dashboard() {
     mutationFn: () => leaveTeamFn(),
     onSuccess: () => {
       trigger?.('success');
+      setFeedback({ message: 'leave --status=success', type: 'success' });
       queryClient.invalidateQueries({ queryKey: ['team'] });
       setActionError(null);
     },
@@ -166,6 +178,7 @@ function Dashboard() {
     mutationFn: () => dissolveTeamFn(),
     onSuccess: () => {
       trigger?.('success');
+      setFeedback({ message: 'dissolve --status=confirmed', type: 'success' });
       queryClient.invalidateQueries({ queryKey: ['team'] });
       setActionError(null);
     },
@@ -208,6 +221,8 @@ function Dashboard() {
 
   function handleKick(targetUserId: string) {
     setActionError(null);
+    kickTargetNameRef.current =
+      teamData?.members.find((m) => m.id === targetUserId)?.fullName ?? targetUserId;
     kickMutation.mutate(targetUserId);
   }
 
@@ -332,6 +347,7 @@ function Dashboard() {
             onCopyLink: handleCopyLink,
             loading: actionLoading,
             error: actionError,
+            feedback,
             onKick: handleKick,
             onLeave: handleLeave,
             onDissolve: handleDissolve,

@@ -160,14 +160,11 @@
   },
   "dashboard": {
     "signOut": "Выйти",
-    "hackingInto": "Загрузка панели...",
+    "hackingInto": "Взлом панели управления...",
     "unauthorized": "[403] Доступ запрещён",
     "pleaseLogin": "Войдите, чтобы открыть эту страницу.",
     "goToLogin": "→ Войти",
     "welcomeBack": "С возвращением,",
-    "status": "Статус",
-    "registered": "Зарегистрирован",
-    "participant": "Участник HackNU/26",
     "team": "Команда",
     "members": "{{count}}/4 участников",
     "noTeam": "Команды пока нет",
@@ -191,7 +188,13 @@
     "joinTeam": "Присоединиться к команде",
     "joinPlaceholder": "Вставьте ссылку-приглашение или код",
     "join": "Присоединиться →",
-    "invalidInviteInput": "Введите ссылку-приглашение или код"
+    "invalidInviteInput": "Введите ссылку-приглашение или код",
+    "healthCheck": "Статус",
+    "healthWarning": "ВНИМАНИЕ",
+    "healthReady": "ГОТОВ",
+    "healthNoTeam": "Нет команды",
+    "healthTeamSmall": "В команде < 2 участников",
+    "healthRegistered": "Зарегистрирован"
   },
   "invite": {
     "joining": "Присоединение к команде...",

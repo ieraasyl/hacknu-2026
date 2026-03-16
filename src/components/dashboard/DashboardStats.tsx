@@ -11,15 +11,41 @@ export default function DashboardStats({
 }) {
   const { t } = useTranslation();
 
+  const health =
+    !teamData || teamLoading
+      ? {
+          title: t('dashboard.healthWarning'),
+          subtitle: t('dashboard.healthNoTeam'),
+          color: 'text-yellow-400',
+          border: 'hover:border-yellow-500/30',
+        }
+      : teamData.members.length < 2
+        ? {
+            title: t('dashboard.healthWarning'),
+            subtitle: t('dashboard.healthTeamSmall'),
+            color: 'text-yellow-400',
+            border: 'hover:border-yellow-500/30',
+          }
+        : {
+            title: t('dashboard.healthReady'),
+            subtitle: t('dashboard.healthRegistered'),
+            color: 'text-hacknu-green',
+            border: 'hover:border-hacknu-green/30',
+          };
+
   return (
     <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-green/30">
+      <Card
+        className={`border-hacknu-border bg-hacknu-dark-card transition-all ${health.border}`}
+      >
         <CardContent className="pt-4">
           <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-            {t('dashboard.status')}
+            {t('dashboard.healthCheck')}
           </CardDescription>
-          <CardTitle className="text-2xl text-hacknu-green">{t('dashboard.registered')}</CardTitle>
-          <p className="mt-1 text-xs text-hacknu-text-muted">{t('dashboard.participant')}</p>
+          <CardTitle className={`text-2xl ${health.color}`}>{health.title}</CardTitle>
+          <p className="mt-1 font-mono text-xs tracking-wider text-hacknu-text-muted">
+            {health.subtitle}
+          </p>
         </CardContent>
       </Card>
       <Card className="border-hacknu-border bg-hacknu-dark-card transition-all hover:border-hacknu-purple/30">

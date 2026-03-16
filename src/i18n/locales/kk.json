@@ -160,14 +160,11 @@
   },
   "dashboard": {
     "signOut": "Шығу",
-    "hackingInto": "Басқару тақтасына кіруде...",
+    "hackingInto": "Жүйеге бұзып кіру...",
     "unauthorized": "[403] Рұқсат жоқ",
     "pleaseLogin": "Бұл бетке кіру үшін жүйеге кіріңіз.",
     "goToLogin": "→ Кіру бетіне",
     "welcomeBack": "Қайта оралдыңыз,",
-    "status": "Мәртебе",
-    "registered": "Тіркелген",
-    "participant": "HackNU/26 қатысушысы",
     "team": "Топ",
     "members": "{{count}}/4 мүше",
     "noTeam": "Топ жоқ",
@@ -191,7 +188,13 @@
     "joinTeam": "Топқа қосылу",
     "joinPlaceholder": "Шақыру сілтемесін немесе кодты қойыңыз",
     "join": "Қосылу →",
-    "invalidInviteInput": "Жарамды шақыру сілтемесін немесе кодты енгізіңіз"
+    "invalidInviteInput": "Жарамды шақыру сілтемесін немесе кодты енгізіңіз",
+    "healthCheck": "Мәртебе",
+    "healthWarning": "ЕСКЕРТУ",
+    "healthReady": "ДАЙЫН",
+    "healthNoTeam": "Топ жоқ",
+    "healthTeamSmall": "Топта < 2 мүше",
+    "healthRegistered": "Тіркелген"
   },
   "invite": {
     "joining": "Топқа қосылуда...",

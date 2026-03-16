@@ -165,9 +165,6 @@
     "pleaseLogin": "Please log in to access this page.",
     "goToLogin": "→ Go to Login",
     "welcomeBack": "Welcome back,",
-    "status": "Status",
-    "registered": "Registered",
-    "participant": "HackNU/26 participant",
     "team": "Team",
     "members": "{{count}}/4 members",
     "noTeam": "No team yet",
@@ -191,7 +188,13 @@
     "joinTeam": "Join a team",
     "joinPlaceholder": "Paste invite link or code",
     "join": "Join →",
-    "invalidInviteInput": "Enter a valid invite link or code"
+    "invalidInviteInput": "Enter a valid invite link or code",
+    "healthCheck": "Status",
+    "healthWarning": "WARNING",
+    "healthReady": "READY",
+    "healthNoTeam": "No team assigned",
+    "healthTeamSmall": "Team size < 2",
+    "healthRegistered": "Registered"
   },
   "invite": {
     "joining": "Joining team...",

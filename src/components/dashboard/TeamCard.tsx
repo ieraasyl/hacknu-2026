@@ -32,6 +32,7 @@ export type TeamCardProps = {
     onCopyLink: () => void;
     loading: string | null;
     error: string | null;
+    feedback: { message: string; type: 'success' | 'error' } | null;
     onKick: (targetUserId: string) => void;
     onLeave: () => void;
     onDissolve: () => void;
@@ -60,6 +61,7 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
     onCopyLink: handleCopyLink,
     loading: actionLoading,
     error: actionError,
+    feedback,
     onKick: handleKick,
     onLeave: handleLeave,
     onDissolve: handleDissolve,
@@ -72,7 +74,17 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
           <div className="h-3 w-3 rounded-full bg-hacknu-purple/60" />
           <div className="h-3 w-3 rounded-full bg-hacknu-purple/30" />
           <div className="h-3 w-3 rounded-full bg-hacknu-purple/10" />
-          <span className="ml-2 text-xs text-hacknu-text-muted">team.sh</span>
+          {feedback ? (
+            <span
+              className={`ml-2 text-xs tracking-wider ${
+                feedback.type === 'success' ? 'text-hacknu-green' : 'text-red-400'
+              }`}
+            >
+              team.sh &gt; {feedback.message}
+            </span>
+          ) : (
+            <span className="ml-2 text-xs tracking-wider text-hacknu-text-muted">team.sh</span>
+          )}
         </div>
       </CardHeader>
       <CardContent className="pt-4">
