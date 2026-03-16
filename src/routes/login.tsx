@@ -1,10 +1,10 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
-import { authClient, signIn, useSession } from '@/lib/auth-client';
+import { authClient, signIn } from '@/lib/auth-client';
 import { Separator } from '@/components/ui/separator';
 import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
@@ -15,7 +15,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { BackgroundGrid, GradientOrbs } from '@/components/ui/background';
 import { TerminalDots } from '@/components/ui/terminal-dots';
 import { AuthHeader } from '@/components/AuthHeader';
-import SessionActiveCard from '@/components/login/SessionActiveCard';
 import EmailForm from '@/components/login/EmailForm';
 import OtpForm from '@/components/login/OtpForm';
 
@@ -31,6 +30,16 @@ export const Route = createFileRoute('/login')({
   validateSearch: (search: Record<string, unknown>) => ({
     redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
   }),
+  beforeLoad: async ({ search }) => {
+    const destination = await getPostLoginDestination();
+    if (destination === '/login') return;
+    const safeRedirect = search.redirect?.startsWith('/invite/') ? search.redirect : undefined;
+    const to = destination === '/dashboard' ? (safeRedirect ?? '/dashboard') : destination;
+    throw redirect({
+      to,
+      ...(destination === '/onboarding' && safeRedirect && { search: { redirect: safeRedirect } }),
+    });
+  },
   component: LoginPage,
 });
 
@@ -38,7 +47,6 @@ const RESEND_COOLDOWN = 60;
 
 function LoginPage() {
   const { t } = useTranslation();
-  const { data: session } = useSession();
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
   const { trigger } = useWebHaptics(webHapticsOptions);
@@ -179,20 +187,6 @@ function LoginPage() {
       setGoogleLoading(false);
     }
   }, [redirect, t, trigger]);
-
-  if (session) {
-    return (
-      <div className="flex min-h-screen flex-col bg-hacknu-dark">
-        <AuthHeader />
-        <div className="relative flex flex-1 items-center justify-center p-6">
-          <BackgroundGrid />
-          <div className="relative z-10 w-full max-w-sm">
-            <SessionActiveCard session={session} />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen flex-col bg-hacknu-dark">
