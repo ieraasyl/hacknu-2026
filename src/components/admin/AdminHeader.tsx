@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
 import { ConfirmButton } from '@/components/ui/confirm-button';
 
 export default function AdminHeader({
@@ -16,32 +17,35 @@ export default function AdminHeader({
   const { t } = useTranslation();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <a href="/" className="flex items-center gap-1">
-          <span className="text-lg font-bold tracking-tighter text-hacknu-green">HackNU</span>
-          <span className="text-lg font-bold tracking-tighter text-hacknu-purple">/26</span>
+    <header className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/95 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <a href="/" className="flex items-center gap-2">
+          <span className="text-2xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
+          <span className="text-2xl font-bold tracking-tighter text-hacknu-purple">/26</span>
         </a>
-        <div className="flex items-center gap-4">
-          <Link
-            to="/dashboard"
-            className="rounded px-2 py-1 text-xs tracking-wider text-hacknu-text-muted uppercase transition-colors hover:bg-hacknu-dark-card hover:text-hacknu-text"
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
+            render={<Link to="/dashboard" />}
           >
             {t('navbar.dashboard')}
-          </Link>
+          </Button>
           {onRefresh && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={onRefresh}
               disabled={isRefreshing || (refreshCooldownSeconds ?? 0) > 0}
-              className="rounded px-2 py-1 text-xs text-hacknu-text-muted transition-colors hover:bg-hacknu-dark-card hover:text-hacknu-text disabled:opacity-50"
+              className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
             >
               {isRefreshing
                 ? 'Refreshing…'
                 : (refreshCooldownSeconds ?? 0) > 0
                   ? `↻ ${refreshCooldownSeconds}s`
                   : '↻ Refresh'}
-            </button>
+            </Button>
           )}
           <ConfirmButton
             label={t('dashboard.signOut')}
@@ -49,7 +53,7 @@ export default function AdminHeader({
             onConfirm={onSignOut}
             variant="outline"
             size="sm"
-            className="border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
+            className="border-hacknu-border tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
           />
         </div>
       </div>

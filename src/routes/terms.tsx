@@ -18,7 +18,7 @@ export const Route = createFileRoute('/terms')({
 function TermsPage() {
   return (
     <div className="flex min-h-screen flex-col bg-hacknu-dark">
-      <AuthHeader logoSize="sm" />
+      <AuthHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
         <div
           className="pointer-events-none fixed inset-0 opacity-[0.03]"

@@ -91,7 +91,7 @@ function InviteResult() {
   if (status === 'joining') {
     return (
       <div className="flex min-h-screen flex-col bg-hacknu-dark">
-        <AuthHeader logoSize="sm" />
+        <AuthHeader />
         <div className="relative flex flex-1 items-center justify-center">
           <BackgroundGrid />
           <div className="relative z-10 text-center">
@@ -108,7 +108,7 @@ function InviteResult() {
   // Error state
   return (
     <div className="flex min-h-screen flex-col bg-hacknu-dark">
-      <AuthHeader logoSize="sm" />
+      <AuthHeader />
       <div className="relative flex flex-1 items-center justify-center p-6">
         <BackgroundGrid />
         <Card className="relative z-10 w-full max-w-sm border-hacknu-border bg-hacknu-dark-card">

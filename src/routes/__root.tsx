@@ -27,7 +27,7 @@ function NotFoundPage() {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-screen flex-col bg-hacknu-dark">
-      <AuthHeader logoSize="sm" />
+      <AuthHeader />
       <div className="relative flex flex-1 items-center justify-center p-6">
         <div
           className="pointer-events-none fixed inset-0 opacity-[0.03]"

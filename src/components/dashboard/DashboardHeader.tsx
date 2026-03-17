@@ -13,15 +13,15 @@ export default function DashboardHeader({
   const { t } = useTranslation();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <a href="/" className="flex items-center gap-1">
-          <span className="text-xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
-          <span className="text-xl font-bold tracking-tighter text-hacknu-purple">/26</span>
+    <header className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/95 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <a href="/" className="flex items-center gap-2">
+          <span className="text-2xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
+          <span className="text-2xl font-bold tracking-tighter text-hacknu-purple">/26</span>
         </a>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          <span className="hidden text-xs text-hacknu-text-muted sm:inline">
+          <span className="hidden text-xs tracking-wider text-hacknu-text-muted sm:inline">
             {session.user.email}
           </span>
           <ConfirmButton
