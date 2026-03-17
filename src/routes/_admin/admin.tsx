@@ -117,6 +117,17 @@ const TEAM_COLUMNS: { key: TeamSortKey; label: string }[] = [
   { key: 'createdAt', label: 'Created' },
 ];
 
+const displayDateFormatter = new Intl.DateTimeFormat('ru-RU', {
+  dateStyle: 'short',
+  timeZone: 'Asia/Almaty',
+});
+
+function formatDateForDisplay(isoString: string): string {
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return '—';
+  return displayDateFormatter.format(date);
+}
+
 function AdminPage() {
   const { data } = useSuspenseQuery(reportQueryOptions);
   const [activeTab, setActiveTab] = useState<TabId>('participants');
@@ -140,6 +151,12 @@ function AdminPage() {
   );
 
   const { participants, teams } = data;
+
+  const teamByName = useMemo(() => new Map(teams.map((t) => [t.name, t])), [teams]);
+  const participantByName = useMemo(
+    () => new Map(participants.map((p) => [p.fullName, p])),
+    [participants],
+  );
 
   const filteredParticipants = useMemo(() => {
     const q = participantSearch.toLowerCase().trim();
@@ -188,16 +205,14 @@ function AdminPage() {
   const sortedTeams = useMemo(() => {
     const { key, dir } = teamSort;
     return [...filteredTeams].sort((a, b) => {
-      const aVal =
-        key === 'memberCount' ? a.memberCount : key === 'createdAt' ? a.createdAt : (a[key] ?? '');
-      const bVal =
-        key === 'memberCount' ? b.memberCount : key === 'createdAt' ? b.createdAt : (b[key] ?? '');
-      const cmp =
-        typeof aVal === 'number' && typeof bVal === 'number'
-          ? aVal - bVal
-          : key === 'createdAt'
-            ? new Date(aVal as string).getTime() - new Date(bVal as string).getTime()
-            : String(aVal).localeCompare(String(bVal), undefined, { sensitivity: 'base' });
+      let cmp: number;
+      if (key === 'memberCount') cmp = a.memberCount - b.memberCount;
+      else if (key === 'createdAt')
+        cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      else
+        cmp = String(a[key] ?? '').localeCompare(String(b[key] ?? ''), undefined, {
+          sensitivity: 'base',
+        });
       return dir === 'asc' ? cmp : -cmp;
     });
   }, [filteredTeams, teamSort]);
@@ -216,19 +231,32 @@ function AdminPage() {
     }));
   }
 
-  // Cross-tab navigation: scroll to element after switching tab
+  // Cross-tab navigation: scroll to element after switching tab.
   useEffect(() => {
     if (!scrollToId) return;
-    const el = document.getElementById(scrollToId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const cls = scrollToId.startsWith('participant-')
-        ? 'admin-highlight-green'
-        : 'admin-highlight-purple';
-      el.classList.add(cls);
-      setTimeout(() => el.classList.remove(cls), 2000);
-      queueMicrotask(() => setScrollToId(null));
-    }
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let innerRafId: number | null = null;
+    const rafId = requestAnimationFrame(() => {
+      innerRafId = requestAnimationFrame(() => {
+        const el = document.getElementById(scrollToId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const cls = scrollToId.startsWith('participant-')
+            ? 'admin-highlight-green'
+            : 'admin-highlight-purple';
+          el.classList.add(cls);
+          timeoutId = setTimeout(() => el.classList.remove(cls), 2000);
+          setScrollToId(null);
+        } else {
+          setScrollToId(null);
+        }
+      });
+    });
+    return () => {
+      cancelAnimationFrame(rafId);
+      if (innerRafId !== null) cancelAnimationFrame(innerRafId);
+      if (timeoutId !== null) clearTimeout(timeoutId);
+    };
   }, [activeTab, scrollToId]);
 
   function goToTeam(slug: string) {
@@ -313,13 +341,13 @@ function AdminPage() {
               onClick={() => {
                 if (activeTab === 'participants') {
                   const allVisible = PARTICIPANT_COLUMNS.every(
-                    (c) => visibleParticipantCols[c.key] !== false,
+                    (c) => visibleParticipantCols[c.key],
                   );
                   setVisibleParticipantCols(
                     Object.fromEntries(PARTICIPANT_COLUMNS.map((c) => [c.key, !allVisible])),
                   );
                 } else {
-                  const allVisible = TEAM_COLUMNS.every((c) => visibleTeamCols[c.key] !== false);
+                  const allVisible = TEAM_COLUMNS.every((c) => visibleTeamCols[c.key]);
                   setVisibleTeamCols(
                     Object.fromEntries(TEAM_COLUMNS.map((c) => [c.key, !allVisible])),
                   );
@@ -327,10 +355,10 @@ function AdminPage() {
               }}
               title={
                 activeTab === 'participants'
-                  ? PARTICIPANT_COLUMNS.every((c) => visibleParticipantCols[c.key] !== false)
+                  ? PARTICIPANT_COLUMNS.every((c) => visibleParticipantCols[c.key])
                     ? 'Hide all columns'
                     : 'Show all columns'
-                  : TEAM_COLUMNS.every((c) => visibleTeamCols[c.key] !== false)
+                  : TEAM_COLUMNS.every((c) => visibleTeamCols[c.key])
                     ? 'Hide all columns'
                     : 'Show all columns'
               }
@@ -406,7 +434,7 @@ function AdminPage() {
                 <table className="w-full min-w-[1000px] text-left text-sm">
                   <thead>
                     <tr className="border-b border-hacknu-border bg-hacknu-dark-card">
-                      {visibleParticipantCols.fullName !== false && (
+                      {visibleParticipantCols.fullName && (
                         <SortableTh
                           label="Name"
                           sortKey="fullName"
@@ -414,7 +442,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.email !== false && (
+                      {visibleParticipantCols.email && (
                         <SortableTh
                           label="Email"
                           sortKey="email"
@@ -422,7 +450,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.iin !== false && (
+                      {visibleParticipantCols.iin && (
                         <SortableTh
                           label="IIN"
                           sortKey="iin"
@@ -430,7 +458,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.phone !== false && (
+                      {visibleParticipantCols.phone && (
                         <SortableTh
                           label="Phone"
                           sortKey="phone"
@@ -438,7 +466,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.parentPhone !== false && (
+                      {visibleParticipantCols.parentPhone && (
                         <SortableTh
                           label="Parent phone"
                           sortKey="parentPhone"
@@ -446,7 +474,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.city !== false && (
+                      {visibleParticipantCols.city && (
                         <SortableTh
                           label="City"
                           sortKey="city"
@@ -454,7 +482,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.placeOfStudy !== false && (
+                      {visibleParticipantCols.placeOfStudy && (
                         <SortableTh
                           label="Place of study"
                           sortKey="placeOfStudy"
@@ -462,7 +490,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.educationLevel !== false && (
+                      {visibleParticipantCols.educationLevel && (
                         <SortableTh
                           label="Education"
                           sortKey="educationLevel"
@@ -470,7 +498,7 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.teamName !== false && (
+                      {visibleParticipantCols.teamName && (
                         <SortableTh
                           label="Team"
                           sortKey="teamName"
@@ -478,10 +506,10 @@ function AdminPage() {
                           onSort={toggleParticipantSort}
                         />
                       )}
-                      {visibleParticipantCols.cvUrl !== false && (
+                      {visibleParticipantCols.cvUrl && (
                         <th className="px-4 py-3 font-medium text-hacknu-green">CV</th>
                       )}
-                      {visibleParticipantCols.createdAt !== false && (
+                      {visibleParticipantCols.createdAt && (
                         <SortableTh
                           label="Created"
                           sortKey="createdAt"
@@ -498,37 +526,37 @@ function AdminPage() {
                         id={`participant-${p.email}`}
                         className="scroll-mt-24 border-b border-hacknu-border/50 last:border-0 hover:bg-hacknu-dark-card/50"
                       >
-                        {visibleParticipantCols.fullName !== false && (
+                        {visibleParticipantCols.fullName && (
                           <td className="px-4 py-3 text-hacknu-text">{p.fullName}</td>
                         )}
-                        {visibleParticipantCols.email !== false && (
+                        {visibleParticipantCols.email && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.email}</td>
                         )}
-                        {visibleParticipantCols.iin !== false && (
+                        {visibleParticipantCols.iin && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.iin}</td>
                         )}
-                        {visibleParticipantCols.phone !== false && (
+                        {visibleParticipantCols.phone && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.phone}</td>
                         )}
-                        {visibleParticipantCols.parentPhone !== false && (
+                        {visibleParticipantCols.parentPhone && (
                           <td className="px-4 py-3 text-hacknu-text-muted">
                             {p.parentPhone ?? '—'}
                           </td>
                         )}
-                        {visibleParticipantCols.city !== false && (
+                        {visibleParticipantCols.city && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.city}</td>
                         )}
-                        {visibleParticipantCols.placeOfStudy !== false && (
+                        {visibleParticipantCols.placeOfStudy && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.placeOfStudy}</td>
                         )}
-                        {visibleParticipantCols.educationLevel !== false && (
+                        {visibleParticipantCols.educationLevel && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{p.educationLevel}</td>
                         )}
-                        {visibleParticipantCols.teamName !== false && (
+                        {visibleParticipantCols.teamName && (
                           <td className="px-4 py-3 text-hacknu-text-muted">
                             {p.teamName
                               ? (() => {
-                                  const team = teams.find((t) => t.name === p.teamName);
+                                  const team = teamByName.get(p.teamName);
                                   return team ? (
                                     <button
                                       type="button"
@@ -545,7 +573,7 @@ function AdminPage() {
                               : '—'}
                           </td>
                         )}
-                        {visibleParticipantCols.cvUrl !== false && (
+                        {visibleParticipantCols.cvUrl && (
                           <td className="px-4 py-3">
                             {p.cvUrl ? (
                               <a
@@ -561,9 +589,9 @@ function AdminPage() {
                             )}
                           </td>
                         )}
-                        {visibleParticipantCols.createdAt !== false && (
+                        {visibleParticipantCols.createdAt && (
                           <td className="px-4 py-3 text-hacknu-text-muted">
-                            {new Date(p.createdAt).toLocaleDateString()}
+                            {formatDateForDisplay(p.createdAt)}
                           </td>
                         )}
                       </tr>
@@ -584,7 +612,7 @@ function AdminPage() {
                 <table className="w-full min-w-[600px] text-left text-sm">
                   <thead>
                     <tr className="border-b border-hacknu-border bg-hacknu-dark-card">
-                      {visibleTeamCols.name !== false && (
+                      {visibleTeamCols.name && (
                         <SortableTh
                           label="Name"
                           sortKey="name"
@@ -593,7 +621,7 @@ function AdminPage() {
                           variant="purple"
                         />
                       )}
-                      {visibleTeamCols.captainName !== false && (
+                      {visibleTeamCols.captainName && (
                         <SortableTh
                           label="Captain"
                           sortKey="captainName"
@@ -602,7 +630,7 @@ function AdminPage() {
                           variant="purple"
                         />
                       )}
-                      {visibleTeamCols.memberCount !== false && (
+                      {visibleTeamCols.memberCount && (
                         <SortableTh
                           label="Members"
                           sortKey="memberCount"
@@ -611,7 +639,7 @@ function AdminPage() {
                           variant="purple"
                         />
                       )}
-                      {visibleTeamCols.inviteSlug !== false && (
+                      {visibleTeamCols.inviteSlug && (
                         <SortableTh
                           label="Invite slug"
                           sortKey="inviteSlug"
@@ -620,7 +648,7 @@ function AdminPage() {
                           variant="purple"
                         />
                       )}
-                      {visibleTeamCols.createdAt !== false && (
+                      {visibleTeamCols.createdAt && (
                         <SortableTh
                           label="Created"
                           sortKey="createdAt"
@@ -638,18 +666,18 @@ function AdminPage() {
                         id={`team-${t.inviteSlug}`}
                         className="scroll-mt-24 border-b border-hacknu-border/50 last:border-0 hover:bg-hacknu-dark-card/50"
                       >
-                        {visibleTeamCols.name !== false && (
+                        {visibleTeamCols.name && (
                           <td className="px-4 py-3 text-hacknu-text">{t.name}</td>
                         )}
-                        {visibleTeamCols.captainName !== false && (
+                        {visibleTeamCols.captainName && (
                           <td className="px-4 py-3 text-hacknu-text-muted">{t.captainName}</td>
                         )}
-                        {visibleTeamCols.memberCount !== false && (
+                        {visibleTeamCols.memberCount && (
                           <td className="px-4 py-3 text-hacknu-text-muted">
                             {[t.member1, t.member2, t.member3, t.member4]
                               .filter(Boolean)
                               .map((name, i, arr) => {
-                                const participant = participants.find((x) => x.fullName === name);
+                                const participant = participantByName.get(name);
                                 return (
                                   <span key={name}>
                                     {participant ? (
@@ -670,14 +698,14 @@ function AdminPage() {
                               })}
                           </td>
                         )}
-                        {visibleTeamCols.inviteSlug !== false && (
+                        {visibleTeamCols.inviteSlug && (
                           <td className="px-4 py-3 font-mono text-xs text-hacknu-text-muted">
                             {t.inviteSlug}
                           </td>
                         )}
-                        {visibleTeamCols.createdAt !== false && (
+                        {visibleTeamCols.createdAt && (
                           <td className="px-4 py-3 text-xs whitespace-nowrap text-hacknu-text-muted">
-                            {new Date(t.createdAt).toLocaleDateString()}
+                            {formatDateForDisplay(t.createdAt)}
                           </td>
                         )}
                       </tr>
