@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
 import { user } from '@/db/auth-schema';
 
@@ -35,26 +35,30 @@ export type NewTeam = typeof team.$inferInsert;
  * Participant — filled in during onboarding (step 2 of registration).
  * teamId is nullable; set when the participant joins or creates a team.
  */
-export const participant = sqliteTable('participant', {
-  id: text('id')
-    .primaryKey()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  fullName: text('full_name').notNull(),
-  iin: text('iin').notNull(),
-  phone: text('phone').notNull(),
-  city: text('city').notNull(),
-  placeOfStudy: text('place_of_study').notNull(),
-  parentPhone: text('parent_phone'),
-  educationLevel: text('education_level').notNull(),
-  cvUrl: text('cv_url'),
-  teamId: text('team_id').references(() => team.id, { onDelete: 'set null' }),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .notNull(),
-});
+export const participant = sqliteTable(
+  'participant',
+  {
+    id: text('id')
+      .primaryKey()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    fullName: text('full_name').notNull(),
+    iin: text('iin').notNull(),
+    phone: text('phone').notNull(),
+    city: text('city').notNull(),
+    placeOfStudy: text('place_of_study').notNull(),
+    parentPhone: text('parent_phone'),
+    educationLevel: text('education_level').notNull(),
+    cvUrl: text('cv_url'),
+    teamId: text('team_id').references(() => team.id, { onDelete: 'set null' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+  },
+  (table) => [index('idx_participant_team_id').on(table.teamId)],
+);
 
 export type Participant = typeof participant.$inferSelect;
 export type NewParticipant = typeof participant.$inferInsert;

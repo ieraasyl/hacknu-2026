@@ -26,6 +26,7 @@ const getAdminReportFn = createServerFn({ method: 'GET' }).handler(async () => {
 const reportQueryOptions = queryOptions({
   queryKey: ['admin-report'],
   queryFn: () => getAdminReportFn(),
+  staleTime: 5 * 60 * 1000,
 });
 
 /* ─── Route ─── */
