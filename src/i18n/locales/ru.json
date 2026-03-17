@@ -194,7 +194,11 @@
     "healthReady": "ГОТОВ",
     "healthNoTeam": "Нет команды",
     "healthTeamSmall": "В команде < 2 участников",
-    "healthRegistered": "Зарегистрирован"
+    "healthRegistered": "Зарегистрирован",
+    "generateName": "Сгенерировать название команды",
+    "cancelGenerate": "Отмена",
+    "generateCooldown": "Повторить через {{seconds}} с",
+    "generateError": "Не удалось сгенерировать название. Попробуйте позже."
   },
   "invite": {
     "joining": "Присоединение к команде...",

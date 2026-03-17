@@ -6,6 +6,7 @@ HackNU/26 — 9th Annual Student Hackathon site and registration app
 
 - **Registration**: Sign in via email OTP or Google OAuth → complete onboarding → access dashboard.
 - **Teams**: Create a team (2–4 members) or join via invite link. Captain can kick members or dissolve the team.
+- **AI team name generation**: AI-powered suggestions for team names in the dashboard.
 - **Admin**: Participants and teams report at `/admin`.
 
 ## Tech Stack

@@ -194,7 +194,11 @@
     "healthReady": "ДАЙЫН",
     "healthNoTeam": "Топ жоқ",
     "healthTeamSmall": "Топта < 2 мүше",
-    "healthRegistered": "Тіркелген"
+    "healthRegistered": "Тіркелген",
+    "generateName": "Топ атын жасау",
+    "cancelGenerate": "Болдырмау",
+    "generateCooldown": "{{seconds}} с кейін қайталаңыз",
+    "generateError": "Атын жасау мүмкін болмады. Кейінірек қайталап көріңіз."
   },
   "invite": {
     "joining": "Топқа қосылуда...",

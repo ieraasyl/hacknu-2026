@@ -78,6 +78,15 @@ const dissolveTeamFn = createServerFn({ method: 'POST' }).handler(async () => {
   await dissolveTeam(session.user.id);
 });
 
+const generateTeamNameFn = createServerFn({ method: 'POST' }).handler(async () => {
+  const request = getRequest();
+  const session = await getSession(request);
+  if (!session) throw new Error('Unauthorized');
+  const { generateTeamName } = await import('@/lib/ai.server');
+  const name = await generateTeamName();
+  return { name };
+});
+
 const teamQueryOptions = queryOptions({
   queryKey: ['team'],
   queryFn: () => getMyTeamFn(),
@@ -107,7 +116,9 @@ function Dashboard() {
   const [joinError, setJoinError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(
+    null,
+  );
   const kickTargetNameRef = useRef<string>('');
 
   useEffect(() => {
@@ -150,7 +161,10 @@ function Dashboard() {
     mutationFn: (targetUserId: string) => kickMemberFn({ data: { targetUserId } }),
     onSuccess: () => {
       trigger?.('success');
-      setFeedback({ message: `kick @${kickTargetNameRef.current} --status=success`, type: 'success' });
+      setFeedback({
+        message: `kick @${kickTargetNameRef.current} --status=success`,
+        type: 'success',
+      });
       queryClient.invalidateQueries({ queryKey: ['team'] });
       setActionError(null);
     },
@@ -187,6 +201,76 @@ function Dashboard() {
       setActionError((err as Error).message);
     },
   });
+
+  const generateIdRef = useRef(0);
+  const cancelledGenerateIdRef = useRef<number | null>(null);
+
+  const [generateCooldownUntil, setGenerateCooldownUntil] = useState(0);
+  const [createCooldownSeconds, setCreateCooldownSeconds] = useState(0);
+  useEffect(() => {
+    if (generateCooldownUntil <= 0) {
+      setCreateCooldownSeconds(0);
+      return;
+    }
+    const update = () => {
+      const remaining = Math.ceil((generateCooldownUntil - Date.now()) / 1000);
+      if (remaining <= 0) {
+        setGenerateCooldownUntil(0);
+        setCreateCooldownSeconds(0);
+        return;
+      }
+      setCreateCooldownSeconds(remaining);
+    };
+    update();
+    const t = setTimeout(() => setGenerateCooldownUntil(0), Math.max(0, generateCooldownUntil - Date.now()));
+    const i = setInterval(update, 1000);
+    return () => {
+      clearTimeout(t);
+      clearInterval(i);
+    };
+  }, [generateCooldownUntil]);
+
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      const id = ++generateIdRef.current;
+      try {
+        const data = await generateTeamNameFn();
+        return { ...data, __localId: id };
+      } catch (err) {
+        return await Promise.reject({ err, __localId: id });
+      }
+    },
+    onSuccess: (data: { name: string; __localId: number }) => {
+      if (data.__localId === cancelledGenerateIdRef.current) {
+        cancelledGenerateIdRef.current = null;
+        return;
+      }
+      setCreateName(data.name);
+      setCreateError(null);
+      trigger?.('success');
+    },
+    onError: (err: { err: Error; __localId: number }) => {
+      if (err.__localId === cancelledGenerateIdRef.current) {
+        cancelledGenerateIdRef.current = null;
+        return;
+      }
+      trigger?.('error');
+      setCreateError(t('dashboard.generateError'));
+    },
+  });
+
+  function handleGenerate() {
+    setGenerateCooldownUntil(Date.now() + 5000);
+    generateMutation.mutate();
+  }
+
+  function handleCancelGenerate() {
+    if (!generateMutation.isPending) return;
+    cancelledGenerateIdRef.current = generateIdRef.current;
+    generateMutation.reset();
+    setCreateError(null);
+    setGenerateCooldownUntil(Date.now() + 3000);
+  }
 
   function extractSlug(input: string): string {
     const trimmed = input.trim();
@@ -334,6 +418,11 @@ function Dashboard() {
             loading: createMutation.isPending,
             error: createError,
             onSubmit: handleCreate,
+            onGenerate: handleGenerate,
+            onCancelGenerate: handleCancelGenerate,
+            generating: generateMutation.isPending,
+            generateOnCooldown: generateCooldownUntil > 0,
+            generateCooldownSeconds: createCooldownSeconds,
           }}
           joinForm={{
             input: joinInput,

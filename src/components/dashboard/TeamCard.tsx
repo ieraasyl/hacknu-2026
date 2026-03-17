@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { SparkleIcon, StopIcon } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { ConfirmButton } from '@/components/ui/confirm-button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -19,6 +20,11 @@ export type TeamCardProps = {
     loading: boolean;
     error: string | null;
     onSubmit: (e: React.FormEvent) => void;
+    onGenerate: () => void;
+    onCancelGenerate?: () => void;
+    generating: boolean;
+    generateOnCooldown: boolean;
+    generateCooldownSeconds: number;
   };
   joinForm: {
     input: string;
@@ -48,6 +54,11 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
     loading: createLoading,
     error: createError,
     onSubmit: handleCreate,
+    onGenerate,
+    onCancelGenerate,
+    generating,
+    generateOnCooldown,
+    generateCooldownSeconds,
   } = createForm;
   const {
     input: joinInput,
@@ -193,16 +204,49 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
                 {t('dashboard.createTeam')}
               </p>
               <form onSubmit={handleCreate} className="flex gap-2">
-                <Input
-                  placeholder={t('dashboard.teamNamePlaceholder')}
-                  value={createName}
-                  onChange={(e) => setCreateName(e.target.value)}
-                  disabled={createLoading}
-                  className="flex-1 border-hacknu-border bg-hacknu-dark font-mono text-xs text-hacknu-text placeholder:text-hacknu-text-muted/50"
-                />
+                <div className="relative flex-1">
+                  <Input
+                    placeholder={t('dashboard.teamNamePlaceholder')}
+                    value={createName}
+                    onChange={(e) => setCreateName(e.target.value)}
+                    disabled={createLoading || generating}
+                    className="w-full border-hacknu-border bg-hacknu-dark pr-7 font-mono text-xs text-hacknu-text placeholder:text-hacknu-text-muted/50"
+                  />
+                  <div className="group/tooltip absolute inset-y-0 right-0 flex items-stretch">
+                    <button
+                      type="button"
+                      onClick={generating ? onCancelGenerate : onGenerate}
+                      disabled={createLoading || (!generating && generateOnCooldown)}
+                      aria-label={
+                      generating
+                        ? t('dashboard.cancelGenerate')
+                        : generateOnCooldown && generateCooldownSeconds > 0
+                          ? t('dashboard.generateCooldown', { seconds: generateCooldownSeconds })
+                          : t('dashboard.generateName')
+                    }
+                      className="flex aspect-square h-full items-center justify-center text-hacknu-text-muted transition-colors hover:bg-white/10 hover:text-hacknu-purple disabled:pointer-events-none disabled:opacity-30"
+                    >
+                      {generating ? (
+                        <StopIcon size={12} />
+                      ) : (
+                        <SparkleIcon size={12} />
+                      )}
+                    </button>
+                    <span
+                      role="tooltip"
+                      className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap border border-hacknu-border bg-hacknu-dark-card px-2.5 py-1.5 text-xs text-hacknu-text opacity-0 shadow-lg transition-opacity group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100"
+                    >
+                      {generating
+                        ? t('dashboard.cancelGenerate')
+                        : generateOnCooldown && generateCooldownSeconds > 0
+                          ? t('dashboard.generateCooldown', { seconds: generateCooldownSeconds })
+                          : t('dashboard.generateName')}
+                    </span>
+                  </div>
+                </div>
                 <Button
                   type="submit"
-                  disabled={createLoading || !createName.trim()}
+                  disabled={createLoading || generating || !createName.trim()}
                   className="shrink-0 bg-hacknu-green text-xs font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
                 >
                   {createLoading ? '...' : t('dashboard.create')}

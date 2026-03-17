@@ -194,7 +194,11 @@
     "healthReady": "READY",
     "healthNoTeam": "No team assigned",
     "healthTeamSmall": "Team size < 2",
-    "healthRegistered": "Registered"
+    "healthRegistered": "Registered",
+    "generateName": "Generate a team name",
+    "cancelGenerate": "Cancel",
+    "generateCooldown": "Try again in {{seconds}}s",
+    "generateError": "Couldn't generate a name. Try again later."
   },
   "invite": {
     "joining": "Joining team...",
