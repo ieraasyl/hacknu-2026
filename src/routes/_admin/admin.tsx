@@ -29,6 +29,10 @@ const reportQueryOptions = queryOptions({
   staleTime: 5 * 60 * 1000,
 });
 
+export const REFRESH_COOLDOWN_MS = 30 * 1000; // 30 seconds on success
+export const REFRESH_COOLDOWN_ON_FAIL_MS = 10 * 1000; // 10 seconds on error
+export { reportQueryOptions };
+
 /* ─── Route ─── */
 
 export const Route = createFileRoute('/_admin/admin')({
