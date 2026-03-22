@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackgroundGrid } from '@/components/ui/background';
+import { Toggle } from '@/components/ui/toggle';
 import { ListChecksIcon } from '@phosphor-icons/react';
 
 /* ─── Server Function ─── */
@@ -134,6 +135,9 @@ function AdminPage() {
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const [participantSearch, setParticipantSearch] = useState('');
   const [teamSearch, setTeamSearch] = useState('');
+  const [showTeamsWithTwoPlusMembersOnly, setShowTeamsWithTwoPlusMembersOnly] = useState(false);
+  const [showParticipantsInEligibleTeamsOnly, setShowParticipantsInEligibleTeamsOnly] =
+    useState(false);
   const [participantSort, setParticipantSort] = useState<{
     key: ParticipantSortKey;
     dir: 'asc' | 'desc';
@@ -158,10 +162,25 @@ function AdminPage() {
     [participants],
   );
 
+  const teamsEligibleTeamsTab = useMemo(() => {
+    if (!showTeamsWithTwoPlusMembersOnly) return teams;
+    return teams.filter((t) => t.memberCount >= 2);
+  }, [teams, showTeamsWithTwoPlusMembersOnly]);
+
+  const participantsEligibleParticipantsTab = useMemo(() => {
+    if (!showParticipantsInEligibleTeamsOnly) return participants;
+    return participants.filter((p) => {
+      if (!p.teamName) return false;
+      const t = teamByName.get(p.teamName);
+      return t != null && t.memberCount >= 2;
+    });
+  }, [participants, teamByName, showParticipantsInEligibleTeamsOnly]);
+
   const filteredParticipants = useMemo(() => {
     const q = participantSearch.toLowerCase().trim();
-    if (!q) return participants;
-    return participants.filter(
+    const base = participantsEligibleParticipantsTab;
+    if (!q) return base;
+    return base.filter(
       (p) =>
         p.fullName.toLowerCase().includes(q) ||
         p.email.toLowerCase().includes(q) ||
@@ -173,21 +192,22 @@ function AdminPage() {
         (p.parentPhone?.includes(q) ?? false) ||
         p.educationLevel.toLowerCase().includes(q),
     );
-  }, [participants, participantSearch]);
+  }, [participantsEligibleParticipantsTab, participantSearch]);
 
   const filteredTeams = useMemo(() => {
     const q = teamSearch.toLowerCase().trim();
-    if (!q) return teams;
+    const base = teamsEligibleTeamsTab;
+    if (!q) return base;
     const members = (t: ReportTeam) =>
       [t.member1, t.member2, t.member3, t.member4].filter(Boolean).join(' ').toLowerCase();
-    return teams.filter(
+    return base.filter(
       (t) =>
         t.name.toLowerCase().includes(q) ||
         t.captainName.toLowerCase().includes(q) ||
         members(t).includes(q) ||
         t.inviteSlug.toLowerCase().includes(q),
     );
-  }, [teams, teamSearch]);
+  }, [teamsEligibleTeamsTab, teamSearch]);
 
   const sortedParticipants = useMemo(() => {
     const { key, dir } = participantSort;
@@ -260,11 +280,13 @@ function AdminPage() {
   }, [activeTab, scrollToId]);
 
   function goToTeam(slug: string) {
+    setShowTeamsWithTwoPlusMembersOnly(false);
     setActiveTab('teams');
     setScrollToId(`team-${slug}`);
   }
 
   function goToParticipant(email: string) {
+    setShowParticipantsInEligibleTeamsOnly(false);
     setActiveTab('participants');
     setScrollToId(`participant-${email}`);
   }
@@ -310,13 +332,13 @@ function AdminPage() {
                 value="participants"
                 className="rounded-md px-5 py-2.5 text-sm font-medium text-hacknu-text-muted transition-colors hover:text-hacknu-text data-active:bg-hacknu-green/20 data-active:text-hacknu-green"
               >
-                Participants ({participants.length})
+                Participants
               </TabsTrigger>
               <TabsTrigger
                 value="teams"
                 className="rounded-md px-5 py-2.5 text-sm font-medium text-hacknu-text-muted transition-colors hover:text-hacknu-text data-active:bg-hacknu-purple/20 data-active:text-hacknu-purple"
               >
-                Teams ({teams.length})
+                Teams
               </TabsTrigger>
             </TabsList>
             <Input
@@ -422,12 +444,36 @@ function AdminPage() {
                     </Badge>
                   );
                 })}
+            {activeTab === 'participants' && (
+              <Toggle
+                type="button"
+                variant="outline"
+                size="sm"
+                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted hover:bg-hacknu-dark-card hover:text-hacknu-text"
+                pressed={showParticipantsInEligibleTeamsOnly}
+                onPressedChange={setShowParticipantsInEligibleTeamsOnly}
+              >
+                {showParticipantsInEligibleTeamsOnly ? 'In eligible teams' : 'All participants'}
+              </Toggle>
+            )}
+            {activeTab === 'teams' && (
+              <Toggle
+                type="button"
+                variant="outline"
+                size="sm"
+                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted hover:bg-hacknu-dark-card hover:text-hacknu-text"
+                pressed={showTeamsWithTwoPlusMembersOnly}
+                onPressedChange={setShowTeamsWithTwoPlusMembersOnly}
+              >
+                {showTeamsWithTwoPlusMembersOnly ? 'Eligible teams' : 'All teams'}
+              </Toggle>
+            )}
           </div>
 
           <TabsContent value="participants" className="mt-0">
             <section>
               <p className="mb-2 text-xs text-hacknu-text-muted">
-                {filteredParticipants.length} of {participants.length}
+                {filteredParticipants.length} of {participantsEligibleParticipantsTab.length}
                 {participantSearch && ' (filtered)'}
               </p>
               <div className="overflow-x-auto rounded border border-hacknu-border">
@@ -605,7 +651,7 @@ function AdminPage() {
           <TabsContent value="teams" className="mt-0">
             <section>
               <p className="mb-2 text-xs text-hacknu-text-muted">
-                {filteredTeams.length} of {teams.length}
+                {filteredTeams.length} of {teamsEligibleTeamsTab.length}
                 {teamSearch && ' (filtered)'}
               </p>
               <div className="overflow-x-auto rounded border border-hacknu-border">
