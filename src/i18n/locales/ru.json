@@ -8,7 +8,9 @@
     "titleNU": "NU",
     "titleYear": "/26",
     "subtitle": "9-й ежегодный 24-часовой студенческий хакатон",
-    "subtitleOrg": "организован",
+    "subtitleLine1Highlight": "",
+    "subtitleLine1Suffix": "",
+    "subtitleOrg": "организованный",
     "subtitleOrgName": "NU ACM Student Chapter",
     "ctaRegister": "регистрация",
     "ctaDashboard": "панель управления"
@@ -49,6 +51,7 @@
     "hour": "часа",
     "hackathon": "хакатон",
     "participants": "участников",
+    "editionOrdinal": "9-е",
     "annualEdition": "ежегодное мероприятие",
     "title": "Крупнейший студенческий",
     "titleHighlight": "хакатон в Центральной Азии",
@@ -215,16 +218,11 @@
     "removeFile": "Удалить файл"
   },
   "education": {
-    "High School": "Средняя школа",
-    "Bachelor's (in progress)": "Бакалавриат (в процессе)",
+    "College": "Колледж",
+    "Foundation": "Foundation",
     "Bachelor's": "Бакалавриат",
-    "Master's (in progress)": "Магистратура (в процессе)",
     "Master's": "Магистратура",
-    "PhD (in progress)": "PhD (в процессе)",
-    "PhD": "PhD",
-    "Bootcamp Graduate": "Выпускник буткампа",
-    "Self-taught": "Самоучка",
-    "Other": "Другое"
+    "PhD": "PhD"
   },
   "nervOverlay": {
     "header": "NERV HQ — АСТАНА",

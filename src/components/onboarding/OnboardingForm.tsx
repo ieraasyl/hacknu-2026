@@ -204,7 +204,9 @@ export default function OnboardingForm({
             disabled={loading}
           >
             <SelectTrigger className="w-full border-hacknu-border bg-hacknu-dark text-hacknu-text focus-visible:border-hacknu-green">
-              <SelectValue placeholder={t('onboarding.educationPlaceholder')} />
+              <SelectValue placeholder={t('onboarding.educationPlaceholder')}>
+                {educationLevel ? t(`education.${educationLevel}`) : undefined}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="border-hacknu-border bg-hacknu-dark-card">
               {EDUCATION_LEVELS.map((level) => (

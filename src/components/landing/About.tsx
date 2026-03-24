@@ -52,7 +52,7 @@ export default function About() {
   const highlights = [
     { number: '24', unit: t('about.hour'), text: t('about.hackathon') },
     { number: '500+', unit: '', text: t('about.participants') },
-    { number: '9th', unit: '', text: t('about.annualEdition') },
+    { number: t('about.editionOrdinal'), unit: '', text: t('about.annualEdition') },
   ];
 
   return (

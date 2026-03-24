@@ -7,6 +7,11 @@ export default function Hero({ session }: { session: Session | null }) {
   const { t } = useTranslation();
   const isLoggedIn = !!session?.user;
 
+  const subtitleLine1Highlight = t('hero.subtitleLine1Highlight').trim();
+  const subtitleLine1Suffix = t('hero.subtitleLine1Suffix');
+  const subtitleOrg = t('hero.subtitleOrg').trim();
+  const subtitleOrgName = t('hero.subtitleOrgName').trim();
+
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center overflow-hidden">
       <HexagonBackground className="absolute inset-0" />
@@ -34,15 +39,9 @@ export default function Hero({ session }: { session: Session | null }) {
               '-1px 0 0 rgba(0,0,0,0.9), 1px 0 0 rgba(0,0,0,0.9), 0 -1px 0 rgba(0,0,0,0.9), 0 1px 0 rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.6)',
           }}
         >
-          <span className="text-hacknu-green">
-            {t('hero.titleHack')}
-          </span>
-          <span className="text-hacknu-green">
-            {t('hero.titleNU')}
-          </span>
-          <span className="text-hacknu-purple">
-            {t('hero.titleYear')}
-          </span>
+          <span className="text-hacknu-green">{t('hero.titleHack')}</span>
+          <span className="text-hacknu-green">{t('hero.titleNU')}</span>
+          <span className="text-hacknu-purple">{t('hero.titleYear')}</span>
         </h1>
 
         {/* Subtitle */}
@@ -52,10 +51,26 @@ export default function Hero({ session }: { session: Session | null }) {
             textShadow: '0 0 30px rgba(0,0,0,1), 0 0 60px rgba(0,0,0,1), 0 2px 8px rgba(0,0,0,1)',
           }}
         >
-          {t('hero.subtitle')}
+          {subtitleLine1Highlight ? (
+            <>
+              <span className="text-hacknu-green">{subtitleLine1Highlight}</span>
+              {subtitleLine1Suffix}
+            </>
+          ) : (
+            t('hero.subtitle')
+          )}
           <br />
-          {t('hero.subtitleOrg')}{' '}
-          <span className="text-hacknu-green">{t('hero.subtitleOrgName')}</span>
+          {subtitleOrg ? (
+            <>
+              {subtitleOrg}
+              {subtitleOrgName ? (
+                <>
+                  {' '}
+                  <span className="text-hacknu-green">{subtitleOrgName}</span>
+                </>
+              ) : null}
+            </>
+          ) : null}
         </p>
 
         {/* Register / Dashboard CTA */}

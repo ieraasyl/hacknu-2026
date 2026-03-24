@@ -7,9 +7,11 @@
     "titleHack": "Hack",
     "titleNU": "NU",
     "titleYear": "/26",
-    "subtitle": "9-шы жылдық 24 сағаттық студенттік хакathon",
-    "subtitleOrg": "ұйымдастырушы",
-    "subtitleOrgName": "NU ACM Student Chapter",
+    "subtitle": "",
+    "subtitleLine1Highlight": "NU ACM Student Chapter",
+    "subtitleLine1Suffix": " ұйымдастырған",
+    "subtitleOrg": "9-шы жылдық 24 сағаттық студенттік хакатон",
+    "subtitleOrgName": "",
     "ctaRegister": "тіркелу",
     "ctaDashboard": "басқару тақтасы"
   },
@@ -22,7 +24,7 @@
     "toggleMenu": "Мәзірді ашу/жабу"
   },
   "footer": {
-    "readyToHack": "Хакathonға дайынсыз ба?",
+    "readyToHack": "Хакатонға дайынсыз ба?",
     "ctaRegister": "тіркелу",
     "ctaDashboard": "басқару тақтасы",
     "copyright": "© 2026 NU ACM Student Chapter",
@@ -30,7 +32,7 @@
     "linkedin": "LinkedIn",
     "youtube": "YouTube",
     "email": "Email",
-    "credits": "HackNU/26 тобының жасаған және құрған"
+    "credits": "HackNU/26 командасы ❤ жобалаған және құрастырған"
   },
   "infoCards": {
     "when": "Қашан?",
@@ -47,12 +49,13 @@
   "about": {
     "header": "# --- HackNU туралы бірнеше негізгі нәрсе ---",
     "hour": "сағат",
-    "hackathon": "хакathon",
+    "hackathon": "хакатон",
     "participants": "қатысушы",
+    "editionOrdinal": "9-шы",
     "annualEdition": "жылдық шығарылым",
     "title": "Орталық Азиядағы ең үлкен",
-    "titleHighlight": "студенттік хакathon",
-    "para1": "HackNU — Назарбаев Университетінің ACM Student Chapter ұйымдастырған 24 сағаттық хакathon. Бастапқыдан бері HackNU Орталық Азиядағы ең үлкен студенттік хакathonдардың біріне айналды.",
+    "titleHighlight": "студенттік хакатон",
+    "para1": "HackNU — Назарбаев Университетінің ACM Student Chapter ұйымдастырған 24 сағаттық хакатон. Бастапқыдан бері HackNU Орталық Азиядағы ең үлкен студенттік хакатондардың біріне айналды.",
     "para2": "Сіз бастауыш бағдарламашы немесе тәжірибелі әзірлеуші болсаңыз да, HackNU инновациялық шешімдер жасау, жаңа технологияларды үйрену және ұқсас ойлы адамдармен танысу үшін тамаша ортаны жасайды.",
     "photoAlt": "HackNU іс-шара фотосуреті {{index}}"
   },
@@ -215,16 +218,11 @@
     "removeFile": "Файлды өшіру"
   },
   "education": {
-    "High School": "Жоғары мектеп",
-    "Bachelor's (in progress)": "Бакалавриат (оқуда)",
+    "College": "Колледж",
+    "Foundation": "Foundation",
     "Bachelor's": "Бакалавриат",
-    "Master's (in progress)": "Магистратура (оқуда)",
     "Master's": "Магистратура",
-    "PhD (in progress)": "PhD (оқуда)",
-    "PhD": "PhD",
-    "Bootcamp Graduate": "Bootcamp түлегі",
-    "Self-taught": "Өзіндік оқыған",
-    "Other": "Басқа"
+    "PhD": "PhD"
   },
   "nervOverlay": {
     "header": "NERV HQ — АСТАНА",

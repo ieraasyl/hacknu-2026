@@ -8,6 +8,8 @@
     "titleNU": "NU",
     "titleYear": "/26",
     "subtitle": "9th Annual 24-hour student hackathon",
+    "subtitleLine1Highlight": "",
+    "subtitleLine1Suffix": "",
     "subtitleOrg": "organized by",
     "subtitleOrgName": "NU ACM Student Chapter",
     "ctaRegister": "register",
@@ -49,6 +51,7 @@
     "hour": "hour",
     "hackathon": "hackathon",
     "participants": "participants",
+    "editionOrdinal": "9th",
     "annualEdition": "annual edition",
     "title": "The biggest student",
     "titleHighlight": "hackathon in Central Asia",
@@ -215,16 +218,11 @@
     "removeFile": "Remove file"
   },
   "education": {
-    "High School": "High School",
-    "Bachelor's (in progress)": "Bachelor's (in progress)",
+    "College": "College",
+    "Foundation": "Foundation",
     "Bachelor's": "Bachelor's",
-    "Master's (in progress)": "Master's (in progress)",
     "Master's": "Master's",
-    "PhD (in progress)": "PhD (in progress)",
-    "PhD": "PhD",
-    "Bootcamp Graduate": "Bootcamp Graduate",
-    "Self-taught": "Self-taught",
-    "Other": "Other"
+    "PhD": "PhD"
   },
   "nervOverlay": {
     "header": "NERV HQ — ASTANA",
