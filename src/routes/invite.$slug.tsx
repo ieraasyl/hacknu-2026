@@ -129,7 +129,7 @@ function InviteResult() {
             </CardDescription>
             <Button
               className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
-              render={<a href="/dashboard" />}
+              onClick={() => navigate({ to: '/dashboard' })}
             >
               {t('invite.goToDashboard')}
             </Button>

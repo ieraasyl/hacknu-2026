@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { AuthHeader } from '@/components/AuthHeader';
 
 export const Route = createFileRoute('/privacy')({
@@ -16,6 +16,8 @@ export const Route = createFileRoute('/privacy')({
 });
 
 function PrivacyPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="flex min-h-screen flex-col bg-hacknu-dark">
       <AuthHeader />
@@ -160,12 +162,13 @@ function PrivacyPage() {
             </section>
           </div>
 
-          <a
-            href="/"
-            className="mt-12 inline-block text-sm font-medium text-hacknu-green hover:underline"
+          <button
+            type="button"
+            onClick={() => navigate({ to: '/' })}
+            className="mt-12 inline-block cursor-pointer text-sm font-medium text-hacknu-green hover:underline"
           >
             ← Back to home
-          </a>
+          </button>
         </div>
       </main>
     </div>

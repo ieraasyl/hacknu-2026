@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { ConfirmButton } from '@/components/ui/confirm-button';
 
@@ -15,20 +15,21 @@ export default function AdminHeader({
   refreshCooldownSeconds?: number;
 }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <a href="/" className="flex items-center gap-2">
+        <button type="button" onClick={() => navigate({ to: '/' })} className="flex cursor-pointer items-center gap-2">
           <span className="text-2xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
           <span className="text-2xl font-bold tracking-tighter text-hacknu-purple">/26</span>
-        </a>
+        </button>
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
             className="tracking-wider text-hacknu-text-muted uppercase hover:bg-transparent hover:text-hacknu-green"
-            render={<Link to="/dashboard" />}
+            onClick={() => navigate({ to: '/dashboard' })}
           >
             {t('navbar.dashboard')}
           </Button>

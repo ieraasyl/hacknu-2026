@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import type { PilotState } from '@/lib/pilot-state.functions';
 
 interface NERVOverlayProps {
@@ -124,6 +125,7 @@ const TypewriterLine: FC<{
 
 export const NERVOverlay: FC<NERVOverlayProps> = ({ state, onClose }) => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const templates = LINE_TEMPLATES[state];
   const lines = useMemo<Line[]>(
     () =>
@@ -235,12 +237,15 @@ export const NERVOverlay: FC<NERVOverlayProps> = ({ state, onClose }) => {
         {showCTA && (
           <div className="mt-6 border-t border-hacknu-green/20 pt-4">
             {cta ? (
-              <a
-                href={cta.href}
-                className="block w-full border border-hacknu-green/50 py-2 text-center font-mono text-sm tracking-widest text-hacknu-green transition-all hover:border-hacknu-green hover:bg-hacknu-green/10 hover:shadow-[0_0_20px_rgba(88,225,145,0.2)]"
+              <button
+                type="button"
+                onClick={() => {
+                  void navigate({ to: cta.href });
+                }}
+                className="block w-full cursor-pointer border border-hacknu-green/50 py-2 text-center font-mono text-sm tracking-widest text-hacknu-green transition-all hover:border-hacknu-green hover:bg-hacknu-green/10 hover:shadow-[0_0_20px_rgba(88,225,145,0.2)]"
               >
                 {cta.label}
-              </a>
+              </button>
             ) : (
               <div className="animate-pulse text-center font-mono text-sm tracking-widest text-hacknu-green">
                 {t('nervOverlay.readyMessage')}

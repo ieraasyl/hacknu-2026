@@ -1,5 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import { HeadContent, Scripts, createRootRouteWithContext, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie } from '@tanstack/react-start/server';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
@@ -25,6 +25,7 @@ const getServerLocale = createServerFn({ method: 'GET' }).handler(async () => {
 
 function NotFoundPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <div className="flex min-h-screen flex-col bg-hacknu-dark">
       <AuthHeader />
@@ -47,12 +48,13 @@ function NotFoundPage() {
             ════════════════════════════════
           </div>
           <p className="mb-8 text-sm text-hacknu-text-muted">{t('notFound.message')}</p>
-          <a
-            href="/"
-            className="inline-block bg-hacknu-green px-8 py-3 text-sm font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
+          <button
+            type="button"
+            onClick={() => navigate({ to: '/' })}
+            className="inline-block cursor-pointer bg-hacknu-green px-8 py-3 text-sm font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
           >
             {t('notFound.goHome')}
-          </a>
+          </button>
         </div>
       </div>
     </div>

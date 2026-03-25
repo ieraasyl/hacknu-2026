@@ -8,14 +8,28 @@ import { NERVOverlay } from '@/components/landing/NERVOverlay';
 import { getPilotState, type PilotState } from '@/lib/pilot-state.functions';
 import type { Session } from '@/lib/types';
 
+const SCROLL_EDGE_RATIO = 0.3;
+
 function FloatingModel({ onModelClick }: { onModelClick: () => void }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const check = () => setVisible(window.scrollY > window.innerHeight * 0.7);
+    const check = () => {
+      const { scrollY, innerHeight } = window;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const margin = innerHeight * SCROLL_EDGE_RATIO;
+      const pastTop = scrollY > margin;
+      const gapBelowViewport = scrollHeight - scrollY - innerHeight;
+      const beforeBottom = gapBelowViewport > margin;
+      setVisible(pastTop && beforeBottom);
+    };
     check();
     window.addEventListener('scroll', check, { passive: true });
-    return () => window.removeEventListener('scroll', check);
+    window.addEventListener('resize', check, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
   }, []);
 
   return (

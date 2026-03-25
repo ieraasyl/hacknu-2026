@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Separator } from '@/components/ui/separator';
@@ -7,6 +8,7 @@ import type { Session } from '@/lib/types';
 
 export default function Navbar({ session }: { session: Session | null }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const isLoggedIn = !!session?.user;
 
@@ -15,10 +17,10 @@ export default function Navbar({ session }: { session: Session | null }) {
       <div className="border-b border-hacknu-border">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           {/* Logo */}
-          <a href="/" className="group flex items-center gap-2">
+          <button type="button" onClick={() => navigate({ to: '/' })} className="group flex cursor-pointer items-center gap-2">
             <span className="text-2xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
             <span className="text-2xl font-bold tracking-tighter text-hacknu-purple">/26</span>
-          </a>
+          </button>
 
           {/* Desktop Nav Links */}
           <div className="hidden items-center gap-2 md:flex">
@@ -49,7 +51,7 @@ export default function Navbar({ session }: { session: Session | null }) {
             <LanguageSwitcher className="ml-2" />
             <Button
               className="ml-2 bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
-              render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
+              onClick={() => navigate({ to: isLoggedIn ? '/dashboard' : '/login' })}
             >
               {isLoggedIn ? t('navbar.dashboard') : t('navbar.register')}
             </Button>
@@ -126,7 +128,7 @@ export default function Navbar({ session }: { session: Session | null }) {
               <Separator className="my-2 bg-hacknu-border" />
               <Button
                 className="bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
-                render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
+                onClick={() => navigate({ to: isLoggedIn ? '/dashboard' : '/login' })}
               >
                 {isLoggedIn ? t('navbar.dashboard') : t('navbar.register')}
               </Button>

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { ConfirmButton } from '@/components/ui/confirm-button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { Session } from '@/lib/types';
@@ -11,14 +12,15 @@ export default function DashboardHeader({
   onSignOut: () => void | Promise<void>;
 }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-50 border-b border-hacknu-border bg-hacknu-dark/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <a href="/" className="flex items-center gap-2">
+        <button type="button" onClick={() => navigate({ to: '/' })} className="flex cursor-pointer items-center gap-2">
           <span className="text-2xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
           <span className="text-2xl font-bold tracking-tighter text-hacknu-purple">/26</span>
-        </a>
+        </button>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <span className="hidden text-xs tracking-wider text-hacknu-text-muted sm:inline">

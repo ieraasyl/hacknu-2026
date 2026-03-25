@@ -182,7 +182,7 @@ function OnboardingPage() {
 
   const handleSignOut = async () => {
     await signOut();
-    window.location.href = '/login';
+    await navigate({ to: '/login', replace: true, search: { redirect: undefined } });
   };
 
   return (

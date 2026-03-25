@@ -368,7 +368,7 @@ function Dashboard() {
             </CardDescription>
             <Button
               className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
-              render={<a href="/login" />}
+              onClick={() => navigate({ to: '/login' })}
             >
               {t('dashboard.goToLogin')}
             </Button>

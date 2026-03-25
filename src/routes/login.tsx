@@ -254,7 +254,7 @@ function LoginPage() {
               variant="link"
               size="xs"
               className="text-hacknu-text-muted hover:text-hacknu-green"
-              render={<a href="/" />}
+              onClick={() => navigate({ to: '/' })}
             >
               {t('login.backToHome')}
             </Button>

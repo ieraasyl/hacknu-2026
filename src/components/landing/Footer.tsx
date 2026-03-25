@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import type { Session } from '@/lib/types';
@@ -6,6 +7,7 @@ import DecryptedText from '@/components/landing/DecryptedText';
 
 export default function Footer({ session }: { session: Session | null }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isLoggedIn = !!session?.user;
 
   return (
@@ -24,7 +26,7 @@ export default function Footer({ session }: { session: Session | null }) {
           variant="link"
           haptic="light"
           className="h-auto p-0 font-mono text-2xl font-bold tracking-wider text-hacknu-green hover:text-white md:text-4xl"
-          render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
+          onClick={() => navigate({ to: isLoggedIn ? '/dashboard' : '/login' })}
         >
           {'> '}
           <DecryptedText
@@ -59,18 +61,20 @@ export default function Footer({ session }: { session: Session | null }) {
             </span>
           </div>
           <div className="flex gap-4">
-            <a
-              href="/privacy"
-              className="text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
+            <button
+              type="button"
+              onClick={() => navigate({ to: '/privacy' })}
+              className="cursor-pointer text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
             >
               Privacy
-            </a>
-            <a
-              href="/terms"
-              className="text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate({ to: '/terms' })}
+              className="cursor-pointer text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
             >
               Terms
-            </a>
+            </button>
           </div>
         </div>
 

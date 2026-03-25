@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { HexagonBackground } from '@/components/landing/HexagonBackground';
 import type { Session } from '@/lib/types';
 
 export default function Hero({ session }: { session: Session | null }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isLoggedIn = !!session?.user;
 
   const subtitleLine1Highlight = t('hero.subtitleLine1Highlight').trim();
@@ -82,7 +84,7 @@ export default function Hero({ session }: { session: Session | null }) {
             variant="link"
             haptic="light"
             className="h-auto p-0 font-mono text-lg tracking-wider text-hacknu-green hover:text-white md:text-2xl"
-            render={<a href={isLoggedIn ? '/dashboard' : '/login'} />}
+            onClick={() => navigate({ to: isLoggedIn ? '/dashboard' : '/login' })}
           >
             {'>'} {isLoggedIn ? t('hero.ctaDashboard') : t('hero.ctaRegister')}
             <span
