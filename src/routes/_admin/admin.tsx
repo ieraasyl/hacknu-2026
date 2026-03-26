@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackgroundGrid } from '@/components/ui/background';
-import { Toggle } from '@/components/ui/toggle';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ListChecksIcon } from '@phosphor-icons/react';
 
 /* ─── Server Function ─── */
@@ -96,6 +96,11 @@ type TeamSortKey = keyof Pick<
 
 type TabId = 'participants' | 'teams';
 
+type EligibilityFilter = 'all' | 'eligible' | 'not-eligible';
+
+const adminEligibilityToggleItemClass =
+  'hover:bg-hacknu-dark-card/60 hover:text-hacknu-text aria-pressed:bg-hacknu-dark-card aria-pressed:text-hacknu-text';
+
 const PARTICIPANT_COLUMNS: { key: ParticipantSortKey | 'cvUrl'; label: string }[] = [
   { key: 'fullName', label: 'Name' },
   { key: 'email', label: 'Email' },
@@ -135,9 +140,10 @@ function AdminPage() {
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const [participantSearch, setParticipantSearch] = useState('');
   const [teamSearch, setTeamSearch] = useState('');
-  const [showTeamsWithTwoPlusMembersOnly, setShowTeamsWithTwoPlusMembersOnly] = useState(false);
-  const [showParticipantsInEligibleTeamsOnly, setShowParticipantsInEligibleTeamsOnly] =
-    useState(false);
+  const [teamEligibilityFilter, setTeamEligibilityFilter] =
+    useState<EligibilityFilter>('all');
+  const [participantEligibilityFilter, setParticipantEligibilityFilter] =
+    useState<EligibilityFilter>('all');
   const [participantSort, setParticipantSort] = useState<{
     key: ParticipantSortKey;
     dir: 'asc' | 'desc';
@@ -163,18 +169,23 @@ function AdminPage() {
   );
 
   const teamsEligibleTeamsTab = useMemo(() => {
-    if (!showTeamsWithTwoPlusMembersOnly) return teams;
-    return teams.filter((t) => t.memberCount >= 2);
-  }, [teams, showTeamsWithTwoPlusMembersOnly]);
+    if (teamEligibilityFilter === 'eligible') return teams.filter((t) => t.memberCount >= 2);
+    if (teamEligibilityFilter === 'not-eligible') return teams.filter((t) => t.memberCount < 2);
+    return teams;
+  }, [teams, teamEligibilityFilter]);
 
   const participantsEligibleParticipantsTab = useMemo(() => {
-    if (!showParticipantsInEligibleTeamsOnly) return participants;
-    return participants.filter((p) => {
+    const inEligibleTeam = (p: ReportParticipant) => {
       if (!p.teamName) return false;
       const t = teamByName.get(p.teamName);
       return t != null && t.memberCount >= 2;
-    });
-  }, [participants, teamByName, showParticipantsInEligibleTeamsOnly]);
+    };
+    if (participantEligibilityFilter === 'eligible')
+      return participants.filter((p) => inEligibleTeam(p));
+    if (participantEligibilityFilter === 'not-eligible')
+      return participants.filter((p) => !inEligibleTeam(p));
+    return participants;
+  }, [participants, teamByName, participantEligibilityFilter]);
 
   const filteredParticipants = useMemo(() => {
     const q = participantSearch.toLowerCase().trim();
@@ -280,15 +291,23 @@ function AdminPage() {
   }, [activeTab, scrollToId]);
 
   function goToTeam(slug: string) {
-    setShowTeamsWithTwoPlusMembersOnly(false);
+    setTeamEligibilityFilter('all');
     setActiveTab('teams');
     setScrollToId(`team-${slug}`);
   }
 
   function goToParticipant(email: string) {
-    setShowParticipantsInEligibleTeamsOnly(false);
+    setParticipantEligibilityFilter('all');
     setActiveTab('participants');
     setScrollToId(`participant-${email}`);
+  }
+
+  function onEligibilityValueChange(
+    setter: (v: EligibilityFilter) => void,
+    next: string[],
+  ) {
+    const v = next[0];
+    if (v === 'all' || v === 'eligible' || v === 'not-eligible') setter(v);
   }
 
   return (
@@ -445,28 +464,44 @@ function AdminPage() {
                   );
                 })}
             {activeTab === 'participants' && (
-              <Toggle
-                type="button"
+              <ToggleGroup
+                spacing={0}
                 variant="outline"
                 size="sm"
-                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted hover:bg-hacknu-dark-card hover:text-hacknu-text"
-                pressed={showParticipantsInEligibleTeamsOnly}
-                onPressedChange={setShowParticipantsInEligibleTeamsOnly}
+                value={[participantEligibilityFilter]}
+                onValueChange={(v) => onEligibilityValueChange(setParticipantEligibilityFilter, v)}
+                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted"
               >
-                {showParticipantsInEligibleTeamsOnly ? 'In eligible teams' : 'All participants'}
-              </Toggle>
+                <ToggleGroupItem value="all" className={adminEligibilityToggleItemClass}>
+                  All
+                </ToggleGroupItem>
+                <ToggleGroupItem value="eligible" className={adminEligibilityToggleItemClass}>
+                  Eligible
+                </ToggleGroupItem>
+                <ToggleGroupItem value="not-eligible" className={adminEligibilityToggleItemClass}>
+                  Not eligible
+                </ToggleGroupItem>
+              </ToggleGroup>
             )}
             {activeTab === 'teams' && (
-              <Toggle
-                type="button"
+              <ToggleGroup
+                spacing={0}
                 variant="outline"
                 size="sm"
-                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted hover:bg-hacknu-dark-card hover:text-hacknu-text"
-                pressed={showTeamsWithTwoPlusMembersOnly}
-                onPressedChange={setShowTeamsWithTwoPlusMembersOnly}
+                value={[teamEligibilityFilter]}
+                onValueChange={(v) => onEligibilityValueChange(setTeamEligibilityFilter, v)}
+                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted"
               >
-                {showTeamsWithTwoPlusMembersOnly ? 'Eligible teams' : 'All teams'}
-              </Toggle>
+                <ToggleGroupItem value="all" className={adminEligibilityToggleItemClass}>
+                  All
+                </ToggleGroupItem>
+                <ToggleGroupItem value="eligible" className={adminEligibilityToggleItemClass}>
+                  Eligible
+                </ToggleGroupItem>
+                <ToggleGroupItem value="not-eligible" className={adminEligibilityToggleItemClass}>
+                  Not eligible
+                </ToggleGroupItem>
+              </ToggleGroup>
             )}
           </div>
 
