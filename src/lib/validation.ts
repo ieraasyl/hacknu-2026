@@ -1,12 +1,6 @@
 import { z } from 'zod';
 
-export const EDUCATION_LEVELS = [
-  'College',
-  'Foundation',
-  "Bachelor's",
-  "Master's",
-  'PhD',
-] as const;
+export const EDUCATION_LEVELS = ['College', 'Foundation', "Bachelor's", "Master's", 'PhD'] as const;
 
 export type EducationLevel = (typeof EDUCATION_LEVELS)[number];
 

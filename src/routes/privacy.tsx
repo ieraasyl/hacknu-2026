@@ -33,9 +33,7 @@ function PrivacyPage() {
           <h1 className="mb-2 font-mono text-2xl font-bold tracking-tight text-hacknu-green">
             Privacy Policy
           </h1>
-          <p className="mb-8 text-sm text-hacknu-text-muted">
-            Last updated: March 2026
-          </p>
+          <p className="mb-8 text-sm text-hacknu-text-muted">Last updated: March 2026</p>
 
           <div className="space-y-6 text-sm leading-relaxed text-hacknu-text">
             <section>
@@ -43,10 +41,9 @@ function PrivacyPage() {
                 1. Who we are
               </h2>
               <p>
-                HackNU/26 is the 9th Annual 24-hour student hackathon organized by
-                the NU ACM Student Chapter at Nazarbayev University, Astana,
-                Kazakhstan. This privacy policy applies to the HackNU/26
-                registration website and app at hacknu.nuacm.kz.
+                HackNU/26 is the 9th Annual 24-hour student hackathon organized by the NU ACM
+                Student Chapter at Nazarbayev University, Astana, Kazakhstan. This privacy policy
+                applies to the HackNU/26 registration website and app at hacknu.nuacm.kz.
               </p>
             </section>
 
@@ -55,29 +52,25 @@ function PrivacyPage() {
                 2. Data we collect
               </h2>
               <p className="mb-2">
-                When you register for HackNU/26, we collect and process the
-                following personal data:
+                When you register for HackNU/26, we collect and process the following personal data:
               </p>
               <ul className="list-inside list-disc space-y-1 text-hacknu-text-muted">
                 <li>
-                  <strong className="text-hacknu-text">Account data:</strong>{' '}
-                  Email address, name, and profile picture (from Google Sign-In
-                  or email OTP verification)
+                  <strong className="text-hacknu-text">Account data:</strong> Email address, name,
+                  and profile picture (from Google Sign-In or email OTP verification)
                 </li>
                 <li>
-                  <strong className="text-hacknu-text">Registration data:</strong>{' '}
-                  Full name, IIN (individual identification number), phone number,
-                  city, place of study, education level, parent/guardian phone
-                  (if applicable)
+                  <strong className="text-hacknu-text">Registration data:</strong> Full name, IIN
+                  (individual identification number), phone number, city, place of study, education
+                  level, parent/guardian phone (if applicable)
                 </li>
                 <li>
-                  <strong className="text-hacknu-text">CV/resume:</strong> If you
-                  upload a CV during registration, it is stored securely on our
-                  systems
+                  <strong className="text-hacknu-text">CV/resume:</strong> If you upload a CV during
+                  registration, it is stored securely on our systems
                 </li>
                 <li>
-                  <strong className="text-hacknu-text">Team data:</strong> Team
-                  name and membership information
+                  <strong className="text-hacknu-text">Team data:</strong> Team name and membership
+                  information
                 </li>
               </ul>
             </section>
@@ -86,14 +79,14 @@ function PrivacyPage() {
               <h2 className="mb-2 font-mono text-base font-semibold text-hacknu-green">
                 3. How we use your data
               </h2>
-              <p>
-                We use your personal data to:
-              </p>
+              <p>We use your personal data to:</p>
               <ul className="list-inside list-disc space-y-1 text-hacknu-text-muted">
                 <li>Verify your identity and manage your registration</li>
                 <li>Organize teams and communicate hackathon logistics</li>
-                <li>Share participant information with event organizers and
-                  partners as needed for the event</li>
+                <li>
+                  Share participant information with event organizers and partners as needed for the
+                  event
+                </li>
                 <li>Comply with legal obligations and ensure event safety</li>
               </ul>
             </section>
@@ -103,10 +96,9 @@ function PrivacyPage() {
                 4. Legal basis and consent
               </h2>
               <p>
-                We process your data based on your consent when you register and
-                submit your information. You may withdraw consent at any time by
-                contacting us; however, withdrawal may affect your ability to
-                participate in the hackathon.
+                We process your data based on your consent when you register and submit your
+                information. You may withdraw consent at any time by contacting us; however,
+                withdrawal may affect your ability to participate in the hackathon.
               </p>
             </section>
 
@@ -115,10 +107,9 @@ function PrivacyPage() {
                 5. Data storage and security
               </h2>
               <p>
-                Your data is stored on secure servers (Cloudflare D1) and
-                transmitted over HTTPS. CV uploads are stored in Google Drive
-                under our organization&apos;s control. We do not sell your data
-                to third parties.
+                Your data is stored on secure servers (Cloudflare D1) and transmitted over HTTPS. CV
+                uploads are stored in Google Drive under our organization&apos;s control. We do not
+                sell your data to third parties.
               </p>
             </section>
 
@@ -127,9 +118,9 @@ function PrivacyPage() {
                 6. Data retention
               </h2>
               <p>
-                We retain your data for the duration of the hackathon and a
-                reasonable period afterward for administrative purposes. You may
-                request deletion of your data by contacting us.
+                We retain your data for the duration of the hackathon and a reasonable period
+                afterward for administrative purposes. You may request deletion of your data by
+                contacting us.
               </p>
             </section>
 
@@ -138,9 +129,9 @@ function PrivacyPage() {
                 7. Your rights
               </h2>
               <p>
-                Under Kazakhstan&apos;s Personal Data Law, you have the right to
-                access, correct, block, or delete your personal data. To
-                exercise these rights, contact us at the email below.
+                Under Kazakhstan&apos;s Personal Data Law, you have the right to access, correct,
+                block, or delete your personal data. To exercise these rights, contact us at the
+                email below.
               </p>
             </section>
 
@@ -149,12 +140,9 @@ function PrivacyPage() {
                 8. Contact
               </h2>
               <p>
-                For questions about this privacy policy or your personal data,
-                contact the NU ACM Student Chapter at{' '}
-                <a
-                  href="mailto:acmsc@nu.edu.kz"
-                  className="text-hacknu-green hover:underline"
-                >
+                For questions about this privacy policy or your personal data, contact the NU ACM
+                Student Chapter at{' '}
+                <a href="mailto:acmsc@nu.edu.kz" className="text-hacknu-green hover:underline">
                   acmsc@nu.edu.kz
                 </a>
                 .

@@ -218,23 +218,19 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
                       onClick={generating ? onCancelGenerate : onGenerate}
                       disabled={createLoading || (!generating && generateOnCooldown)}
                       aria-label={
-                      generating
-                        ? t('dashboard.cancelGenerate')
-                        : generateOnCooldown && generateCooldownSeconds > 0
-                          ? t('dashboard.generateCooldown', { seconds: generateCooldownSeconds })
-                          : t('dashboard.generateName')
-                    }
+                        generating
+                          ? t('dashboard.cancelGenerate')
+                          : generateOnCooldown && generateCooldownSeconds > 0
+                            ? t('dashboard.generateCooldown', { seconds: generateCooldownSeconds })
+                            : t('dashboard.generateName')
+                      }
                       className="flex aspect-square h-full items-center justify-center text-hacknu-text-muted transition-colors hover:bg-white/10 hover:text-hacknu-purple disabled:pointer-events-none disabled:opacity-30"
                     >
-                      {generating ? (
-                        <StopIcon size={12} />
-                      ) : (
-                        <SparkleIcon size={12} />
-                      )}
+                      {generating ? <StopIcon size={12} /> : <SparkleIcon size={12} />}
                     </button>
                     <span
                       role="tooltip"
-                      className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap border border-hacknu-border bg-hacknu-dark-card px-2.5 py-1.5 text-xs text-hacknu-text opacity-0 shadow-lg transition-opacity group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100"
+                      className="pointer-events-none absolute top-full left-1/2 mt-2 -translate-x-1/2 border border-hacknu-border bg-hacknu-dark-card px-2.5 py-1.5 text-xs whitespace-nowrap text-hacknu-text opacity-0 shadow-lg transition-opacity group-focus-within/tooltip:opacity-100 group-hover/tooltip:opacity-100"
                     >
                       {generating
                         ? t('dashboard.cancelGenerate')

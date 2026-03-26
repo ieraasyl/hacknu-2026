@@ -206,24 +206,18 @@ function Dashboard() {
   const cancelledGenerateIdRef = useRef<number | null>(null);
 
   const [generateCooldownUntil, setGenerateCooldownUntil] = useState(0);
-  const [createCooldownSeconds, setCreateCooldownSeconds] = useState(0);
+  const [cooldownNow, setCooldownNow] = useState(() => Date.now());
+  const createCooldownSeconds =
+    generateCooldownUntil > cooldownNow
+      ? Math.ceil((generateCooldownUntil - cooldownNow) / 1000)
+      : 0;
   useEffect(() => {
-    if (generateCooldownUntil <= 0) {
-      setCreateCooldownSeconds(0);
-      return;
-    }
-    const update = () => {
-      const remaining = Math.ceil((generateCooldownUntil - Date.now()) / 1000);
-      if (remaining <= 0) {
-        setGenerateCooldownUntil(0);
-        setCreateCooldownSeconds(0);
-        return;
-      }
-      setCreateCooldownSeconds(remaining);
-    };
-    update();
-    const t = setTimeout(() => setGenerateCooldownUntil(0), Math.max(0, generateCooldownUntil - Date.now()));
-    const i = setInterval(update, 1000);
+    if (generateCooldownUntil <= 0) return;
+    const t = setTimeout(
+      () => setGenerateCooldownUntil(0),
+      Math.max(0, generateCooldownUntil - Date.now()),
+    );
+    const i = setInterval(() => setCooldownNow(Date.now()), 1000);
     return () => {
       clearTimeout(t);
       clearInterval(i);
@@ -260,6 +254,7 @@ function Dashboard() {
   });
 
   function handleGenerate() {
+    setCooldownNow(Date.now());
     setGenerateCooldownUntil(Date.now() + 5000);
     generateMutation.mutate();
   }
@@ -269,6 +264,7 @@ function Dashboard() {
     cancelledGenerateIdRef.current = generateIdRef.current;
     generateMutation.reset();
     setCreateError(null);
+    setCooldownNow(Date.now());
     setGenerateCooldownUntil(Date.now() + 3000);
   }
 
@@ -368,7 +364,7 @@ function Dashboard() {
             </CardDescription>
             <Button
               className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
-              onClick={() => navigate({ to: '/login' })}
+              onClick={() => navigate({ to: '/login', search: { redirect: undefined } })}
             >
               {t('dashboard.goToLogin')}
             </Button>

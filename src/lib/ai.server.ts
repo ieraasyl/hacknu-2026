@@ -5,7 +5,7 @@ interface AiEnv {
   AI: {
     run: (
       model: string,
-      options: { messages: unknown[]; temperature?: number; top_p?: number; max_tokens?: number }
+      options: { messages: unknown[]; temperature?: number; top_p?: number; max_tokens?: number },
     ) => Promise<unknown>;
   };
 }
@@ -15,8 +15,19 @@ function getAiEnv(): AiEnv {
 }
 
 const CREATIVE_THEMES = [
-  'tech puns', 'animals', 'food', 'space', 'nature', 'music', 'games',
-  'wordplay', 'mythology', 'sci-fi', 'abstract', 'minimal', 'bold',
+  'tech puns',
+  'animals',
+  'food',
+  'space',
+  'nature',
+  'music',
+  'games',
+  'wordplay',
+  'mythology',
+  'sci-fi',
+  'abstract',
+  'minimal',
+  'bold',
 ];
 
 export async function generateTeamName(): Promise<string> {
@@ -43,8 +54,8 @@ export async function generateTeamName(): Promise<string> {
     max_tokens: 32,
   });
 
-  const content = (response as { choices?: Array<{ message?: { content?: string } }> })
-    .choices?.[0]?.message?.content;
+  const content = (response as { choices?: Array<{ message?: { content?: string } }> }).choices?.[0]
+    ?.message?.content;
   if (!content?.trim()) throw new Error('AI returned no team name');
   const name = content.trim();
   return name.length > 30 ? name.slice(0, 30) : name;

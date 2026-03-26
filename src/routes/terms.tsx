@@ -33,9 +33,7 @@ function TermsPage() {
           <h1 className="mb-2 font-mono text-2xl font-bold tracking-tight text-hacknu-green">
             Terms of Service
           </h1>
-          <p className="mb-8 text-sm text-hacknu-text-muted">
-            Last updated: March 2026
-          </p>
+          <p className="mb-8 text-sm text-hacknu-text-muted">Last updated: March 2026</p>
 
           <div className="space-y-6 text-sm leading-relaxed text-hacknu-text">
             <section>
@@ -43,9 +41,9 @@ function TermsPage() {
                 1. Acceptance of terms
               </h2>
               <p>
-                By registering for HackNU/26 and using this platform (hacknu.nuacm.kz),
-                you agree to these Terms of Service. If you do not agree, please do
-                not use the registration system.
+                By registering for HackNU/26 and using this platform (hacknu.nuacm.kz), you agree to
+                these Terms of Service. If you do not agree, please do not use the registration
+                system.
               </p>
             </section>
 
@@ -54,10 +52,9 @@ function TermsPage() {
                 2. Eligibility
               </h2>
               <p>
-                HackNU/26 is a student hackathon. You must be a registered student
-                or otherwise meet the eligibility criteria specified in the
-                hackathon rules to participate. Participation is subject to
-                verification by the organizers.
+                HackNU/26 is a student hackathon. You must be a registered student or otherwise meet
+                the eligibility criteria specified in the hackathon rules to participate.
+                Participation is subject to verification by the organizers.
               </p>
             </section>
 
@@ -66,9 +63,9 @@ function TermsPage() {
                 3. Registration and accuracy
               </h2>
               <p>
-                You agree to provide accurate, complete, and up-to-date
-                information during registration. False or misleading information
-                may result in disqualification or removal from the event.
+                You agree to provide accurate, complete, and up-to-date information during
+                registration. False or misleading information may result in disqualification or
+                removal from the event.
               </p>
             </section>
 
@@ -77,10 +74,9 @@ function TermsPage() {
                 4. Code of conduct
               </h2>
               <p>
-                All participants must adhere to the hackathon&apos;s Code of
-                Conduct and any rules set by the organizers. Harassment,
-                cheating, or disruptive behavior will not be tolerated and may
-                result in immediate removal from the event.
+                All participants must adhere to the hackathon&apos;s Code of Conduct and any rules
+                set by the organizers. Harassment, cheating, or disruptive behavior will not be
+                tolerated and may result in immediate removal from the event.
               </p>
             </section>
 
@@ -89,10 +85,9 @@ function TermsPage() {
                 5. Intellectual property
               </h2>
               <p>
-                Projects created during HackNU/26 remain the property of the
-                participants. By participating, you grant the organizers a
-                non-exclusive license to showcase, promote, and document your
-                project for hackathon-related purposes.
+                Projects created during HackNU/26 remain the property of the participants. By
+                participating, you grant the organizers a non-exclusive license to showcase,
+                promote, and document your project for hackathon-related purposes.
               </p>
             </section>
 
@@ -101,10 +96,10 @@ function TermsPage() {
                 6. Limitation of liability
               </h2>
               <p>
-                The NU ACM Student Chapter and HackNU/26 organizers are not
-                liable for any loss, damage, or inconvenience arising from your
-                use of this platform or participation in the event. The platform
-                is provided &quot;as is&quot; without warranties of any kind.
+                The NU ACM Student Chapter and HackNU/26 organizers are not liable for any loss,
+                damage, or inconvenience arising from your use of this platform or participation in
+                the event. The platform is provided &quot;as is&quot; without warranties of any
+                kind.
               </p>
             </section>
 
@@ -113,9 +108,8 @@ function TermsPage() {
                 7. Changes
               </h2>
               <p>
-                We may update these terms from time to time. Continued use of
-                the platform after changes constitutes acceptance of the
-                updated terms.
+                We may update these terms from time to time. Continued use of the platform after
+                changes constitutes acceptance of the updated terms.
               </p>
             </section>
 
@@ -124,12 +118,8 @@ function TermsPage() {
                 8. Contact
               </h2>
               <p>
-                For questions about these terms, contact the NU ACM Student
-                Chapter at{' '}
-                <a
-                  href="mailto:acmsc@nu.edu.kz"
-                  className="text-hacknu-green hover:underline"
-                >
+                For questions about these terms, contact the NU ACM Student Chapter at{' '}
+                <a href="mailto:acmsc@nu.edu.kz" className="text-hacknu-green hover:underline">
                   acmsc@nu.edu.kz
                 </a>
                 .

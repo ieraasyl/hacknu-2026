@@ -18,8 +18,7 @@ export interface HexagonBackgroundProps {
   hexagonsPerWave?: number;
 }
 
-const HEX_CLIP =
-  'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
+const HEX_CLIP = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
 
 const HEX_BASE_CLASS =
   'relative shrink-0 transition-all duration-1000 [clip-path:polygon(50%_0%,100%_25%,100%_75%,50%_100%,0%_75%,0%_25%)] before:absolute before:inset-0 before:transition-all before:duration-500 after:absolute after:bg-hacknu-dark after:[clip-path:polygon(50%_0%,100%_25%,100%_75%,50%_100%,0%_75%,0%_25%)] after:transition-all after:duration-500';
@@ -50,38 +49,36 @@ const HexCell = memo(function HexCell({
   return (
     <div
       className={HEX_BASE_CLASS}
-      style={{
-        width: scaledHexWidth,
-        height: scaledHexHeight,
-        marginLeft: scaledMargin,
-        contain: 'layout style paint',
-        ...(isActive
-          ? {
-              '--border-color': glowColor,
-              '--glow-opacity': '0.6',
-            }
-          : {
-              '--border-color': borderColor,
-              '--glow-opacity': '0',
-            }),
-      } as React.CSSProperties}
+      style={
+        {
+          width: scaledHexWidth,
+          height: scaledHexHeight,
+          marginLeft: scaledMargin,
+          contain: 'layout style paint',
+          ...(isActive
+            ? {
+                '--border-color': glowColor,
+                '--glow-opacity': '0.6',
+              }
+            : {
+                '--border-color': borderColor,
+                '--glow-opacity': '0',
+              }),
+        } as React.CSSProperties
+      }
     >
       <div
         className="absolute inset-0 transition-all duration-500"
         style={{
           background: 'var(--border-color)',
-          filter: isActive
-            ? `drop-shadow(0 0 20px ${glowColor})`
-            : 'none',
+          filter: isActive ? `drop-shadow(0 0 20px ${glowColor})` : 'none',
         }}
       />
       <div
         className="absolute transition-all duration-500"
         style={{
           inset: scaledMargin,
-          background: isActive
-            ? 'rgba(24, 24, 27, 0.9)'
-            : 'var(--hacknu-dark)',
+          background: isActive ? 'rgba(24, 24, 27, 0.9)' : 'var(--hacknu-dark)',
           clipPath: HEX_CLIP,
         }}
       />
@@ -135,8 +132,7 @@ export function HexagonBackground({
     const animate = () => {
       if (grid.rows === 0 || grid.cols === 0) return;
 
-      const numToActivate =
-        Math.floor(Math.random() * hexagonsPerWave) + hexagonsPerWave;
+      const numToActivate = Math.floor(Math.random() * hexagonsPerWave) + hexagonsPerWave;
       const newActive = new Set<string>();
 
       for (let i = 0; i < numToActivate; i++) {
@@ -177,19 +173,14 @@ export function HexagonBackground({
       <div className="absolute inset-0 overflow-hidden">
         {Array.from({ length: grid.rows }).map((_, rowIndex) => {
           const isOddRow = rowIndex % 2 === 1;
-          const marginLeft = isOddRow
-            ? -(scaledHexWidth / 2) + scaledMargin
-            : scaledMargin;
+          const marginLeft = isOddRow ? -(scaledHexWidth / 2) + scaledMargin : scaledMargin;
 
           return (
             <div
               key={rowIndex}
               className="flex"
               style={{
-                marginTop:
-                  rowIndex === 0
-                    ? -scaledHexHeight * 0.25
-                    : -scaledRowSpacing * 0.16,
+                marginTop: rowIndex === 0 ? -scaledHexHeight * 0.25 : -scaledRowSpacing * 0.16,
                 marginLeft: marginLeft - scaledHexWidth * 0.1,
               }}
             >
@@ -219,9 +210,7 @@ export function HexagonBackground({
         }}
       />
 
-      {children && (
-        <div className="relative z-10 h-full w-full">{children}</div>
-      )}
+      {children && <div className="relative z-10 h-full w-full">{children}</div>}
     </div>
   );
 }

@@ -140,8 +140,7 @@ function AdminPage() {
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const [participantSearch, setParticipantSearch] = useState('');
   const [teamSearch, setTeamSearch] = useState('');
-  const [teamEligibilityFilter, setTeamEligibilityFilter] =
-    useState<EligibilityFilter>('all');
+  const [teamEligibilityFilter, setTeamEligibilityFilter] = useState<EligibilityFilter>('all');
   const [participantEligibilityFilter, setParticipantEligibilityFilter] =
     useState<EligibilityFilter>('all');
   const [participantSort, setParticipantSort] = useState<{
@@ -302,10 +301,7 @@ function AdminPage() {
     setScrollToId(`participant-${email}`);
   }
 
-  function onEligibilityValueChange(
-    setter: (v: EligibilityFilter) => void,
-    next: string[],
-  ) {
+  function onEligibilityValueChange(setter: (v: EligibilityFilter) => void, next: string[]) {
     const v = next[0];
     if (v === 'all' || v === 'eligible' || v === 'not-eligible') setter(v);
   }

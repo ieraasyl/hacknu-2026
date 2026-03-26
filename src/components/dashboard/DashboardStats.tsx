@@ -35,9 +35,7 @@ export default function DashboardStats({
 
   return (
     <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Card
-        className={`border-hacknu-border bg-hacknu-dark-card transition-all ${health.border}`}
-      >
+      <Card className={`border-hacknu-border bg-hacknu-dark-card transition-all ${health.border}`}>
         <CardContent className="pt-4">
           <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
             {t('dashboard.healthCheck')}

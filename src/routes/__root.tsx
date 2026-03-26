@@ -1,5 +1,10 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { HeadContent, Scripts, createRootRouteWithContext, useNavigate } from '@tanstack/react-router';
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+  useNavigate,
+} from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie } from '@tanstack/react-start/server';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';

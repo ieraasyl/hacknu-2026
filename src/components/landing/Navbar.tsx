@@ -17,7 +17,11 @@ export default function Navbar({ session }: { session: Session | null }) {
       <div className="border-b border-hacknu-border">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           {/* Logo */}
-          <button type="button" onClick={() => navigate({ to: '/' })} className="group flex cursor-pointer items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate({ to: '/' })}
+            className="group flex cursor-pointer items-center gap-2"
+          >
             <span className="text-2xl font-bold tracking-tighter text-hacknu-green">HackNU</span>
             <span className="text-2xl font-bold tracking-tighter text-hacknu-purple">/26</span>
           </button>

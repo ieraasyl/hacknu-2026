@@ -64,14 +64,14 @@ export default function Footer({ session }: { session: Session | null }) {
             <button
               type="button"
               onClick={() => navigate({ to: '/privacy' })}
-              className="cursor-pointer text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
+              className="cursor-pointer text-xs text-hacknu-text-muted transition-colors hover:text-hacknu-green"
             >
               Privacy
             </button>
             <button
               type="button"
               onClick={() => navigate({ to: '/terms' })}
-              className="cursor-pointer text-xs text-hacknu-text-muted hover:text-hacknu-green transition-colors"
+              className="cursor-pointer text-xs text-hacknu-text-muted transition-colors hover:text-hacknu-green"
             >
               Terms
             </button>

@@ -37,7 +37,7 @@ export default function Partners() {
         <div className="grid gap-8 md:grid-cols-2 md:gap-12">
           {partnerCategories.map((category) => (
             <div key={category.key} className="flex flex-col">
-              <h3 className="mb-4 text-sm font-medium uppercase tracking-wider text-hacknu-text-muted">
+              <h3 className="mb-4 text-sm font-medium tracking-wider text-hacknu-text-muted uppercase">
                 {t(`partners.categories.${category.key}`)}
               </h3>
               <div className="grid flex-1 gap-6 sm:grid-cols-2 md:grid-cols-1">
