@@ -6,13 +6,15 @@ import { useSuspenseQuery, queryOptions } from '@tanstack/react-query';
 import { getSession } from '@/lib/auth.server';
 import { getReportData } from '@/lib/report.server';
 import type { ReportParticipant, ReportTeam } from '@/lib/report.server';
-import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { ColumnToggleBar } from '@/components/admin/ColumnToggleBar';
+import {
+  EligibilityToggle,
+  type EligibilityFilter,
+} from '@/components/admin/EligibilityToggle';
+import { StatCard } from '@/components/admin/StatCard';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackgroundGrid } from '@/components/ui/background';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { ListChecksIcon } from '@phosphor-icons/react';
 
 /* ─── Server Function ─── */
 
@@ -96,11 +98,6 @@ type TeamSortKey = keyof Pick<
 
 type TabId = 'participants' | 'teams';
 
-type EligibilityFilter = 'all' | 'eligible' | 'not-eligible';
-
-const adminEligibilityToggleItemClass =
-  'hover:bg-hacknu-dark-card/60 hover:text-hacknu-text aria-pressed:bg-hacknu-dark-card aria-pressed:text-hacknu-text';
-
 const PARTICIPANT_COLUMNS: { key: ParticipantSortKey | 'cvUrl'; label: string }[] = [
   { key: 'fullName', label: 'Name' },
   { key: 'email', label: 'Email' },
@@ -165,6 +162,20 @@ function AdminPage() {
   const participantByName = useMemo(
     () => new Map(participants.map((p) => [p.fullName, p])),
     [participants],
+  );
+
+  const eligibleTeamsCount = useMemo(
+    () => teams.filter((t) => t.memberCount >= 2).length,
+    [teams],
+  );
+
+  const eligibleParticipantsCount = useMemo(
+    () =>
+      participants.filter((p) => {
+        const t = p.teamName ? teamByName.get(p.teamName) : null;
+        return t != null && t.memberCount >= 2;
+      }).length,
+    [participants, teamByName],
   );
 
   const teamsEligibleTeamsTab = useMemo(() => {
@@ -301,11 +312,6 @@ function AdminPage() {
     setScrollToId(`participant-${email}`);
   }
 
-  function onEligibilityValueChange(setter: (v: EligibilityFilter) => void, next: string[]) {
-    const v = next[0];
-    if (v === 'all' || v === 'eligible' || v === 'not-eligible') setter(v);
-  }
-
   return (
     <div className="min-h-screen bg-hacknu-dark">
       <BackgroundGrid />
@@ -318,22 +324,18 @@ function AdminPage() {
         </div>
 
         <div className="mb-12 grid gap-4 sm:grid-cols-2">
-          <Card className="border-hacknu-border bg-hacknu-dark-card">
-            <CardContent className="pt-4">
-              <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                Participants
-              </CardDescription>
-              <CardTitle className="text-2xl text-hacknu-green">{participants.length}</CardTitle>
-            </CardContent>
-          </Card>
-          <Card className="border-hacknu-border bg-hacknu-dark-card">
-            <CardContent className="pt-4">
-              <CardDescription className="mb-2 tracking-wider text-hacknu-text-muted uppercase">
-                Teams
-              </CardDescription>
-              <CardTitle className="text-2xl text-hacknu-purple">{teams.length}</CardTitle>
-            </CardContent>
-          </Card>
+          <StatCard
+            label="Participants"
+            total={participants.length}
+            eligibleCount={eligibleParticipantsCount}
+            variant="green"
+          />
+          <StatCard
+            label="Teams"
+            total={teams.length}
+            eligibleCount={eligibleTeamsCount}
+            variant="purple"
+          />
         </div>
 
         <Tabs
@@ -373,131 +375,51 @@ function AdminPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                if (activeTab === 'participants') {
-                  const allVisible = PARTICIPANT_COLUMNS.every(
-                    (c) => visibleParticipantCols[c.key],
-                  );
+            {activeTab === 'participants' ? (
+              <ColumnToggleBar
+                columns={PARTICIPANT_COLUMNS}
+                visible={visibleParticipantCols}
+                variant="green"
+                onToggleColumn={(key) =>
+                  setVisibleParticipantCols((prev) => ({
+                    ...prev,
+                    [key]: !(prev[key] ?? true),
+                  }))
+                }
+                onToggleAll={() => {
+                  const allVisible = PARTICIPANT_COLUMNS.every((c) => visibleParticipantCols[c.key]);
                   setVisibleParticipantCols(
                     Object.fromEntries(PARTICIPANT_COLUMNS.map((c) => [c.key, !allVisible])),
                   );
-                } else {
+                }}
+              />
+            ) : (
+              <ColumnToggleBar
+                columns={TEAM_COLUMNS}
+                visible={visibleTeamCols}
+                variant="purple"
+                onToggleColumn={(key) =>
+                  setVisibleTeamCols((prev) => ({
+                    ...prev,
+                    [key]: !(prev[key] ?? true),
+                  }))
+                }
+                onToggleAll={() => {
                   const allVisible = TEAM_COLUMNS.every((c) => visibleTeamCols[c.key]);
                   setVisibleTeamCols(
                     Object.fromEntries(TEAM_COLUMNS.map((c) => [c.key, !allVisible])),
                   );
-                }
-              }}
-              title={
-                activeTab === 'participants'
-                  ? PARTICIPANT_COLUMNS.every((c) => visibleParticipantCols[c.key])
-                    ? 'Hide all columns'
-                    : 'Show all columns'
-                  : TEAM_COLUMNS.every((c) => visibleTeamCols[c.key])
-                    ? 'Hide all columns'
-                    : 'Show all columns'
-              }
-              className="shrink-0 rounded p-0.5 text-hacknu-text-muted transition-colors hover:bg-hacknu-dark-card hover:text-hacknu-text"
-              aria-label="Toggle all columns"
-            >
-              <ListChecksIcon className="size-4" />
-            </button>
-            {activeTab === 'participants'
-              ? PARTICIPANT_COLUMNS.map((col) => {
-                  const visible = visibleParticipantCols[col.key] ?? true;
-                  return (
-                    <Badge
-                      key={col.key}
-                      variant={visible ? 'secondary' : 'outline'}
-                      role="button"
-                      tabIndex={0}
-                      className={`cursor-pointer transition-colors select-none ${
-                        visible
-                          ? 'border-hacknu-green/40 bg-hacknu-green/20 text-hacknu-green hover:bg-hacknu-green/30'
-                          : 'border-hacknu-border bg-transparent text-hacknu-text-muted/70 hover:border-hacknu-border hover:text-hacknu-text-muted'
-                      }`}
-                      onClick={() =>
-                        setVisibleParticipantCols((prev) => ({ ...prev, [col.key]: !visible }))
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setVisibleParticipantCols((prev) => ({ ...prev, [col.key]: !visible }));
-                        }
-                      }}
-                    >
-                      {col.label}
-                    </Badge>
-                  );
-                })
-              : TEAM_COLUMNS.map((col) => {
-                  const visible = visibleTeamCols[col.key] ?? true;
-                  return (
-                    <Badge
-                      key={col.key}
-                      variant={visible ? 'secondary' : 'outline'}
-                      role="button"
-                      tabIndex={0}
-                      className={`cursor-pointer transition-colors select-none ${
-                        visible
-                          ? 'border-hacknu-purple/40 bg-hacknu-purple/20 text-hacknu-purple hover:bg-hacknu-purple/30'
-                          : 'border-hacknu-border bg-transparent text-hacknu-text-muted/70 hover:border-hacknu-border hover:text-hacknu-text-muted'
-                      }`}
-                      onClick={() =>
-                        setVisibleTeamCols((prev) => ({ ...prev, [col.key]: !visible }))
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setVisibleTeamCols((prev) => ({ ...prev, [col.key]: !visible }));
-                        }
-                      }}
-                    >
-                      {col.label}
-                    </Badge>
-                  );
-                })}
+                }}
+              />
+            )}
             {activeTab === 'participants' && (
-              <ToggleGroup
-                spacing={0}
-                variant="outline"
-                size="sm"
-                value={[participantEligibilityFilter]}
-                onValueChange={(v) => onEligibilityValueChange(setParticipantEligibilityFilter, v)}
-                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted"
-              >
-                <ToggleGroupItem value="all" className={adminEligibilityToggleItemClass}>
-                  All
-                </ToggleGroupItem>
-                <ToggleGroupItem value="eligible" className={adminEligibilityToggleItemClass}>
-                  Eligible
-                </ToggleGroupItem>
-                <ToggleGroupItem value="not-eligible" className={adminEligibilityToggleItemClass}>
-                  Not eligible
-                </ToggleGroupItem>
-              </ToggleGroup>
+              <EligibilityToggle
+                value={participantEligibilityFilter}
+                onChange={setParticipantEligibilityFilter}
+              />
             )}
             {activeTab === 'teams' && (
-              <ToggleGroup
-                spacing={0}
-                variant="outline"
-                size="sm"
-                value={[teamEligibilityFilter]}
-                onValueChange={(v) => onEligibilityValueChange(setTeamEligibilityFilter, v)}
-                className="ml-auto shrink-0 border-hacknu-border text-hacknu-text-muted"
-              >
-                <ToggleGroupItem value="all" className={adminEligibilityToggleItemClass}>
-                  All
-                </ToggleGroupItem>
-                <ToggleGroupItem value="eligible" className={adminEligibilityToggleItemClass}>
-                  Eligible
-                </ToggleGroupItem>
-                <ToggleGroupItem value="not-eligible" className={adminEligibilityToggleItemClass}>
-                  Not eligible
-                </ToggleGroupItem>
-              </ToggleGroup>
+              <EligibilityToggle value={teamEligibilityFilter} onChange={setTeamEligibilityFilter} />
             )}
           </div>
 
