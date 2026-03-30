@@ -4,6 +4,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useSuspenseQuery, queryOptions } from '@tanstack/react-query';
 import { getSession } from '@/lib/auth.server';
+import { sessionIsAdmin } from '@/lib/admin.server';
 import { getReportData } from '@/lib/report.server';
 import type { ReportParticipant, ReportTeam } from '@/lib/report.server';
 import { ColumnToggleBar } from '@/components/admin/ColumnToggleBar';
@@ -22,7 +23,7 @@ const getAdminReportFn = createServerFn({ method: 'GET' }).handler(async () => {
   const request = getRequest();
   const session = await getSession(request);
   if (!session) throw new Error('Unauthorized');
-  // Admin check is done in _admin layout; we're only called when admin
+  if (!sessionIsAdmin(session)) throw new Error('Unauthorized');
   return getReportData();
 });
 

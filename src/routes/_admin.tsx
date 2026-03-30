@@ -3,9 +3,9 @@ import { createFileRoute, notFound, Outlet, useNavigate } from '@tanstack/react-
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { useQuery } from '@tanstack/react-query';
-import { env } from 'cloudflare:workers';
 import { signOut } from '@/lib/auth-client';
 import { getSession } from '@/lib/auth.server';
+import { sessionIsAdmin } from '@/lib/admin.server';
 import AdminHeader from '@/components/admin/AdminHeader';
 import {
   reportQueryOptions,
@@ -13,27 +13,10 @@ import {
   REFRESH_COOLDOWN_ON_FAIL_MS,
 } from './_admin/admin';
 
-interface AppEnv {
-  ADMIN_EMAILS?: string;
-}
-
-function getAdminEmails(): string[] {
-  const appEnv = env as unknown as AppEnv;
-  const raw = appEnv.ADMIN_EMAILS?.trim();
-  if (!raw) return [];
-  return raw
-    .split(/[,\s]+/)
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-}
-
 const checkAdmin = createServerFn({ method: 'GET' }).handler(async () => {
   const request = getRequest();
   const session = await getSession(request);
-  const adminEmails = getAdminEmails();
-  const email = session?.user.email?.toLowerCase();
-  const isAdmin = adminEmails.length > 0 && email && adminEmails.includes(email);
-  if (!isAdmin) {
+  if (!sessionIsAdmin(session)) {
     throw notFound();
   }
   return { user: session!.user };
