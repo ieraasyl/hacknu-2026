@@ -159,7 +159,11 @@
     "submit": "> Тіркелуді аяқтау",
     "saving": "Сақталуда...",
     "signOutDifferent": "Шығу / басқа аккаунтты қолдану",
-    "somethingWentWrong": "Бірдеңе қате кетті"
+    "somethingWentWrong": "Бірдеңе қате кетті",
+    "registrationClosedTitle": "Тіркелу аяқталды",
+    "registrationClosedDesc": "HackNU/26-ға тіркелу мерзімі аяқталды. Профильді енді толтыру мүмкін емес. Жүйеден шыға аласыз немесе басты бетке қайта аласыз.",
+    "registrationClosedError": "Тіркелу аяқталды",
+    "backToHome": "Басты бетке"
   },
   "dashboard": {
     "signOut": "Шығу",
@@ -201,7 +205,9 @@
     "generateName": "Топ атын жасау",
     "cancelGenerate": "Болдырмау",
     "generateCooldown": "{{seconds}} с кейін қайталаңыз",
-    "generateError": "Атын жасау мүмкін болмады. Кейінірек қайталап көріңіз."
+    "generateError": "Атын жасау мүмкін болмады. Кейінірек қайталап көріңіз.",
+    "registrationLockedBanner": "[!] Тіркелу аяқталды. Команда құрамын өзгерту мүмкін емес.",
+    "registrationClosedNoTeam": "[!] Тіркелу аяқталды. Команда құру немесе оған қосылу мүмкін емес."
   },
   "invite": {
     "joining": "Топқа қосылуда...",

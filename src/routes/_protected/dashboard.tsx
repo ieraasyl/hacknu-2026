@@ -17,6 +17,7 @@ import {
   leaveTeam,
   dissolveTeam,
 } from '@/lib/team.server';
+import { REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BackgroundGrid } from '@/components/ui/background';
@@ -36,9 +37,11 @@ const getMyTeamFn = createServerFn({ method: 'GET' }).handler(async () => {
 const createTeamFn = createServerFn({ method: 'POST' })
   .inputValidator((input: { name: string }) => input)
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) throw new Error('Unauthorized');
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
     const parsed = createTeamSchema.safeParse(data);
     if (!parsed.success) throw new Error(parsed.error.issues[0].message);
     return createTeam(session.user.id, parsed.data.name);
@@ -47,9 +50,11 @@ const createTeamFn = createServerFn({ method: 'POST' })
 const joinTeamFn = createServerFn({ method: 'POST' })
   .inputValidator((input: { slug: string }) => input)
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) throw new Error('Unauthorized');
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
     const parsed = inviteSlugSchema.safeParse(data);
     if (!parsed.success) throw new Error(parsed.error.issues[0].message);
     return joinTeamBySlug(session.user.id, parsed.data.slug);
@@ -58,23 +63,29 @@ const joinTeamFn = createServerFn({ method: 'POST' })
 const kickMemberFn = createServerFn({ method: 'POST' })
   .inputValidator((input: { targetUserId: string }) => input)
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) throw new Error('Unauthorized');
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
     await kickMember(session.user.id, data.targetUserId);
   });
 
 const leaveTeamFn = createServerFn({ method: 'POST' }).handler(async () => {
+  const { isRegistrationOpen } = await import('@/lib/registration.server');
   const request = getRequest();
   const session = await getSession(request);
   if (!session) throw new Error('Unauthorized');
+  if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
   await leaveTeam(session.user.id);
 });
 
 const dissolveTeamFn = createServerFn({ method: 'POST' }).handler(async () => {
+  const { isRegistrationOpen } = await import('@/lib/registration.server');
   const request = getRequest();
   const session = await getSession(request);
   if (!session) throw new Error('Unauthorized');
+  if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
   await dissolveTeam(session.user.id);
 });
 
@@ -92,10 +103,25 @@ const teamQueryOptions = queryOptions({
   queryFn: () => getMyTeamFn(),
 });
 
+const getRegistrationStatusFn = createServerFn({ method: 'GET' }).handler(async () => {
+  const { isRegistrationOpen } = await import('@/lib/registration.server');
+  return { open: isRegistrationOpen() };
+});
+
+const registrationStatusQueryOptions = queryOptions({
+  queryKey: ['registration-status'],
+  queryFn: () => getRegistrationStatusFn(),
+  staleTime: 60 * 1000,
+});
+
 /* ─── Route ─── */
 
 export const Route = createFileRoute('/_protected/dashboard')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(teamQueryOptions),
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(teamQueryOptions),
+      context.queryClient.ensureQueryData(registrationStatusQueryOptions),
+    ]),
   component: Dashboard,
 });
 
@@ -110,6 +136,8 @@ function Dashboard() {
   const { trigger } = useWebHaptics(webHapticsOptions);
 
   const { data: teamData } = useSuspenseQuery(teamQueryOptions);
+  const { data: regStatus } = useSuspenseQuery(registrationStatusQueryOptions);
+  const registrationOpen = regStatus?.open ?? true;
   const [createName, setCreateName] = useState('');
   const [createError, setCreateError] = useState<string | null>(null);
   const [joinInput, setJoinInput] = useState('');
@@ -170,7 +198,7 @@ function Dashboard() {
     },
     onError: (err) => {
       trigger?.('error');
-      setActionError((err as Error).message);
+      setActionError(t((err as Error).message));
     },
   });
 
@@ -184,7 +212,7 @@ function Dashboard() {
     },
     onError: (err) => {
       trigger?.('error');
-      setActionError((err as Error).message);
+      setActionError(t((err as Error).message));
     },
   });
 
@@ -198,7 +226,7 @@ function Dashboard() {
     },
     onError: (err) => {
       trigger?.('error');
-      setActionError((err as Error).message);
+      setActionError(t((err as Error).message));
     },
   });
 
@@ -437,6 +465,7 @@ function Dashboard() {
             onLeave: handleLeave,
             onDissolve: handleDissolve,
           }}
+          registrationOpen={registrationOpen}
         />
       </main>
     </div>

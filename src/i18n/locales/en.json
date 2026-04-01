@@ -159,7 +159,11 @@
     "submit": "> Complete Registration",
     "saving": "Saving...",
     "signOutDifferent": "Sign out / use a different account",
-    "somethingWentWrong": "Something went wrong"
+    "somethingWentWrong": "Something went wrong",
+    "registrationClosedTitle": "Registration is closed",
+    "registrationClosedDesc": "The registration period for HackNU/26 has ended. You can no longer complete your profile. You may either log out of your account or return to the homepage.",
+    "registrationClosedError": "Registration is closed",
+    "backToHome": "Back to home"
   },
   "dashboard": {
     "signOut": "Sign Out",
@@ -201,7 +205,9 @@
     "generateName": "Generate a team name",
     "cancelGenerate": "Cancel",
     "generateCooldown": "Try again in {{seconds}}s",
-    "generateError": "Couldn't generate a name. Try again later."
+    "generateError": "Couldn't generate a name. Try again later.",
+    "registrationLockedBanner": "[!] Registration is closed. Team changes are locked.",
+    "registrationClosedNoTeam": "[!] Registration is closed. You can no longer create or join a team."
   },
   "invite": {
     "joining": "Joining team...",

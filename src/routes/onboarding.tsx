@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { getSession } from '@/lib/auth.server';
+import { REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration';
 import { webHapticsOptions } from '@/lib/web-haptics';
 import {
   getParticipant,
@@ -14,7 +15,9 @@ import {
 } from '@/lib/onboarding.server';
 import { onboardingSchema } from '@/lib/validation';
 import { signOut } from '@/lib/auth-client';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ConfirmButton } from '@/components/ui/confirm-button';
 import { TerminalDots } from '@/components/ui/terminal-dots';
 import { BackgroundGrid, GradientOrbs } from '@/components/ui/background';
 import { StepBadge } from '@/components/ui/step-badge';
@@ -35,6 +38,7 @@ type OnboardingInput = {
 };
 
 const checkOnboardingStatus = createServerFn({ method: 'GET' }).handler(async () => {
+  const { isRegistrationOpen } = await import('@/lib/registration.server');
   const request = getRequest();
   const session = await getSession(request);
   if (!session) {
@@ -44,7 +48,8 @@ const checkOnboardingStatus = createServerFn({ method: 'GET' }).handler(async ()
   if (profile) {
     throw redirect({ to: '/dashboard' });
   }
-  return { userId: session.user.id };
+  const registrationOpen = isRegistrationOpen();
+  return { userId: session.user.id, registrationOpen };
 });
 
 const uploadCv = createServerFn({ method: 'POST' })
@@ -53,18 +58,22 @@ const uploadCv = createServerFn({ method: 'POST' })
       input,
   )
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) throw new Error('Unauthorized');
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
     return uploadCvToGas(data);
   });
 
 const deleteCv = createServerFn({ method: 'POST' })
   .inputValidator((input: { fileId: string }) => input)
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) throw new Error('Unauthorized');
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
     await deleteCvFromGas(data.fileId);
   });
 
@@ -77,11 +86,13 @@ const saveOnboarding = createServerFn({ method: 'POST' })
     return parsed.data as unknown as OnboardingInput;
   })
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) {
       throw redirect({ to: '/login', search: { redirect: undefined } });
     }
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
     await upsertParticipant({
       userId: session.user.id,
       fullName: data.fullName,
@@ -102,15 +113,14 @@ export const Route = createFileRoute('/onboarding')({
   validateSearch: (search: Record<string, unknown>) => ({
     redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
   }),
-  beforeLoad: async () => {
-    await checkOnboardingStatus();
-  },
+  loader: () => checkOnboardingStatus(),
   component: OnboardingPage,
 });
 
 function OnboardingPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { registrationOpen } = Route.useLoaderData();
   const { redirect: redirectTo } = Route.useSearch();
   const safeRedirect = redirectTo?.startsWith('/invite/') ? redirectTo : undefined;
   const { trigger } = useWebHaptics(webHapticsOptions);
@@ -126,6 +136,11 @@ function OnboardingPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [cvUploading, setCvUploading] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    await navigate({ to: '/login', replace: true, search: { redirect: undefined } });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,10 +195,50 @@ function OnboardingPage() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    await navigate({ to: '/login', replace: true, search: { redirect: undefined } });
-  };
+  if (!registrationOpen) {
+    return (
+      <div className="flex min-h-screen flex-col bg-hacknu-dark">
+        <AuthHeader />
+        <div className="relative flex flex-1 items-center justify-center p-6">
+          <BackgroundGrid />
+          <GradientOrbs />
+
+          <div className="relative z-10 w-full max-w-md">
+            <Card className="border-hacknu-border bg-hacknu-dark-card">
+              <CardHeader className="border-b border-hacknu-border">
+                <TerminalDots label="registration_closed.sh" />
+              </CardHeader>
+              <CardContent className="pt-4">
+                <CardTitle className="mb-1 text-xl text-hacknu-text">
+                  {t('onboarding.registrationClosedTitle')}
+                </CardTitle>
+                <CardDescription className="mb-6 text-hacknu-text-muted">
+                  {t('onboarding.registrationClosedDesc')}
+                </CardDescription>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 w-full border-hacknu-border bg-hacknu-dark text-hacknu-text hover:border-hacknu-green/50 hover:bg-hacknu-dark-card"
+                    onClick={() => navigate({ to: '/' })}
+                  >
+                    {t('onboarding.backToHome')}
+                  </Button>
+                  <ConfirmButton
+                    label={t('onboarding.signOutDifferent')}
+                    confirmLabel={t('dashboard.confirmAction')}
+                    onConfirm={handleSignOut}
+                    variant="outline"
+                    className="h-10 w-full border-hacknu-border font-bold tracking-wider uppercase"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-hacknu-dark">

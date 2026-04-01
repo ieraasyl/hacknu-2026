@@ -43,9 +43,10 @@ export type TeamCardProps = {
     onLeave: () => void;
     onDissolve: () => void;
   };
+  registrationOpen: boolean;
 };
 
-export default function TeamCard({ team, createForm, joinForm, actions }: TeamCardProps) {
+export default function TeamCard({ team, createForm, joinForm, actions, registrationOpen }: TeamCardProps) {
   const { t } = useTranslation();
   const { data: teamData, loading: teamLoading, isCaptain, inviteUrl } = team;
   const {
@@ -99,6 +100,11 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
         </div>
       </CardHeader>
       <CardContent className="pt-4">
+        {!registrationOpen && !teamLoading && (
+          <div className="mb-4 border border-yellow-500/30 bg-yellow-500/5 px-3 py-2 text-xs text-yellow-400">
+            {teamData ? t('dashboard.registrationLockedBanner') : t('dashboard.registrationClosedNoTeam')}
+          </div>
+        )}
         {teamLoading ? (
           <div className="space-y-3 py-4">
             <div className="h-4 w-48 animate-pulse rounded bg-hacknu-border" />
@@ -106,26 +112,30 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
           </div>
         ) : teamData ? (
           <div className="space-y-4">
-            <div>
-              <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
-                {t('dashboard.inviteLink')}
-              </p>
-              <div className="flex items-center gap-2">
-                <code className="flex-1 truncate rounded border border-hacknu-border bg-hacknu-dark px-2 py-1 text-xs text-hacknu-text-muted">
-                  {inviteUrl}
-                </code>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="shrink-0 border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-hacknu-green/50 hover:text-hacknu-green"
-                  onClick={handleCopyLink}
-                >
-                  {copied ? t('dashboard.copied') : t('dashboard.copy')}
-                </Button>
-              </div>
-            </div>
+            {registrationOpen && (
+              <>
+                <div>
+                  <p className="mb-1 text-xs tracking-wider text-hacknu-text-muted uppercase">
+                    {t('dashboard.inviteLink')}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 truncate rounded border border-hacknu-border bg-hacknu-dark px-2 py-1 text-xs text-hacknu-text-muted">
+                      {inviteUrl}
+                    </code>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0 border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-hacknu-green/50 hover:text-hacknu-green"
+                      onClick={handleCopyLink}
+                    >
+                      {copied ? t('dashboard.copied') : t('dashboard.copy')}
+                    </Button>
+                  </div>
+                </div>
 
-            <Separator className="border-hacknu-border" />
+                <Separator className="border-hacknu-border" />
+              </>
+            )}
 
             <div>
               <p className="mb-2 text-xs tracking-wider text-hacknu-text-muted uppercase">
@@ -146,7 +156,7 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
                         </span>
                       )}
                     </span>
-                    {isCaptain && !member.isCaptain && (
+                    {registrationOpen && isCaptain && !member.isCaptain && (
                       <ConfirmButton
                         label={t('dashboard.kick')}
                         confirmLabel={t('dashboard.confirmAction')}
@@ -171,33 +181,35 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
 
             {actionError && <p className="text-xs text-red-400">[error] {actionError}</p>}
 
-            <div className="flex justify-end pt-2">
-              {isCaptain ? (
-                <ConfirmButton
-                  label={t('dashboard.dissolveTeam')}
-                  confirmLabel={t('dashboard.confirmAction')}
-                  onConfirm={handleDissolve}
-                  loading={actionLoading === 'dissolve'}
-                  loadingLabel={t('dashboard.dissolving')}
-                  variant="outline"
-                  size="sm"
-                  className="border-red-500/30 text-xs tracking-wider text-red-400/70 uppercase hover:border-red-500 hover:text-red-400"
-                />
-              ) : (
-                <ConfirmButton
-                  label={t('dashboard.leaveTeam')}
-                  confirmLabel={t('dashboard.confirmAction')}
-                  onConfirm={handleLeave}
-                  loading={actionLoading === 'leave'}
-                  loadingLabel={t('dashboard.leaving')}
-                  variant="outline"
-                  size="sm"
-                  className="border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
-                />
-              )}
-            </div>
+            {registrationOpen && (
+              <div className="flex justify-end pt-2">
+                {isCaptain ? (
+                  <ConfirmButton
+                    label={t('dashboard.dissolveTeam')}
+                    confirmLabel={t('dashboard.confirmAction')}
+                    onConfirm={handleDissolve}
+                    loading={actionLoading === 'dissolve'}
+                    loadingLabel={t('dashboard.dissolving')}
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500/30 text-xs tracking-wider text-red-400/70 uppercase hover:border-red-500 hover:text-red-400"
+                  />
+                ) : (
+                  <ConfirmButton
+                    label={t('dashboard.leaveTeam')}
+                    confirmLabel={t('dashboard.confirmAction')}
+                    onConfirm={handleLeave}
+                    loading={actionLoading === 'leave'}
+                    loadingLabel={t('dashboard.leaving')}
+                    variant="outline"
+                    size="sm"
+                    className="border-hacknu-border text-xs tracking-wider text-hacknu-text-muted uppercase hover:border-red-500/50 hover:text-red-400"
+                  />
+                )}
+              </div>
+            )}
           </div>
-        ) : (
+        ) : registrationOpen ? (
           <div className="space-y-6 py-2">
             <div>
               <p className="mb-3 text-xs tracking-wider text-hacknu-text-muted uppercase">
@@ -276,7 +288,7 @@ export default function TeamCard({ team, createForm, joinForm, actions }: TeamCa
               {joinError && <p className="mt-1 text-xs text-red-400">[error] {joinError}</p>}
             </div>
           </div>
-        )}
+        ) : null}
       </CardContent>
     </Card>
   );

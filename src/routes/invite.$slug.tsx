@@ -8,6 +8,7 @@ import { useWebHaptics } from 'web-haptics/react';
 import { getSession } from '@/lib/auth.server';
 import { webHapticsOptions } from '@/lib/web-haptics';
 import { getParticipant } from '@/lib/onboarding.server';
+import { REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration';
 import { joinTeamBySlug } from '@/lib/team.server';
 import { AuthHeader } from '@/components/AuthHeader';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,7 @@ import { BackgroundGrid } from '@/components/ui/background';
 const validateInviteFn = createServerFn({ method: 'GET' })
   .inputValidator((input: { slug: string }) => input)
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) {
@@ -36,7 +38,7 @@ const validateInviteFn = createServerFn({ method: 'GET' })
     if (profile.teamId) {
       throw redirect({ to: '/dashboard' });
     }
-    return { slug: data.slug };
+    return { slug: data.slug, registrationOpen: isRegistrationOpen() };
   });
 
 /**
@@ -45,9 +47,11 @@ const validateInviteFn = createServerFn({ method: 'GET' })
 const joinByInviteFn = createServerFn({ method: 'POST' })
   .inputValidator((input: { slug: string }) => input)
   .handler(async ({ data }) => {
+    const { isRegistrationOpen } = await import('@/lib/registration.server');
     const request = getRequest();
     const session = await getSession(request);
     if (!session) throw new Error('Unauthorized');
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
     await joinTeamBySlug(session.user.id, data.slug);
   });
 
@@ -62,11 +66,15 @@ export const Route = createFileRoute('/invite/$slug')({
 
 function InviteResult() {
   const { t } = useTranslation();
-  const { slug } = Route.useLoaderData();
+  const { slug, registrationOpen } = Route.useLoaderData();
   const navigate = useNavigate();
   const { trigger } = useWebHaptics(webHapticsOptions);
-  const [status, setStatus] = useState<'joining' | 'error'>('joining');
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [status, setStatus] = useState<'joining' | 'error'>(() =>
+    registrationOpen ? 'joining' : 'error',
+  );
+  const [errorMsg, setErrorMsg] = useState<string | null>(() =>
+    registrationOpen ? null : REGISTRATION_CLOSED_I18N_KEY,
+  );
   const joinedRef = useRef(false);
 
   const joinMutation = useMutation({
@@ -83,10 +91,11 @@ function InviteResult() {
   });
 
   useEffect(() => {
+    if (!registrationOpen) return;
     if (joinedRef.current) return;
     joinedRef.current = true;
     joinMutation.mutate(slug);
-  }, [slug, joinMutation]);
+  }, [slug, joinMutation, registrationOpen]);
 
   if (status === 'joining') {
     return (
@@ -125,7 +134,9 @@ function InviteResult() {
               {t('invite.couldNotJoin')}
             </CardTitle>
             <CardDescription className="mb-6 text-hacknu-text-muted">
-              {errorMsg ?? t('invite.unexpectedError')}
+              {errorMsg === REGISTRATION_CLOSED_I18N_KEY
+                ? t(REGISTRATION_CLOSED_I18N_KEY)
+                : (errorMsg ?? t('invite.unexpectedError'))}
             </CardDescription>
             <Button
               className="h-10 w-full bg-hacknu-green font-bold tracking-wider text-hacknu-dark uppercase hover:bg-hacknu-green/80"
