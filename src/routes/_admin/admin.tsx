@@ -13,7 +13,7 @@ import { StatCard } from '@/components/admin/StatCard';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackgroundGrid } from '@/components/ui/background';
-import { useAdminHeaderControls } from '../_admin';
+import { useAdminHeaderControls } from '@/lib/admin-header-context';
 
 /* ─── Server Function ─── */
 

@@ -106,6 +106,12 @@
     "message": "The page you're looking for doesn't exist or has been moved.",
     "goHome": "← Go Home"
   },
+  "errorPage": {
+    "title": "[ERR_UNEXPECTED]",
+    "message": "Something went wrong while loading this page. You can try again or return home.",
+    "retry": "Try again",
+    "goHome": "← Go Home"
+  },
   "login": {
     "backToHome": "← Back to home",
     "signInWithGoogle": "Sign in with Google",

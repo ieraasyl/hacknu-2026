@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
-import { getDb } from '@/db';
+import { eq, isNotNull, sql } from 'drizzle-orm';
+import { getDb, participant, team } from '@/db';
 
 interface AppEnv {
   DB: D1Database;
@@ -8,7 +9,6 @@ interface AppEnv {
 export type CheckinParticipant = {
   id: string;
   fullName: string;
-  email: string;
   teamId: string;
   teamName: string;
   placeOfStudy: string;
@@ -54,108 +54,119 @@ function compareByName(a: { fullName: string }, b: { fullName: string }) {
 
 export async function getCheckinData(): Promise<CheckinData> {
   const db = getAppDb();
-  const teamRows = await db.query.team.findMany({
-    with: {
-      captain: { columns: { fullName: true } },
-      members: {
-        columns: {
-          id: true,
-          fullName: true,
-          placeOfStudy: true,
-          educationLevel: true,
-          attended: true,
-        },
-        with: {
-          user: { columns: { email: true } },
-        },
-      },
-    },
-  });
 
-  const eligibleTeams = [...teamRows]
-    .filter((team) => team.members.length >= 2)
-    .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+  const eligible = db.$with('eligible').as(
+    db
+      .select({ teamId: participant.teamId })
+      .from(participant)
+      .where(isNotNull(participant.teamId))
+      .groupBy(participant.teamId)
+      .having(sql`count(*) >= 2`),
+  );
 
-  const eligibleTeamIds = eligibleTeams.map((team) => team.id);
+  const teamsQuery = db
+    .with(eligible)
+    .select({
+      id: team.id,
+      name: team.name,
+      captainId: team.captainId,
+    })
+    .from(team)
+    .innerJoin(eligible, eq(team.id, eligible.teamId))
+    .orderBy(sql`${team.name} collate nocase`);
 
-  const participants = eligibleTeams
-    .flatMap((team) =>
-      team.members.map((member) => ({
+  const membersQuery = db
+    .with(eligible)
+    .select({
+      id: participant.id,
+      fullName: participant.fullName,
+      teamId: participant.teamId,
+      attended: participant.attended,
+      placeOfStudy: participant.placeOfStudy,
+      educationLevel: participant.educationLevel,
+    })
+    .from(participant)
+    .innerJoin(eligible, eq(participant.teamId, eligible.teamId));
+
+  const [teamRows, memberRows] = await db.batch([teamsQuery, membersQuery]);
+
+  if (teamRows.length === 0) {
+    return { participants: [], teams: [], eligibleTeamIds: [] };
+  }
+
+  type MemberRow = (typeof memberRows)[number];
+  const membersByTeamId = new Map<string, MemberRow[]>();
+  for (const row of memberRows) {
+    const tid = row.teamId;
+    if (!tid) continue;
+    const list = membersByTeamId.get(tid) ?? [];
+    list.push(row);
+    membersByTeamId.set(tid, list);
+  }
+
+  const eligibleTeams = teamRows;
+
+  const eligibleTeamIds = eligibleTeams.map((t) => t.id);
+
+  const participants: CheckinParticipant[] = eligibleTeams
+    .flatMap((t) => {
+      const raw = membersByTeamId.get(t.id) ?? [];
+      return raw.map((member) => ({
         id: member.id,
         fullName: member.fullName,
-        email: member.user?.email ?? '',
-        teamId: team.id,
-        teamName: team.name,
+        teamId: t.id,
+        teamName: t.name,
         placeOfStudy: member.placeOfStudy,
         educationLevel: member.educationLevel,
         attended: member.attended,
-      })),
-    )
+      }));
+    })
     .sort(compareByName);
 
-  const teams = eligibleTeams.map((team) => {
-    const members = [...team.members].sort((a, b) => {
-      if (a.id === team.captainId) return -1;
-      if (b.id === team.captainId) return 1;
-      return compareByName(a, b);
-    });
-
-    return {
-      id: team.id,
-      name: team.name,
-      captainName: team.captain?.fullName ?? '',
-      members: members.map((member) => ({
+  const teams: CheckinTeam[] = eligibleTeams.map((t) => {
+    const raw = membersByTeamId.get(t.id) ?? [];
+    const members = raw
+      .map((member) => ({
         id: member.id,
         fullName: member.fullName,
         attended: member.attended,
-      })),
+      }))
+      .sort((a, b) => {
+        if (a.id === t.captainId) return -1;
+        if (b.id === t.captainId) return 1;
+        return compareByName(a, b);
+      });
+
+    const captainName =
+      members.find((m) => m.id === t.captainId)?.fullName ??
+      raw.find((m) => m.id === t.captainId)?.fullName ??
+      '';
+
+    return {
+      id: t.id,
+      name: t.name,
+      captainName,
+      members,
     };
   });
 
   return { participants, teams, eligibleTeamIds };
 }
 
-export async function getAttendanceStatuses(): Promise<AttendanceStatus[]> {
-  const result = await getAppEnv()
-    .DB.prepare(
-      `SELECT p.id, p.attended
-     FROM participant p
-     WHERE p.team_id IN (
-       SELECT t.id
-       FROM team t
-       INNER JOIN participant p2 ON p2.team_id = t.id
-       GROUP BY t.id
-       HAVING COUNT(p2.id) >= 2
-     )`,
-    )
-    .all<{ id: string; attended: number | boolean }>();
-
-  if (import.meta.env.DEV) {
-    console.info('[checkin] attendance rows_read', result.meta.rows_read ?? null);
-  }
-
-  return result.results.map((row) => ({
-    id: row.id,
-    attended: Boolean(row.attended),
-  }));
-}
-
 export async function setAttendance(
   participantId: string,
   attended: boolean,
 ): Promise<AttendanceStatus> {
-  const result = await getAppEnv()
-    .DB.prepare(
-      `UPDATE participant
-       SET attended = ?, updated_at = ?
-       WHERE id = ?`,
-    )
-    .bind(attended ? 1 : 0, Date.now(), participantId)
-    .run();
+  const db = getAppDb();
+  const [row] = await db
+    .update(participant)
+    .set({ attended, updatedAt: new Date() })
+    .where(eq(participant.id, participantId))
+    .returning({ id: participant.id, attended: participant.attended });
 
-  if ((result.meta.changes ?? 0) === 0) {
+  if (!row) {
     throw new Error('Participant not found');
   }
 
-  return { id: participantId, attended };
+  return { id: row.id, attended: row.attended };
 }

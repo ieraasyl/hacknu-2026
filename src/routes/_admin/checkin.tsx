@@ -2,20 +2,12 @@ import { useMemo, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
+import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { getSession } from '@/lib/auth.server';
 import { sessionIsAdmin } from '@/lib/admin.server';
 import {
-  getAttendanceStatuses,
   getCheckinData,
   setAttendance,
-  type AttendanceStatus,
   type CheckinData,
   type CheckinParticipant,
   type CheckinTeam,
@@ -51,11 +43,6 @@ const getCheckinDataFn = createServerFn({ method: 'GET' }).handler(async () => {
   return getCheckinData();
 });
 
-const getAttendanceStatusesFn = createServerFn({ method: 'GET' }).handler(async () => {
-  await requireAdminSession();
-  return getAttendanceStatuses();
-});
-
 const setAttendanceFn = createServerFn({ method: 'POST' })
   .inputValidator((input: { participantId: string; attended: boolean }) => input)
   .handler(async ({ data }) => {
@@ -64,21 +51,12 @@ const setAttendanceFn = createServerFn({ method: 'POST' })
   });
 
 const checkinDataQueryKey = ['checkin-data'] as const;
-const attendanceQueryKey = ['checkin-attendance'] as const;
 
 const checkinDataQueryOptions = queryOptions({
   queryKey: checkinDataQueryKey,
   queryFn: () => getCheckinDataFn(),
   staleTime: Infinity,
   refetchOnWindowFocus: false,
-});
-
-const attendanceQueryOptions = queryOptions({
-  queryKey: attendanceQueryKey,
-  queryFn: () => getAttendanceStatusesFn(),
-  refetchInterval: 30_000,
-  refetchOnWindowFocus: false,
-  refetchIntervalInBackground: false,
 });
 
 export const Route = createFileRoute('/_admin/checkin')({
@@ -122,7 +100,7 @@ function SortableTh<K extends string>({
 
 type ParticipantSortKey = keyof Pick<
   CheckinParticipant,
-  'fullName' | 'email' | 'teamName' | 'placeOfStudy' | 'educationLevel'
+  'fullName' | 'teamName' | 'placeOfStudy' | 'educationLevel'
 >;
 
 type TeamSortKey = 'name' | 'captainName' | 'attended';
@@ -132,7 +110,6 @@ type TeamAttendanceStatus = Exclude<TeamStatusFilter, 'all'>;
 
 const PARTICIPANT_COLUMNS: { key: ParticipantSortKey; label: string }[] = [
   { key: 'fullName', label: 'Full name' },
-  { key: 'email', label: 'Email' },
   { key: 'teamName', label: 'Team name' },
   { key: 'placeOfStudy', label: 'Place of study' },
   { key: 'educationLevel', label: 'Education level' },
@@ -156,28 +133,6 @@ function getTeamAttendanceStatus(team: CheckinTeam): TeamAttendanceStatus {
   return 'no-show';
 }
 
-function mergeCheckinData(
-  checkinData: CheckinData,
-  attendanceMap: Map<string, boolean>,
-): CheckinData {
-  if (attendanceMap.size === 0) return checkinData;
-
-  return {
-    ...checkinData,
-    participants: checkinData.participants.map((participant) => ({
-      ...participant,
-      attended: attendanceMap.get(participant.id) ?? participant.attended,
-    })),
-    teams: checkinData.teams.map((team) => ({
-      ...team,
-      members: team.members.map((member) => ({
-        ...member,
-        attended: attendanceMap.get(member.id) ?? member.attended,
-      })),
-    })),
-  };
-}
-
 function updateCheckinDataAttendance(
   checkinData: CheckinData | undefined,
   participantId: string,
@@ -197,20 +152,6 @@ function updateCheckinDataAttendance(
       ),
     })),
   };
-}
-
-function upsertAttendanceStatus(
-  statuses: AttendanceStatus[] | undefined,
-  nextStatus: AttendanceStatus,
-): AttendanceStatus[] {
-  let found = false;
-  const updatedStatuses = (statuses ?? []).map((status) => {
-    if (status.id !== nextStatus.id) return status;
-    found = true;
-    return nextStatus;
-  });
-
-  return found ? updatedStatuses : [...updatedStatuses, nextStatus];
 }
 
 function AttendanceCheckbox({
@@ -277,8 +218,7 @@ function AttendanceCheckbox({
 
 function CheckinPage() {
   const queryClient = useQueryClient();
-  const { data: staticCheckinData } = useSuspenseQuery(checkinDataQueryOptions);
-  const attendanceQuery = useQuery(attendanceQueryOptions);
+  const { data: checkinData } = useSuspenseQuery(checkinDataQueryOptions);
   const [activeTab, setActiveTab] = useState<TabId>('participants');
   const [participantSearch, setParticipantSearch] = useState('');
   const [teamSearch, setTeamSearch] = useState('');
@@ -300,16 +240,6 @@ function CheckinPage() {
   );
   const [pendingIds, setPendingIds] = useState<Set<string>>(() => new Set());
   const [actionError, setActionError] = useState<string | null>(null);
-
-  const attendanceById = useMemo(
-    () => new Map((attendanceQuery.data ?? []).map((status) => [status.id, status.attended])),
-    [attendanceQuery.data],
-  );
-
-  const checkinData = useMemo(
-    () => mergeCheckinData(staticCheckinData, attendanceById),
-    [attendanceById, staticCheckinData],
-  );
 
   const participants = checkinData.participants;
   const teams = checkinData.teams;
@@ -349,7 +279,6 @@ function CheckinPage() {
     return participantsByFilter.filter(
       (participant) =>
         participant.fullName.toLowerCase().includes(query) ||
-        participant.email.toLowerCase().includes(query) ||
         participant.teamName.toLowerCase().includes(query) ||
         participant.placeOfStudy.toLowerCase().includes(query) ||
         participant.educationLevel.toLowerCase().includes(query),
@@ -414,46 +343,25 @@ function CheckinPage() {
       });
       setActionError(null);
 
-      await queryClient.cancelQueries({ queryKey: attendanceQueryKey });
+      await queryClient.cancelQueries({ queryKey: checkinDataQueryKey });
 
       const previousCheckinData = queryClient.getQueryData<CheckinData>(checkinDataQueryKey);
-      const previousAttendance = queryClient.getQueryData<AttendanceStatus[]>(attendanceQueryKey);
 
       queryClient.setQueryData<CheckinData>(checkinDataQueryKey, (current) =>
         updateCheckinDataAttendance(current, participantId, attended),
       );
-      queryClient.setQueryData<AttendanceStatus[]>(attendanceQueryKey, (current) => {
-        const fallbackStatuses =
-          current ??
-          previousCheckinData?.participants.map((participant) => ({
-            id: participant.id,
-            attended: participant.attended,
-          })) ??
-          [];
 
-        return upsertAttendanceStatus(fallbackStatuses, {
-          id: participantId,
-          attended,
-        });
-      });
-
-      return { previousCheckinData, previousAttendance };
+      return { previousCheckinData };
     },
     onError: (error, _variables, context) => {
       if (context?.previousCheckinData) {
         queryClient.setQueryData(checkinDataQueryKey, context.previousCheckinData);
-      }
-      if (context?.previousAttendance) {
-        queryClient.setQueryData(attendanceQueryKey, context.previousAttendance);
       }
       setActionError(error instanceof Error ? error.message : 'Failed to update attendance');
     },
     onSuccess: (result) => {
       queryClient.setQueryData<CheckinData>(checkinDataQueryKey, (current) =>
         updateCheckinDataAttendance(current, result.id, result.attended),
-      );
-      queryClient.setQueryData<AttendanceStatus[]>(attendanceQueryKey, (current) =>
-        upsertAttendanceStatus(current, result),
       );
     },
     onSettled: (_result, _error, variables) => {
@@ -465,8 +373,7 @@ function CheckinPage() {
     },
   });
 
-  const errorMessage =
-    actionError ?? (attendanceQuery.error instanceof Error ? attendanceQuery.error.message : null);
+  const errorMessage = actionError;
 
   function toggleParticipantSort(key: ParticipantSortKey) {
     setParticipantSort((current) => ({
@@ -495,9 +402,6 @@ function CheckinPage() {
           <h1 className="text-3xl font-bold text-hacknu-text md:text-5xl">
             Check-in <span className="text-hacknu-green">eligible teams</span>
           </h1>
-          <p className="mt-3 text-sm text-hacknu-text-muted">
-            Attendance syncs every 30 seconds while this tab is visible.
-          </p>
         </div>
 
         <div className="mb-12 grid gap-4 sm:grid-cols-2">
@@ -539,7 +443,7 @@ function CheckinPage() {
             <Input
               placeholder={
                 activeTab === 'participants'
-                  ? 'Search by name, email, team, place of study...'
+                  ? 'Search by name, team, place of study...'
                   : 'Search by team, captain, member...'
               }
               value={activeTab === 'participants' ? participantSearch : teamSearch}
@@ -611,7 +515,7 @@ function CheckinPage() {
                 {participantSearch && ' (filtered)'}
               </p>
               <div className="overflow-x-auto rounded border border-hacknu-border">
-                <table className="w-full min-w-[840px] text-left text-sm">
+                <table className="w-full min-w-[680px] text-left text-sm">
                   <thead>
                     <tr className="border-b border-hacknu-border bg-hacknu-dark-card">
                       <th className="px-4 py-3 font-medium text-hacknu-green">Attended</th>
@@ -619,14 +523,6 @@ function CheckinPage() {
                         <SortableTh
                           label="Full name"
                           sortKey="fullName"
-                          current={participantSort}
-                          onSort={toggleParticipantSort}
-                        />
-                      )}
-                      {visibleParticipantCols.email && (
-                        <SortableTh
-                          label="Email"
-                          sortKey="email"
                           current={participantSort}
                           onSort={toggleParticipantSort}
                         />
@@ -675,9 +571,6 @@ function CheckinPage() {
                         </td>
                         {visibleParticipantCols.fullName && (
                           <td className="px-4 py-3 text-hacknu-text">{participant.fullName}</td>
-                        )}
-                        {visibleParticipantCols.email && (
-                          <td className="px-4 py-3 text-hacknu-text-muted">{participant.email}</td>
                         )}
                         {visibleParticipantCols.teamName && (
                           <td className="px-4 py-3 text-hacknu-text-muted">

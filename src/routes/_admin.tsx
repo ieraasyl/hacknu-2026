@@ -1,32 +1,16 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createFileRoute, notFound, Outlet, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { signOut } from '@/lib/auth-client';
 import { getSession } from '@/lib/auth.server';
 import { sessionIsAdmin } from '@/lib/admin.server';
+import {
+  AdminHeaderContext,
+  type AdminHeaderControls,
+  type AdminHeaderContextValue,
+} from '@/lib/admin-header-context';
 import AdminHeader from '@/components/admin/AdminHeader';
-
-type AdminHeaderControls = {
-  onRefresh?: () => void;
-  isRefreshing?: boolean;
-  refreshCooldownSeconds?: number;
-};
-
-type AdminHeaderContextValue = {
-  setHeaderControls: (controls: AdminHeaderControls) => void;
-  resetHeaderControls: () => void;
-};
-
-const AdminHeaderContext = createContext<AdminHeaderContextValue | null>(null);
-
-export function useAdminHeaderControls() {
-  const value = useContext(AdminHeaderContext);
-  if (!value) {
-    throw new Error('useAdminHeaderControls must be used within the admin layout');
-  }
-  return value;
-}
 
 const checkAdmin = createServerFn({ method: 'GET' }).handler(async () => {
   const request = getRequest();

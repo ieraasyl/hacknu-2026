@@ -1,4 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
+import type { ErrorComponentProps } from '@tanstack/react-router';
 import {
   HeadContent,
   Scripts,
@@ -42,24 +43,73 @@ function NotFoundPage() {
             backgroundSize: '60px 60px',
           }}
         />
-        <div className="relative z-10 max-w-lg text-center">
-          <p className="mb-6 text-xs tracking-[0.3em] text-hacknu-green/50 uppercase">
+        <div className="relative z-10 max-w-xl text-center">
+          <p className="mb-6 text-sm tracking-[0.3em] text-hacknu-green/50 uppercase">
             {t('notFound.error')}
           </p>
-          <h1 className="gradient-text mb-4 text-8xl leading-none font-black text-hacknu-green md:text-[10rem]">
+          <h1 className="gradient-text mb-4 text-8xl leading-none font-black text-hacknu-green md:text-[11rem]">
             404
           </h1>
-          <div className="mb-6 text-xs tracking-[0.5em] text-hacknu-text-muted/30">
+          <div className="mb-6 text-sm tracking-[0.5em] text-hacknu-text-muted/30">
             ════════════════════════════════
           </div>
-          <p className="mb-8 text-sm text-hacknu-text-muted">{t('notFound.message')}</p>
+          <p className="mb-8 text-base text-hacknu-text-muted">{t('notFound.message')}</p>
           <button
             type="button"
             onClick={() => navigate({ to: '/' })}
-            className="inline-block cursor-pointer bg-hacknu-green px-8 py-3 text-sm font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
+            className="inline-block cursor-pointer bg-hacknu-green px-8 py-3 text-base font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
           >
             {t('notFound.goHome')}
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RootErrorPage({ error, reset }: ErrorComponentProps) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex min-h-screen flex-col bg-hacknu-dark">
+      <AuthHeader />
+      <div className="relative flex flex-1 items-center justify-center p-6">
+        <div
+          className="pointer-events-none fixed inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(192,132,252,0.45) 1px, transparent 1px), linear-gradient(90deg, rgba(192,132,252,0.45) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        <div className="relative z-10 max-w-xl text-center">
+          <p className="mb-6 text-sm tracking-[0.3em] text-hacknu-purple/60 uppercase">
+            {t('errorPage.title')}
+          </p>
+          <div className="mb-8 space-y-4">
+            <p className="text-base text-hacknu-text-muted">{t('errorPage.message')}</p>
+            {import.meta.env.DEV && (
+              <p className="font-mono text-sm wrap-break-word text-red-400/90">
+                {error instanceof Error ? error.message : String(error)}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => reset()}
+              className="inline-block cursor-pointer border border-hacknu-purple/50 bg-transparent px-8 py-3 text-base font-bold tracking-wider text-hacknu-purple uppercase transition-all hover:border-hacknu-purple hover:bg-hacknu-purple/10"
+            >
+              {t('errorPage.retry')}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate({ to: '/' })}
+              className="inline-block cursor-pointer bg-hacknu-green px-8 py-3 text-base font-bold tracking-wider text-hacknu-dark uppercase transition-all hover:bg-hacknu-green/80 hover:shadow-[0_0_20px_rgba(88,225,145,0.3)]"
+            >
+              {t('errorPage.goHome')}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -70,6 +120,7 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   notFoundComponent: NotFoundPage,
+  errorComponent: RootErrorPage,
   beforeLoad: async () => {
     const locale = await getServerLocale();
     if (i18n.language !== locale) {
