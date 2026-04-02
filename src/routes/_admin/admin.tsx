@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
@@ -8,14 +8,12 @@ import { sessionIsAdmin } from '@/lib/admin.server';
 import { getReportData } from '@/lib/report.server';
 import type { ReportParticipant, ReportTeam } from '@/lib/report.server';
 import { ColumnToggleBar } from '@/components/admin/ColumnToggleBar';
-import {
-  EligibilityToggle,
-  type EligibilityFilter,
-} from '@/components/admin/EligibilityToggle';
+import { EligibilityToggle, type EligibilityFilter } from '@/components/admin/EligibilityToggle';
 import { StatCard } from '@/components/admin/StatCard';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackgroundGrid } from '@/components/ui/background';
+import { useAdminHeaderControls } from '../_admin';
 
 /* ─── Server Function ─── */
 
@@ -33,9 +31,8 @@ const reportQueryOptions = queryOptions({
   staleTime: 5 * 60 * 1000,
 });
 
-export const REFRESH_COOLDOWN_MS = 30 * 1000; // 30 seconds on success
-export const REFRESH_COOLDOWN_ON_FAIL_MS = 10 * 1000; // 10 seconds on error
-export { reportQueryOptions };
+const REFRESH_COOLDOWN_MS = 30 * 1000; // 30 seconds on success
+const REFRESH_COOLDOWN_ON_FAIL_MS = 10 * 1000; // 10 seconds on error
 
 /* ─── Route ─── */
 
@@ -133,7 +130,8 @@ function formatDateForDisplay(isoString: string): string {
 }
 
 function AdminPage() {
-  const { data } = useSuspenseQuery(reportQueryOptions);
+  const { data, isFetching, refetch } = useSuspenseQuery(reportQueryOptions);
+  const { setHeaderControls, resetHeaderControls } = useAdminHeaderControls();
   const [activeTab, setActiveTab] = useState<TabId>('participants');
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const [participantSearch, setParticipantSearch] = useState('');
@@ -156,6 +154,8 @@ function AdminPage() {
   const [visibleTeamCols, setVisibleTeamCols] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(TEAM_COLUMNS.map((c) => [c.key, true])),
   );
+  const [refreshCooldownUntil, setRefreshCooldownUntil] = useState(0);
+  const [refreshCooldownSeconds, setRefreshCooldownSeconds] = useState(0);
 
   const { participants, teams } = data;
 
@@ -165,10 +165,7 @@ function AdminPage() {
     [participants],
   );
 
-  const eligibleTeamsCount = useMemo(
-    () => teams.filter((t) => t.memberCount >= 2).length,
-    [teams],
-  );
+  const eligibleTeamsCount = useMemo(() => teams.filter((t) => t.memberCount >= 2).length, [teams]);
 
   const eligibleParticipantsCount = useMemo(
     () =>
@@ -313,6 +310,51 @@ function AdminPage() {
     setScrollToId(`participant-${email}`);
   }
 
+  useEffect(() => {
+    if (refreshCooldownUntil <= 0) {
+      queueMicrotask(() => setRefreshCooldownSeconds(0));
+      return;
+    }
+    const update = () => {
+      const remaining = Math.ceil((refreshCooldownUntil - Date.now()) / 1000);
+      if (remaining <= 0) {
+        setRefreshCooldownUntil(0);
+        setRefreshCooldownSeconds(0);
+        return;
+      }
+      setRefreshCooldownSeconds(remaining);
+    };
+    update();
+    const timeoutId = setTimeout(
+      () => setRefreshCooldownUntil(0),
+      Math.max(0, refreshCooldownUntil - Date.now()),
+    );
+    const intervalId = setInterval(update, 1000);
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }, [refreshCooldownUntil]);
+
+  const handleRefresh = useCallback(async () => {
+    if (refreshCooldownSeconds > 0 || isFetching) return;
+    try {
+      await refetch();
+      setRefreshCooldownUntil(Date.now() + REFRESH_COOLDOWN_MS);
+    } catch {
+      setRefreshCooldownUntil(Date.now() + REFRESH_COOLDOWN_ON_FAIL_MS);
+    }
+  }, [isFetching, refetch, refreshCooldownSeconds]);
+
+  useEffect(() => {
+    setHeaderControls({
+      onRefresh: handleRefresh,
+      isRefreshing: isFetching,
+      refreshCooldownSeconds,
+    });
+    return resetHeaderControls;
+  }, [handleRefresh, isFetching, refreshCooldownSeconds, resetHeaderControls, setHeaderControls]);
+
   return (
     <div className="min-h-screen bg-hacknu-dark">
       <BackgroundGrid />
@@ -388,7 +430,9 @@ function AdminPage() {
                   }))
                 }
                 onToggleAll={() => {
-                  const allVisible = PARTICIPANT_COLUMNS.every((c) => visibleParticipantCols[c.key]);
+                  const allVisible = PARTICIPANT_COLUMNS.every(
+                    (c) => visibleParticipantCols[c.key],
+                  );
                   setVisibleParticipantCols(
                     Object.fromEntries(PARTICIPANT_COLUMNS.map((c) => [c.key, !allVisible])),
                   );
@@ -420,7 +464,10 @@ function AdminPage() {
               />
             )}
             {activeTab === 'teams' && (
-              <EligibilityToggle value={teamEligibilityFilter} onChange={setTeamEligibilityFilter} />
+              <EligibilityToggle
+                value={teamEligibilityFilter}
+                onChange={setTeamEligibilityFilter}
+              />
             )}
           </div>
 

@@ -46,7 +46,13 @@ export type TeamCardProps = {
   registrationOpen: boolean;
 };
 
-export default function TeamCard({ team, createForm, joinForm, actions, registrationOpen }: TeamCardProps) {
+export default function TeamCard({
+  team,
+  createForm,
+  joinForm,
+  actions,
+  registrationOpen,
+}: TeamCardProps) {
   const { t } = useTranslation();
   const { data: teamData, loading: teamLoading, isCaptain, inviteUrl } = team;
   const {
@@ -102,7 +108,9 @@ export default function TeamCard({ team, createForm, joinForm, actions, registra
       <CardContent className="pt-4">
         {!registrationOpen && !teamLoading && (
           <div className="mb-4 border border-yellow-500/30 bg-yellow-500/5 px-3 py-2 text-xs text-yellow-400">
-            {teamData ? t('dashboard.registrationLockedBanner') : t('dashboard.registrationClosedNoTeam')}
+            {teamData
+              ? t('dashboard.registrationLockedBanner')
+              : t('dashboard.registrationClosedNoTeam')}
           </div>
         )}
         {teamLoading ? (

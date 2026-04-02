@@ -49,6 +49,7 @@ export const participant = sqliteTable(
     parentPhone: text('parent_phone'),
     educationLevel: text('education_level').notNull(),
     cvUrl: text('cv_url'),
+    attended: integer('attended', { mode: 'boolean' }).default(false).notNull(),
     teamId: text('team_id').references(() => team.id, { onDelete: 'set null' }),
     createdAt: integer('created_at', { mode: 'timestamp_ms' })
       .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)

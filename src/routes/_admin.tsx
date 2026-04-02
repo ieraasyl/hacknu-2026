@@ -1,17 +1,32 @@
-import { useState, useEffect } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import { createFileRoute, notFound, Outlet, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
-import { useQuery } from '@tanstack/react-query';
 import { signOut } from '@/lib/auth-client';
 import { getSession } from '@/lib/auth.server';
 import { sessionIsAdmin } from '@/lib/admin.server';
 import AdminHeader from '@/components/admin/AdminHeader';
-import {
-  reportQueryOptions,
-  REFRESH_COOLDOWN_MS,
-  REFRESH_COOLDOWN_ON_FAIL_MS,
-} from './_admin/admin';
+
+type AdminHeaderControls = {
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
+  refreshCooldownSeconds?: number;
+};
+
+type AdminHeaderContextValue = {
+  setHeaderControls: (controls: AdminHeaderControls) => void;
+  resetHeaderControls: () => void;
+};
+
+const AdminHeaderContext = createContext<AdminHeaderContextValue | null>(null);
+
+export function useAdminHeaderControls() {
+  const value = useContext(AdminHeaderContext);
+  if (!value) {
+    throw new Error('useAdminHeaderControls must be used within the admin layout');
+  }
+  return value;
+}
 
 const checkAdmin = createServerFn({ method: 'GET' }).handler(async () => {
   const request = getRequest();
@@ -31,60 +46,30 @@ export const Route = createFileRoute('/_admin')({
 
 function AdminLayout() {
   const navigate = useNavigate();
-  const { refetch, isFetching } = useQuery(reportQueryOptions);
-  const [refreshCooldownUntil, setRefreshCooldownUntil] = useState(0);
-  const [refreshCooldownSeconds, setRefreshCooldownSeconds] = useState(0);
+  const [headerControls, setHeaderControlsState] = useState<AdminHeaderControls>({});
 
-  useEffect(() => {
-    if (refreshCooldownUntil <= 0) {
-      queueMicrotask(() => setRefreshCooldownSeconds(0));
-      return;
-    }
-    const update = () => {
-      const remaining = Math.ceil((refreshCooldownUntil - Date.now()) / 1000);
-      if (remaining <= 0) {
-        setRefreshCooldownUntil(0);
-        setRefreshCooldownSeconds(0);
-        return;
-      }
-      setRefreshCooldownSeconds(remaining);
-    };
-    update();
-    const t = setTimeout(
-      () => setRefreshCooldownUntil(0),
-      Math.max(0, refreshCooldownUntil - Date.now()),
-    );
-    const i = setInterval(update, 1000);
-    return () => {
-      clearTimeout(t);
-      clearInterval(i);
-    };
-  }, [refreshCooldownUntil]);
+  const headerContextValue = useMemo<AdminHeaderContextValue>(
+    () => ({
+      setHeaderControls: (controls) => setHeaderControlsState(controls),
+      resetHeaderControls: () => setHeaderControlsState({}),
+    }),
+    [],
+  );
 
   async function handleSignOut() {
     await signOut();
     void navigate({ to: '/' });
   }
 
-  async function handleRefresh() {
-    if (refreshCooldownSeconds > 0 || isFetching) return;
-    try {
-      await refetch();
-      setRefreshCooldownUntil(Date.now() + REFRESH_COOLDOWN_MS);
-    } catch {
-      setRefreshCooldownUntil(Date.now() + REFRESH_COOLDOWN_ON_FAIL_MS);
-    }
-  }
-
   return (
-    <>
+    <AdminHeaderContext.Provider value={headerContextValue}>
       <AdminHeader
         onSignOut={handleSignOut}
-        onRefresh={handleRefresh}
-        isRefreshing={isFetching}
-        refreshCooldownSeconds={refreshCooldownSeconds}
+        onRefresh={headerControls.onRefresh}
+        isRefreshing={headerControls.isRefreshing}
+        refreshCooldownSeconds={headerControls.refreshCooldownSeconds}
       />
       <Outlet />
-    </>
+    </AdminHeaderContext.Provider>
   );
 }

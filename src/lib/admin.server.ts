@@ -15,9 +15,7 @@ export function getAdminEmails(): string[] {
 }
 
 /** True only when ADMIN_EMAILS is non-empty and the session user's email is listed. */
-export function sessionIsAdmin(
-  session: { user: { email?: string | null } } | null,
-): boolean {
+export function sessionIsAdmin(session: { user: { email?: string | null } } | null): boolean {
   if (!session?.user?.email) return false;
   const adminEmails = getAdminEmails();
   if (adminEmails.length === 0) return false;

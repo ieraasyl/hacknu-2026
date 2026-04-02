@@ -1,0 +1,1 @@
+ALTER TABLE `participant` ADD `attended` integer DEFAULT false NOT NULL;

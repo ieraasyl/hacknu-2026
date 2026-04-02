@@ -1,15 +1,14 @@
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 
-type StatCardProps = {
+type CheckinStatCardProps = {
   label: string;
   total: number;
-  eligibleCount: number;
+  breakdown: string;
   variant: 'green' | 'purple';
 };
 
-export function StatCard({ label, total, eligibleCount, variant }: StatCardProps) {
+export function CheckinStatCard({ label, total, breakdown, variant }: CheckinStatCardProps) {
   const colorClass = variant === 'purple' ? 'text-hacknu-purple' : 'text-hacknu-green';
-  const notEligible = total - eligibleCount;
 
   return (
     <Card className="border-hacknu-border bg-hacknu-dark-card">
@@ -20,8 +19,8 @@ export function StatCard({ label, total, eligibleCount, variant }: StatCardProps
           </CardDescription>
           <CardTitle className={`text-2xl ${colorClass}`}>{total}</CardTitle>
         </div>
-        <div className="text-sm font-medium text-hacknu-text-muted tabular-nums">
-          {eligibleCount} / {notEligible}
+        <div className="text-right text-sm font-medium text-hacknu-text-muted tabular-nums">
+          {breakdown}
         </div>
       </CardContent>
     </Card>

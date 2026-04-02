@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as InviteSlugRouteImport } from './routes/invite.$slug'
 import { Route as ApiReportRouteImport } from './routes/api/report'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
+import { Route as AdminCheckinRouteImport } from './routes/_admin/checkin'
 import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -70,6 +71,11 @@ const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const AdminCheckinRoute = AdminCheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminRoute = AdminAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AdminAdminRoute
+  '/checkin': typeof AdminCheckinRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AdminAdminRoute
+  '/checkin': typeof AdminCheckinRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/_admin/admin': typeof AdminAdminRoute
+  '/_admin/checkin': typeof AdminCheckinRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin'
+    | '/checkin'
     | '/dashboard'
     | '/api/report'
     | '/invite/$slug'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin'
+    | '/checkin'
     | '/dashboard'
     | '/api/report'
     | '/invite/$slug'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/_admin/admin'
+    | '/_admin/checkin'
     | '/_protected/dashboard'
     | '/api/report'
     | '/invite/$slug'
@@ -246,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_admin/checkin': {
+      id: '/_admin/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof AdminCheckinRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin': {
       id: '/_admin/admin'
       path: '/admin'
@@ -265,10 +284,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdminRoute: typeof AdminAdminRoute
+  AdminCheckinRoute: typeof AdminCheckinRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminRoute: AdminAdminRoute,
+  AdminCheckinRoute: AdminCheckinRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
