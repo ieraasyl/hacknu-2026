@@ -3,6 +3,7 @@
 
 # ISO 8601 instant when registration closes.
 # 1 April 2026 23:59 UTC+5
+# After this time, onboarding and team create/join/leave/kick/dissolve are blocked
 # REGISTRATION_DEADLINE=2026-04-01T23:59:59+05:00
 
 # local: http://localhost:3000 

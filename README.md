@@ -5,9 +5,9 @@ HackNU/26 — 9th Annual Student Hackathon site and registration app
 ## Features
 
 - **Registration**: Sign in via email OTP or Google OAuth → complete onboarding → access dashboard.
-- **Teams**: Create a team (2–4 members) or join via invite link. Captain can kick members or dissolve the team.
+- **Teams**: Create a team or join via invite link—up to **4** members per team. Teams are considered eligible with **at least 2** members. Captain can kick members or dissolve the team; non-captains can leave.
 - **AI team name generation**: AI-powered suggestions for team names in the dashboard.
-- **Admin**: Participants and teams report at `/admin`.
+- **Admin**: Participants and teams report at **`/admin`**. Check-in for eligible teams at **`/checkin`**. Both require your account email to be listed in `ADMIN_EMAILS` (see Setup).
 
 ## Tech Stack
 
@@ -25,8 +25,10 @@ TanStack Start (React) on Cloudflare Workers. D1 + Drizzle for storage. better-a
    ```
 
    Fill in the values in both files.
+   - **`.env`** — Used on your PC for Drizzle Kit and `bun run auth:generate` (see `.env.example`).
+   - **`.dev.vars`** — Loaded by Wrangler for `bun run dev`; mirrors production secrets (see `.dev.vars.example`).
 
-   _Note: `.dev.vars` is used only for local development. For production, set secrets via `wrangler secret put <NAME>`. No need to put `.env` variable for production, these are only used from your PC._
+   _Note: `.dev.vars` is only for local development. On production, set the same variable names with `wrangler secret put <NAME>` (or the dashboard). The **`.env`** file is not deployed to Workers—it stays on your machine for CLI tools._
 
 4. Install dependencies:
    ```bash
