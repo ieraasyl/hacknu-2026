@@ -1,13 +1,25 @@
 # hacknu-2026
 
-HackNU/26 — 9th Annual Student Hackathon site and registration app
+HackNU/26 — 9th Annual Student Hackathon site and registration app, deployed at [hacknu.nuacm.kz](https://hacknu.nuacm.kz).
+
+## Impact
+
+- Onboarded **720+ participants** across **250+ teams** for HackNU/26.
+- Became ACM@NU's reusable full-stack foundation for future event registration sites.
+- Supported the complete participant journey from authentication and onboarding through team formation and on-site check-in.
+
+## Architecture
+
+The application runs as a TanStack Start full-stack app on Cloudflare Workers. Cloudflare D1 and Drizzle ORM provide relational storage and migrations; Better Auth handles Google OAuth and email OTP sign-in. The participant dashboard, eligibility controls, reports, and check-in tools share server-side authorization, while i18next provides English, Kazakh, and Russian interfaces. A Google Apps Script integration delivers OTP emails, stores CV uploads, and synchronizes operational reports to Google Sheets.
 
 ## Features
 
 - **Registration**: Sign in via email OTP or Google OAuth → complete onboarding → access dashboard.
 - **Teams**: Create a team or join via invite link—up to **4** members per team. Teams are considered eligible with **at least 2** members. Captain can kick members or dissolve the team; non-captains can leave.
 - **AI team name generation**: AI-powered suggestions for team names in the dashboard.
-- **Admin**: Participants and teams report at **`/admin`**. Check-in for eligible teams at **`/checkin`**. Both require your account email to be listed in `ADMIN_EMAILS` (see Setup).
+- **Admin operations**: Review participants and teams at **`/admin`**, manage eligibility, and check in eligible teams at **`/checkin`**. Both routes require the account email to be listed in `ADMIN_EMAILS`.
+- **Trilingual UI**: Participant and admin workflows are available in English, Kazakh, and Russian.
+- **Operations sync**: Google Apps Script supports email OTP delivery, CV file handling, and Google Sheets report synchronization.
 
 ## Tech Stack
 
